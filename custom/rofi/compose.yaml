@@ -1,0 +1,26 @@
+services:
+  builder:
+    container_name: rofi-builder
+    volumes:
+      - ./build:/build
+
+    #command: meson setup ../build/ -Dxcb=disabled && ninja -C ../build
+    tty: true
+    stdin_open: true
+
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM docker.io/ubuntu:25.04
+
+        RUN apt-get --yes update
+        RUN apt-get --yes update && apt-get --yes install git                 \
+          meson ninja-build gcc make automake pkg-config flex bison cmake     \
+          libwayland-*                                                        \
+          libpango1.0-dev libpangocairo-1.0-0 libcairo2 libglib2.0-dev        \
+          libgdk-pixbuf-2.0-dev libstartup-notification0-dev libxkbcommon-dev \
+          wayland-protocols
+
+        WORKDIR /
+        RUN git clone https://github.com/davatorium/rofi.git
+        WORKDIR /rofi
