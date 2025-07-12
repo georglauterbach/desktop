@@ -29,6 +29,7 @@ function root_setup() {
 # Runs the user setup
 function user_setup() {
   log info 'Running user setup now'
+  cp -r "${SCRIPT_DIR}/gui/home/"* "${HOME}"
 }
 
 function main() {
