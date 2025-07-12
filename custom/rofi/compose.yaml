@@ -1,12 +1,23 @@
+# docker compose up --build
 services:
   builder:
-    container_name: rofi-builder
-    volumes:
-      - ./build:/build
+    container_name: builder-rofi
 
-    #command: meson setup ../build/ -Dxcb=disabled && ninja -C ../build
-    tty: true
-    stdin_open: true
+    volumes:
+      - ./target:/target
+
+    # tty: true
+    # stdin_open: true
+
+    command: >
+      /bin/bash -c
+      "cd /target
+      && ( git clone https://github.com/davatorium/rofi.git . || : ; )
+      && git fetch -apt
+      && git checkout 4110e98
+      && rm -rf build .prefix
+      && meson setup build
+      && ninja -C build"
 
     build:
       context: .
@@ -20,7 +31,3 @@ services:
           libpango1.0-dev libpangocairo-1.0-0 libcairo2 libglib2.0-dev        \
           libgdk-pixbuf-2.0-dev libstartup-notification0-dev libxkbcommon-dev \
           wayland-protocols
-
-        WORKDIR /
-        RUN git clone https://github.com/davatorium/rofi.git
-        WORKDIR /rofi

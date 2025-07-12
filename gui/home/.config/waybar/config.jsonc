@@ -86,7 +86,8 @@
     "on-click-right": "swaync-client --toggle-dnd --skip-wait"
   },
   "sway/window": {
-    "max-length": 90
+    "max-length": 90,
+    "swap-icon-label": false
   },
   // -------------------------------------------
   // ----  Middle Modules  ---------------------

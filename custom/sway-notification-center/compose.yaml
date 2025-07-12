@@ -1,0 +1,32 @@
+# docker compose up --build
+services:
+  builder:
+    container_name: builder-sway-notification-center
+
+    volumes:
+      - ./target:/target
+
+    # tty: true
+    # stdin_open: true
+
+    command: >
+      /bin/bash -c
+      "cd /target
+      && ( git clone https://github.com/ErikReider/SwayNotificationCenter.git . || : ; )
+      && git fetch -apt
+      && git checkout d44aa33
+      && rm -rf build .prefix
+      && meson setup build --prefix=/target/.prefix
+      && ninja -C build
+      && meson install -C build
+      && rm -rf .prefix/lib
+      && find .prefix -type f -exec sed -i 's|/target/.prefix|/usr|g' {} \+"
+
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM docker.io/ubuntu:25.04
+
+        RUN apt-get --yes update
+        RUN apt-get --yes update && apt-get --yes install git \
+          valac meson blueprint-compiler scdoc sassc libgtk-4-dev libgtk4-layer-shell-dev dbus libglib2.0-dev gobject-introspection libgee-0.8-dev libjson-glib-dev libadwaita-1-dev gvfs libgranite-7-dev libpulse-dev libnotify-dev

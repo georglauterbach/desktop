@@ -9,8 +9,7 @@
 # -----------------------------------------------
 
 # https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
-exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-#exec dbus-update-activation-environment --all
+exec systemctl --user import-environment HOME DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
 exec swaync >/tmp/swaync.log 2>&1
 exec sway-audio-idle-inhibit >/tmp/sway-audio-idle-inhibit.log 2>&1

@@ -12,15 +12,21 @@ The desktop is based on Ubuntu. To see which versions are supported, look into [
 
 The desktop itself is provided by [`swaywm/sway`](https://github.com/swaywm/sway), a minimal Wayland compositor. Additionally, other (support) programs are required for a fully functioning desktop. You can find these programs by looking for the `PACKAGES` array in the `install.sh` scripts in [`distributions/ubuntu/*/`](./distributions/ubuntu/).
 
+The following table shows a list of programs for basic desktop functionality associated with Sway that I install:
+
+| Name                                                | Description          | Custom |
+| :-------------------------------------------------- | :------------------- | :----- |
+| [sway-notification-center](https://github.com/ErikReider/SwayNotificationCenter) | notification daemon with a GTK GUI | yes    |
+
 The following table shows a list of the most important graphical programs that I install:
 
-| Name                                                | Description          |
-| :-------------------------------------------------- | :------------------- |
-| [Waybar](https://github.com/Alexays/Waybar)         | Wayland bar          |
-| [Alacritty](https://github.com/alacritty/alacritty) | Terminal             |
-| [rofi](https://github.com/davatorium/rofi)          | Application launcher |
+| Name                                                | Description          | Custom |
+| :-------------------------------------------------- | :------------------- | :----- |
+| [waybar](https://github.com/Alexays/Waybar)         | Wayland bar          | yes    |
+| [alacritty](https://github.com/alacritty/alacritty) | terminal             | no     |
+| [rofi](https://github.com/davatorium/rofi)          | application launcher | yes    |
 
 ## TODO
 
 - GTK Themes: <https://github.com/georglauterbach/hermes/releases/tag/gtk-v0.1.0>
-- custom rofi
+- finish `install.sh`

@@ -1,0 +1,16 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions: []
+dictionaries: []
+words: []
+import: []
+
+ignoreWords:
+  - bindsym
+  - dbus
+  - everforest
+  - gruvbox
+  - nodeadkeys
+  - numlock
+  - swaync
+

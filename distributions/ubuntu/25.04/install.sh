@@ -10,12 +10,17 @@ function __root_setup() {
       sway
 
       # programs associated with Sway for core functionality
-      sway-backgrounds sway-notification-center swayidle swaylock
-      jq librsvg2-2
+      sway-notification-center libgtk4-layer-shell0
+      swayidle
+      swaylock librsvg2-2
+      jq
 
       # to support applications that only run on X11,
       # xwayland provides a compatibility layer
       xwayland
+
+      # application launcher
+      rofi
 
       # the main bar
       waybar
@@ -27,7 +32,9 @@ function __root_setup() {
       fonts-font-awesome
 
       # desktop portals
-      xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
+      xdg-desktop-portal
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
 
       # audio (processing engine)
       pipewire pipewire-audio-client-libraries pulseaudio-utils rtkit wireplumber
@@ -42,19 +49,16 @@ function __root_setup() {
       papers
   )
 
-
   apt-get --yes update
   apt-get --yes install --no-install-recommends --no-install-suggests "${PACKAGES[@]}"
-
-
-
-
-
-  # TODO
-  rm --force /etc/systemd/user/graphical-session.target.wants/{waybar,swaync}.service
   apt-get --yes purge wmenu
 
-  systemctl --user disable swaync.service waybar.service || :
+  rm --force /etc/systemd/user/graphical-session.target.wants/{waybar,swaync}.service
+  systemctl --user disable waybar.service || :
+  systemctl --user mask    waybar.service || :
+  systemctl --user disable swaync.service || :
+  systemctl --user mask    swaync.service || :
+
   systemctl --user enable --now pipewire-pulse.service
 }
 
