@@ -6,11 +6,21 @@ words: []
 import: []
 
 ignoreWords:
+  - alacritty
   - bindsym
   - dbus
   - everforest
   - gruvbox
   - nodeadkeys
   - numlock
+  - pipewire
+  - rofi
+  - swayfx
+  - swayidle
+  - swaylock
   - swaync
+  - waybar
+  - wireplumber
+  - wlroots
+  - xwayland
 

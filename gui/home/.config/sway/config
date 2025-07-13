@@ -250,6 +250,10 @@ smart_borders     on
 default_border    pixel 2
 hide_edge_borders smart
 
+# ensure all windows - even floating ones - have a border
+for_window [class=".*"]  border pixel 2
+for_window [app_id=".*"] border pixel 2
+
 # ----  Gaps
 
 smart_gaps on
@@ -270,8 +274,8 @@ for_window [shell=".*"] inhibit_idle fullscreen
 # ----  Floating Windows
 
 floating_modifier       $spr
-default_floating_border pixel 1
-floating_maximum_size   -1 x -1
+default_floating_border pixel 2
+floating_maximum_size   0 x 0
 
 for_window [class="floating_window"] floating enable
 
@@ -316,5 +320,8 @@ bindsym $spr+Return     exec --no-startup-id systemd-run --user --scope /usr/bin
 # -----------------------------------------------
 # ----  Epilogue  -------------------------------
 # -----------------------------------------------
+
+# Include this file when using SwayFX to enable additional effects
+include "${HOME}/.config/sway/swayfx.conf"
 
 include "${HOME}/.config/sway/user_late.conf"

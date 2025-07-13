@@ -6,7 +6,8 @@ function __root_setup() {
       # can also be used as a fallback in case SwayWM is inaccessible or does not work
       ubuntu-desktop-minimal
 
-      # the actual Wayland compositor
+      # the actual Wayland compositor;
+      # installed for easy dependencies to SwayFX
       sway
 
       # programs associated with Sway for core functionality
@@ -37,7 +38,7 @@ function __root_setup() {
       xdg-desktop-portal-wlr
 
       # audio (processing engine)
-      pipewire pipewire-audio-client-libraries pulseaudio-utils rtkit wireplumber
+      pipewire pipewire-audio-client-libraries rtkit wireplumber
 
       # graphics (API)
       libvulkan1 mesa-vulkan-drivers vulkan-tools
@@ -48,6 +49,9 @@ function __root_setup() {
       # document viewer
       papers
   )
+
+  # shellcheck disable=SC2154
+  cp "${SCRIPT_DIR}/distributions/ubuntu/${VERSION_ID}/ppa/*" /etc/apt/sources.list.d/
 
   apt-get --yes update
   apt-get --yes install --no-install-recommends --no-install-suggests "${PACKAGES[@]}"
@@ -61,4 +65,3 @@ function __root_setup() {
 
   systemctl --user enable --now pipewire-pulse.service
 }
-

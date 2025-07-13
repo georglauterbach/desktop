@@ -1,0 +1,15 @@
+services:
+  builder:
+    container_name: builder-swayfx
+
+    volumes:
+      - ./target:/opt
+
+    environment:
+      - WLROOTSVERSION=0.19.0
+      - WLROOTSLIBVERSION=0.19
+      - SWAYFXVERSION=0.5.2
+      - SCENEFXVERSION=0.4.1
+      - SCENEFXLIBVERSION=0.4
+
+    build: .
