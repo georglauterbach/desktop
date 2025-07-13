@@ -4,5 +4,5 @@ To [build](https://github.com/davatorium/rofi/blob/next/INSTALL.md) [rofi](https
 
 ```bash
 docker compose up --build
-cp target/build/rofi /usr/local/bin/
+sudo cp target/build/rofi /usr/local/bin/
 ```

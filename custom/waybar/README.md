@@ -4,13 +4,14 @@ To [build](https://github.com/Alexays/Waybar?tab=readme-ov-file#building-from-so
 
 ```bash
 docker compose up --build
+sudo bash
 
 while read -r FILE; do
   NEW_FILE=/usr/local${FILE#target/.prefix}
   NEW_DIR=$(dirname "${NEW_FILE}")
-  [[ -d ${NEW_DIR} ]] || sudo mkdir -p "${NEW_DIR}"
+  [[ -d ${NEW_DIR} ]] || mkdir -p "${NEW_DIR}"
 
   echo "Creating '${NEW_FILE}'"
-  sudo cp "${FILE}" "${NEW_FILE}"
+  cp "${FILE}" "${NEW_FILE}"
 done < <(command find target/.prefix -type f)
 ```
