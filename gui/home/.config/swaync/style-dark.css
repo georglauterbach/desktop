@@ -1,0 +1,107 @@
+/* ------------------------------------------- */
+/* ----  General  ---------------------------- */
+/* ------------------------------------------- */
+
+:root {
+  --default-padding: 15px;
+  --default-padding-small: 5px;
+
+  --default-margin: 25px;
+  --default-margin-small: 10px;
+
+  --default-border-radius: 10px;
+  --default-border-radius-small: 5px;
+
+  --default-color-background: 40, 40, 40;
+  --default-color-background-dim: 22, 22, 17;
+
+  --cc-bg: rgba(var(--default-color-background), 0.7);
+  --text-color: #DDC7A1;
+  --text-color-disabled: #B6A891;
+
+  --noti-bg-alpha: 0.8;
+  --noti-border-color: rgba(255, 255, 255, 0.15);
+  --noti-bg: rgba(var(--default-color-background), 0.9);
+  --noti-bg-darker: rgb(38, 38, 38);
+  --noti-bg-hover: rgba(var(--default-color-background-dim), 0.9);
+  --noti-bg-focus: rgba(var(--default-color-background-dim), 0.9);
+  --noti-close-bg: rgb(78, 78, 78);
+  --noti-close-bg-hover: rgb(94, 94, 94);
+
+  --notification-icon-size: 64px;
+  --notification-app-icon-size: calc(var(--notification-icon-size) / 4);
+  --notification-group-icon-size: 32px;
+}
+
+* {
+  box-shadow: none;
+  text-shadow: none;
+  border: none;
+  outline: none;
+}
+
+/* ------------------------------------------- */
+/* ----  Floating Notifications  ------------- */
+/* ------------------------------------------- */
+
+.notification-row {
+  background: none;
+}
+
+.notification-row:focus {
+  background: var(--noti-bg-focus);
+  border: none;
+}
+
+.notification-row .notification-background {
+  border-radius: var(--default-border-radius);
+}
+
+/* The actual notification */
+.notification-row .notification-background .notification {
+  background: var(--noti-bg);
+  transition: background 0.15s ease-in-out;
+  border-radius: var(--default-border-radius);
+}
+
+/* The actual notification text */
+.notification-row .notification-background .notification .notification-default-action {
+  padding: calc(var(--default-padding-small) * 2) var(--default-padding);
+  border-radius: var(--default-border-radius);
+}
+
+/*
+.notification-row .notification-background .notification.low {}
+.notification-row .notification-background .notification.normal {}
+.notification-row .notification-background .notification.critical {}
+*/
+
+.close-button {
+  margin-top: 15px;
+  min-width: 24px;
+  min-height: 24px;
+  margin-right: 20px;
+}
+
+/* ------------------------------------------- */
+/* ----  Control Center  --------------------- */
+/* ------------------------------------------- */
+
+.control-center {
+  padding: var(--default-padding);
+  margin: var(--default-margin);
+}
+
+/* The placeholder when there are no notifications */
+.control-center .control-center-list-placeholder {
+  opacity: 0.8;
+}
+
+/* List of notifications */
+.control-center .control-center-list {
+  margin-top: var(--default-margin-small);
+}
+
+.widget-dnd switch:checked {
+  background-color: #D3869B;
+}
