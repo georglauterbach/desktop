@@ -12,6 +12,7 @@ function __root_setup() {
 
       # programs associated with Sway for core functionality
       sway-notification-center libgtk4-layer-shell0
+      swaybg
       swayidle
       swaylock librsvg2-2
       jq
