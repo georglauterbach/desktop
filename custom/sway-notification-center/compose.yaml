@@ -14,7 +14,7 @@ services:
       "cd /target
       && ( git clone https://github.com/ErikReider/SwayNotificationCenter.git . || : ; )
       && git fetch -apt
-      && git checkout a00a16a
+      && git checkout 6b04c93
       && rm -rf build .prefix
       && meson setup build --prefix=/target/.prefix
       && ninja -C build
