@@ -15,10 +15,13 @@ source <(curl -qsSfL https://raw.githubusercontent.com/georglauterbach/libbash/m
 
 source /etc/os-release || exit_failure_show_callstack 2 "Could not source '/etc/os-release'"
 
+DIST_DIR=${SCRIPT_DIR}/distributions/ubuntu/${VERSION_ID}
+readonly DIST_DIR
+
 # Runs the part of the setup for which superuser privileges are required
 function root_setup() {
   # shellcheck source=distributions/ubuntu/25.04/install.sh
-  if ! source "${SCRIPT_DIR}/distributions/ubuntu/${VERSION_ID}/install.sh"; then
+  if ! source "${DIST_DIR}/install.sh"; then
     exit_failure_show_callstack 2 "Could not source install script for ${PRETTY_NAME}"
   fi
 
@@ -29,7 +32,7 @@ function root_setup() {
 # Runs the user setup
 function user_setup() {
   log info 'Running user setup now'
-  cp -r "${SCRIPT_DIR}/gui/home/"* "${HOME}"
+  cp -r "${DIST_DIR}/config/home/"* "${HOME}"
 }
 
 function main() {

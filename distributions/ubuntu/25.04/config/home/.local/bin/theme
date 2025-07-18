@@ -49,8 +49,21 @@ function set_theme_swaylock() {
   if [[ -f ${CONFIG_FILE} ]]; then
     log_info 'Updating Swaylock configuration'
     if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaylock/config"; then
-      Log_warn 'Could not update color theme of Swaylock'
+      log_warn 'Could not update color theme of Swaylock'
     fi
+  fi
+}
+
+function set_theme_swaync() {
+  local CONFIG_FILE="${HOME}/.config/swaync/style-${THEME_PALETTE}.css"
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating SwayNC configuration'
+    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaync/style.css"; then
+      log_warn 'Could not update color theme of SwayNC'
+    fi
+
+    swaync-client --reload-css >/dev/null
   fi
 }
 
@@ -105,6 +118,7 @@ function main() {
   set_theme_alacritty
   set_theme_rofi
   set_theme_swaylock
+  set_theme_swaync
   set_theme_zellij
 
   if ${ERROR_OCCURRED:-false}; then
