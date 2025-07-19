@@ -1,6 +1,6 @@
 // ----------------------------------------------
 // ----  Waybar Configuration  ------------------
-// ----  https://github.com/Alexays/Waybar  -----
+// ----  https://github.com/Alexays/Waybar  ------
 // ----------------------------------------------
 //
 // ----------------------------------------------
@@ -17,6 +17,7 @@
   "layer": "bottom",
   "position": "top",
   "spacing": 5,
+  "reload_style_on_change": true,
   "modules-left": [
     "tray",
     "idle_inhibitor",
@@ -33,7 +34,6 @@
     "custom/gpu",
     "memory",
     "network",
-    "battery",
     "wireplumber",
     "clock"
   ],
@@ -106,6 +106,7 @@
     "format": " {usage:3}%"
   },
   "custom/gpu": {
+    "exec-if": "which gpu-usage-waybar",
     "exec": "gpu-usage-waybar --interval 5000",
     "return-type": "json",
     "format": "󰍹 {:>9}",

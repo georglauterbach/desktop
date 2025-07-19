@@ -20,27 +20,6 @@
   transition: none;
 }
 
-window#waybar {
-  color: #282828;
-  font-weight: 600;
-}
-
-window#waybar.empty #window,
-window#waybar.solo #window,
-window#waybar.floating #window,
-window#waybar.stacked #window,
-window#waybar.tabbed #window,
-window#waybar.tiled #window {
-    color: #DDC7A1;
-}
-
-window#waybar>box {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
 /* ------------------------------------------- */
 /* ----  Tooltips  --------------------------- */
 /* ------------------------------------------- */
@@ -84,7 +63,39 @@ tooltip label {
   color: #DDC7A1;
 }
 
+window#waybar {
+  color: #282828;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 0px;
+}
+
+window#waybar.empty #window {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  background: transparent;
+}
+
+window#waybar.solo #window,
+window#waybar.floating #window,
+window#waybar.stacked #window,
+window#waybar.tabbed #window,
+window#waybar.tiled #window {
+  color: #DDC7A1;
+  /* background: #504945; */
+  background-color: transparent;
+}
+
+window#waybar>box {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 #mode {
+  background: #504945;
   color: #DDC7A1;
 }
 
@@ -106,9 +117,12 @@ tooltip label {
 
 #workspaces button.focused {
   background: #DDC7A1;
-  box-shadow: none; /* Remove predefined box-shadow */
-  text-shadow: none; /* Remove predefined text-shadow */
-  transition: none; /* Disable predefined animations */
+  box-shadow: none;
+  /* Remove predefined box-shadow */
+  text-shadow: none;
+  /* Remove predefined text-shadow */
+  transition: none;
+  /* Disable predefined animations */
 }
 
 #workspaces button.focused label {
@@ -117,9 +131,12 @@ tooltip label {
 
 #workspaces button.urgent {
   background: #EA6962;
-  box-shadow: none; /* Remove predefined box-shadow */
-  text-shadow: none; /* Remove predefined text-shadow */
-  transition: none; /* Disable predefined animations */
+  box-shadow: none;
+  /* Remove predefined box-shadow */
+  text-shadow: none;
+  /* Remove predefined text-shadow */
+  transition: none;
+  /* Disable predefined animations */
 }
 
 #workspaces button.urgent label {
@@ -127,9 +144,12 @@ tooltip label {
 }
 
 #workspaces button:hover {
-  box-shadow: none; /* Remove predefined box-shadow */
-  text-shadow: none; /* Remove predefined text-shadow */
-  transition: none; /* Disable predefined animations */
+  box-shadow: none;
+  /* Remove predefined box-shadow */
+  text-shadow: none;
+  /* Remove predefined text-shadow */
+  transition: none;
+  /* Disable predefined animations */
 }
 
 /* ------------------------------------------- */
