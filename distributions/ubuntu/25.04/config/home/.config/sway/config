@@ -163,13 +163,14 @@ bindsym $spr+m exec swaymsg     move workspace to "$(swaymsg -t get_outputs | jq
 
 bindsym $spr+r mode "Resize Mode"
 
-set $wm.resize.size 10
+set $wm.resize.size.single 60
+set $wm.resize.size.multi   5
 mode "Resize Mode" {
         bindsym {
-                Left  resize shrink width  $wm.resize.size px or $wm.resize.size ppt
-                Right resize grow   width  $wm.resize.size px or $wm.resize.size ppt
-                Down  resize grow   height $wm.resize.size px or $wm.resize.size ppt
-                Up    resize shrink height $wm.resize.size px or $wm.resize.size ppt
+                Left  resize shrink width  $wm.resize.size.single px or $wm.resize.size.multi ppt
+                Right resize grow   width  $wm.resize.size.single px or $wm.resize.size.multi ppt
+                Down  resize grow   height $wm.resize.size.single px or $wm.resize.size.multi ppt
+                Up    resize shrink height $wm.resize.size.single px or $wm.resize.size.multi ppt
         }
 
         bindsym Return mode "default"
