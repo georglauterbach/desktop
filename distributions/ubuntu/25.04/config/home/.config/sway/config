@@ -322,7 +322,7 @@ bindsym $spr+Return     exec --no-startup-id systemd-run --user --scope /usr/bin
 # ----  Epilogue  -------------------------------
 # -----------------------------------------------
 
-# Include this file when using SwayFX to enable additional effects
-include "${HOME}/.config/sway/swayfx.conf"
+# include this file when using SwayFX to enable additional effects
+#include "${HOME}/.config/sway/swayfx.conf"
 
 include "${HOME}/.config/sway/user_late.conf"
