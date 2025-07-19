@@ -4,8 +4,91 @@ working_directory = "None"
 live_config_reload = true
 
 import = [
-  "~/.config/alacritty/10-miscellaneous.toml",
-  "~/.config/alacritty/30-colors.toml",
-  "~/.config/alacritty/33-colors_active.toml",
-  "~/.config/alacritty/40-bindings.toml",
+  "~/.config/alacritty/33-colors_active.toml"
 ]
+
+[env]
+
+[window]
+dimensions = { columns = 0, lines = 0 }
+position = "None"
+padding = { x = 2, y = 0 }
+dynamic_padding = true
+decorations = "None"
+blur = false
+startup_mode = "Windowed"
+title = "alacritty"
+dynamic_title = true
+decorations_theme_variant = "None"
+
+# A value < 1 can cause certain characters to be displayed
+# incorrectly in programs like Zellij or NeoVim.
+opacity = 1
+
+[window.class]
+instance = "alacritty"
+general = "alacritty"
+
+[scrolling]
+history = 10000
+multiplier = 2
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font" }
+size = 12.0
+glyph_offset = { x = 0, y = 0}
+builtin_box_drawing = false
+
+[bell]
+duration = 0
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+save_to_clipboard = true
+
+[cursor]
+style = { shape = "Block", blinking = "Never" }
+vi_mode_style = "None"
+unfocused_hollow = true
+
+[terminal]
+osc52 = "CopyPaste"
+
+[terminal.shell]
+program = "bash"
+
+[mouse]
+hide_when_typing = true
+
+[[hints.enabled]]
+command = "xdg-open"
+hyperlinks = true
+post_processing = true
+persist = false
+mouse.enabled = true
+binding = { key = "h", mods = "Control" }
+regex = "(mailto:|https?://|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[colors]
+draw_bold_text_with_bright_colors = false
+transparent_background_colors = true
+
+[colors.selection]
+background = "CellForeground"
+text = "CellBackground"
+
+[colors.vi_mode_cursor]
+cursor = "CellForeground"
+text = "CellBackground"
+
+[keyboard]
+bindings = [
+  { action = "Paste",            key = "v",      mods = "Control|Shift" },
+  { action = "Copy",             key = "C",      mods = "Control|Shift" },
+  { action = "IncreaseFontSize", key = "Equals", mods = "Control" },
+  { action = "DecreaseFontSize", key = "Minus",  mods = "Control" },
+  { chars = "\u001b\u007f",      key = "Back",   mods = "Control" }
+]
+
+[mouse]
+bindings = [ { action = "PasteSelection", mouse = "Middle" } ]
