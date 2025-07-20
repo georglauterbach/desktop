@@ -17,15 +17,14 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 read -r -p 'Do you want to install additional extra programs? [y/N] ' RESPONSE
 if [[ ${RESPONSE,,} =~ ^(y(es)?)$ ]]; then
   readonly EXTRA_PROGRAMS=(
+    'app.zen_browser.zen'
     'com.bitwarden.desktop'
     'com.discordapp.Discord'
     'com.github.tchx84.Flatseal'
-    'com.nextcloud.desktopclient.nextcloud'
     'com.valvesoftware.Steam'
     'eu.betterbird.Betterbird'
     'org.cryptomator.Cryptomator'
     'org.libreoffice.LibreOffice'
-    'org.mozilla.firefox'
   )
 
   flatpak install --noninteractive --or-update flathub "${EXTRA_PROGRAMS[@]}"
