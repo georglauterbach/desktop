@@ -113,6 +113,11 @@ function main() {
   gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_PALETTE}"
   gsettings set org.gnome.desktop.interface gtk-theme    "${GTK_THEME}"
   gsettings set org.gnome.desktop.interface icon-theme   "${ICON_THEME}"
+
+  gsettings set org.gnome.desktop.interface font-name           "Ubuntu, 11"
+  gsettings set org.gnome.desktop.interface document-font-name  "Ubuntu, 11"
+  gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
+
   swaymsg output '*' bg "${WALLPAPER}" fill
 
   set_theme_alacritty
