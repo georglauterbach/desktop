@@ -4,7 +4,7 @@ set -eE -u -o pipefail
 shopt -s inherit_errexit
 
 # shellcheck disable=SC2034
-SCRIPT=desktop-setup LOG_LEVEL=info
+SCRIPT=desktop-setup LOG_LEVEL=${LOG_LEVEL:-info}
 
 SCRIPT_DIR="$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")")"
 readonly SCRIPT_DIR
@@ -32,7 +32,14 @@ function root_setup() {
 # Runs the user setup
 function user_setup() {
   log info 'Running user setup now'
-  cp -r "${DIST_DIR}/config/home/"* "${HOME}"
+  while read -r FILE; do
+    NEW_FILE=${HOME}/${FILE#"${DIST_DIR}/config/home/"}
+    NEW_DIR=$(dirname "${NEW_FILE}")
+
+    echo "Creating '${NEW_FILE}'"
+    [[ -d ${NEW_DIR} ]] || mkdir -p "${NEW_DIR}"
+    cp "${FILE}" "${NEW_FILE}"
+  done < <(command find "${DIST_DIR}/config/home" -type f)
 }
 
 function main() {
