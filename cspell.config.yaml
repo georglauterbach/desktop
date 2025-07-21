@@ -10,17 +10,20 @@ ignoreWords:
   - bindsym
   - dbus
   - everforest
+  - flatpak
+  - flatpaks
   - gruvbox
   - nodeadkeys
   - numlock
   - pipewire
   - rofi
+  - ryzen
   - swayfx
   - swayidle
   - swaylock
   - swaync
+  - uefi
   - waybar
   - wireplumber
   - wlroots
   - xwayland
-
