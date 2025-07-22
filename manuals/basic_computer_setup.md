@@ -2,7 +2,7 @@
 
 ## UEFI
 
-1. Update to the latest UEFI version for your motherboard
+1. Update to the latest BIOS version for your motherboard
 2. With an AMD CPU,
     1. Enable [EXPO](https://www.amd.com/en/products/processors/technologies/expo.html)
         - you do this in the UEFI settings
@@ -12,6 +12,8 @@
         - run `sudo dmesg | grep -F 'BAR='` and check that `BAR >= RAM`
     3. Undervolt the CPU
         - this can be done via [Ryzen Master](https://www.amd.com/en/products/software/ryzen-master.html)
+3. Enable USB power output when in sleep state S5 (poweroff)
+4. Tune the CPU fan curve
 
 ## OS
 
