@@ -27,3 +27,4 @@ ignoreWords:
   - wireplumber
   - wlroots
   - xwayland
+  - yubikey
