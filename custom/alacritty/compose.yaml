@@ -11,7 +11,8 @@ services:
 
     command: >
       /bin/bash -c "
-      export CARGO_HOME=/target/rust/cargo/home RUSTUP_HOME=/target/rust/rustup/home
+      set -eE -u -o pipefail
+      && export CARGO_HOME=/target/rust/cargo/home RUSTUP_HOME=/target/rust/rustup/home
       && rustup default 1.91.0
       && { [[ -d alacritty ]] || git clone https://github.com/alacritty/alacritty.git ; }
       && cd alacritty
@@ -25,6 +26,9 @@ services:
       dockerfile_inline: |
         FROM docker.io/rust:1.91.0-slim-trixie
         USER root
-        RUN apt-get update && apt-get --yes install cmake g++ git pkg-config \
-            libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
         WORKDIR /target
+
+        RUN apt-get update && apt-get --yes install cmake g++ git pkg-config \
+            libfontconfig1-dev \
+            libxcb-xfixes0-dev \
+            libxkbcommon-dev python3

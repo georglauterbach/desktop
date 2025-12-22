@@ -1,0 +1,61 @@
+# syntax=docker.packages.rsint.net/docker.io/docker/dockerfile:1
+
+ARG IMAGE_REGISTRY=docker.packages.rsint.net/docker.io
+ARG IMAGE_NAME=ubuntu
+ARG IMAGE_TAG=24.04
+FROM ${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+
+RUN apt-get update && apt-get --yes install \
+    autoconf build-essential cmake curl git meson ninja-build \
+    bash-completion \
+    glslang-dev \
+    glslang-tools \
+    hwdata \
+    libavcodec-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libdisplay-info-dev \
+    libcairo2-dev \
+    libdrm-dev \
+    libegl1-mesa-dev \
+    libevdev-dev \
+    libgbm-dev \
+    libgles2-mesa-dev \
+    libgtk-4-dev \
+    libgtk-3-dev \
+    libgdk-pixbuf2.0-dev \
+    libgudev-1.0-dev \
+    libjson-c-dev \
+    liblcms2-dev \
+    libliftoff-dev \
+    libmtdev-dev \
+    libncurses-dev \
+    libncurses6 \
+    libpango1.0-dev \
+    libpng-dev \
+    libreadline-dev \
+    libseat-dev \
+    libsystemd-dev \
+    libtool-bin \
+    libvulkan-dev \
+    libvulkan1 \
+    libx11-dev \
+    libxft-dev \
+    libx11-xcb-dev \
+    '^libxcb.*' \
+    libxcomposite-dev \
+    libxdamage-dev \
+    libxinerama-dev \
+    libxkbcommon-dev \
+    libxml2-dev \
+    libxtst-dev \
+    libwacom-dev \
+    libwayland-dev \
+    lua5.4 \
+    liblua5.4-0 \
+    liblua5.4-dev \
+    scdoc \
+    vulkan-tools \
+    xcb-proto \
+    xutils-dev \
+    xwayland

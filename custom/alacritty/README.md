@@ -7,7 +7,7 @@ To [build](https://github.com/alacritty/alacritty/blob/master/INSTALL.md) [Alacr
 docker compose up --build
 
 # check dynamic dependencies
-ldd target/alacritty/target/release/alacritty
+ldd target/alacritty/target/release/alacritty | grep 'not found'
 
 # copy binary to system
 sudo cp target/alacritty/target/release/alacritty /usr/local/bin/

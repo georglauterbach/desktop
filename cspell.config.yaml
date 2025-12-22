@@ -15,6 +15,7 @@ ignoreWords:
   - gruvbox
   - nodeadkeys
   - numlock
+  - pipefail
   - pipewire
   - rofi
   - ryzen
