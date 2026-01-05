@@ -263,6 +263,7 @@ gaps outer -2
 
 # ---- Focus
 
+mouse_warping container
 focus_follows_mouse yes
 focus_on_window_activation none
 
