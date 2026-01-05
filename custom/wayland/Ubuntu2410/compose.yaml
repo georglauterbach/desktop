@@ -1,0 +1,35 @@
+# docker compose up --build
+services:
+  wayland-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: ubuntu2404
+
+    volumes:
+      - ./src:/src
+      - ./out:/out
+      - ../build.sh:/build.sh
+
+    #tty: true
+    #stdin_open: true
+    command: /bin/bash /build.sh
+
+    environment:
+      GIT_REV_WAYLAND: '1.24.0'
+      GIT_REV_WAYLAND_PROTOCOLS: '1.46'
+
+      GIT_REV_LIBINPUT: '1.30.1'
+      GIT_REV_PIXMAN: 'pixman-0.46.4'
+      GIT_REV_LIBXCB_ERRORS: 'master'
+
+      GIT_REV_WLROOTS: '0.19.2'
+      GIT_REV_SWAY: '1.11'
+
+      GIT_REV_SCENEFX: '0.4.1'
+      GIT_REV_SWAYFX: '0.5.3'
+
+      GIT_REV_ROFI: 'master'
+      GIT_REV_SWAYNOTIFICATIONCENTER: 'v0.12.3'
+      GIT_REV_WAYBAR: '0.14.0'

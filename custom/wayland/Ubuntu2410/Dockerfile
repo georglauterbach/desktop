@@ -1,0 +1,95 @@
+# syntax=docker.io/docker/dockerfile:1
+#
+# cSpell: disable
+
+FROM docker.io/ubuntu:24.04
+
+RUN apt-get update && apt-get --yes install \
+    autoconf automake bison build-essential clang-tidy cmake curl flex gcc git make meson ninja-build pkg-config \
+    bash-completion \
+    blueprint-compiler \
+    cava \
+    dbus \
+    glslang-dev \
+    glslang-tools \
+    gobject-introspection \
+    gvfs \
+    hwdata \
+    libadwaita-1-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libdisplay-info-dev \
+    libcairo2-dev \
+    libdbusmenu-gtk3-dev \
+    libdrm-dev \
+    libegl1-mesa-dev \
+    libevdev-dev \
+    libfmt-dev \
+    libgbm-dev \
+    libgee-0.8-dev \
+    libgirepository1.0-dev \
+    libgles2-mesa-dev \
+    libglib2.0-dev \
+    libgtk4-layer-shell-dev \
+    libgtk-4-dev \
+    libgtk-3-dev \
+    libgdk-pixbuf-2.0-dev \
+    libgtkmm-3.0-dev \
+    libgranite-7-dev \
+    libgudev-1.0-dev \
+    libiniparser-dev \
+    libinotifytools0-dev \
+    libinput-dev \
+    libjson-c-dev \
+    libjson-glib-dev \
+    libjsoncpp-dev \
+    liblcms2-dev \
+    libliftoff-dev \
+    libmpdclient-dev \
+    libmtdev-dev \
+    libncurses-dev \
+    libncurses6 \
+    libnl-3-dev \
+    libnl-genl-3-dev \
+    libnotify-dev \
+    libpango1.0-dev \
+    libpangocairo-1.0-0 \
+    libpng-dev \
+    libpulse-dev \
+    libreadline-dev \
+    libseat-dev \
+    libsigc++-2.0-dev \
+    libsndio-dev \
+    libspdlog-dev \
+    libstartup-notification0-dev \
+    libsystemd-dev \
+    libtool-bin \
+    libvulkan-dev \
+    libvulkan1 \
+    libwireplumber-0.5-dev \
+    libx11-dev \
+    libx11-xcb-dev \
+    libxft-dev \
+    '^libxcb.*' \
+    libxcomposite-dev \
+    libxdamage-dev \
+    libxinerama-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    libxkbregistry-dev \
+    libxml2-dev \
+    libxtst-dev \
+    libwacom-dev \
+    lua5.4 \
+    liblua5.4-0 \
+    liblua5.4-dev \
+    rfkill \
+    sassc \
+    scdoc \
+    upower \
+    valac \
+    vulkan-tools \
+    xcb-proto \
+    xutils-dev \
+    xwayland

@@ -1,31 +1,37 @@
-version: "0.2"
-ignorePaths: []
-dictionaryDefinitions: []
-dictionaries: []
-words: []
-import: []
+---
+version: '0.2'
 
-ignoreWords:
-  - alacritty
-  - bindsym
-  - dbus
-  - everforest
-  - flatpak
-  - flatpaks
-  - gruvbox
-  - nodeadkeys
-  - numlock
-  - pipefail
-  - pipewire
-  - rofi
-  - ryzen
-  - swayfx
-  - swayidle
-  - swaylock
-  - swaync
-  - uefi
-  - waybar
-  - wireplumber
-  - wlroots
-  - xwayland
-  - yubikey
+import:
+  - custom/wayland/cspell.config.yaml
+
+dictionaries:
+  - en_US
+  - softwareTerms
+  - bash
+
+words: []
+
+# ignoreWords:
+#   - alacritty
+#   - bindsym
+#   - dbus
+#   - everforest
+#   - flatpak
+#   - flatpaks
+#   - gruvbox
+#   - nodeadkeys
+#   - numlock
+#   - pipefail
+#   - pipewire
+#   - rofi
+#   - ryzen
+#   - swayfx
+#   - swayidle
+#   - swaylock
+#   - swaync
+#   - uefi
+#   - waybar
+#   - wireplumber
+#   - wlroots
+#   - xwayland
+#   - yubikey

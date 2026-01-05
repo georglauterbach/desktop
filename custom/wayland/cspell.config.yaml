@@ -1,0 +1,24 @@
+---
+version: '0.2'
+
+ignorePaths:
+  - '*/src'
+  - '*/out'
+
+words: []
+
+ignoreWords:
+  - Alexays
+  - davatorium
+  - ErikReider
+  - libinput
+  - libxcb
+  - pixman
+  - rofi
+  - scenefx
+  - swayfx
+  - SwayNotificationCenter
+  - swaywm
+  - Waybar
+  - wlrfx
+  - xorg
