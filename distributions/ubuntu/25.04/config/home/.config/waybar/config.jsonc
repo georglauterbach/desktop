@@ -20,7 +20,7 @@
   "reload_style_on_change": true,
   "modules-left": [
     "tray",
-    "idle_inhibitor",
+    //"idle_inhibitor",
     "custom/audio_idle_inhibitor",
     "custom/notifications",
     "sway/window",
@@ -31,7 +31,7 @@
   ],
   "modules-right": [
     "cpu",
-    "custom/gpu",
+    //"custom/gpu",
     "memory",
     "network",
     "wireplumber",

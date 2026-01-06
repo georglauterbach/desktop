@@ -118,7 +118,11 @@ function main() {
   gsettings set org.gnome.desktop.interface document-font-name  "Ubuntu, 11"
   gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
 
-  swaymsg output '*' bg "${WALLPAPER}" fill
+  if [[ -e ${WALLPAPER} ]]; then
+    swaymsg output '*' bg "${WALLPAPER}" fill
+  else
+    log_warn "Wallpaper file '${WALLPAPER}' does not exist"
+  fi
 
   set_theme_alacritty
   set_theme_rofi

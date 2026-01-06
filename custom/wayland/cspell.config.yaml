@@ -13,12 +13,17 @@ ignoreWords:
   - ErikReider
   - libinput
   - libxcb
+  - pipewire
   - pixman
   - rofi
   - scenefx
   - swayfx
   - SwayNotificationCenter
   - swaywm
+  - swaybg
+  - swayidle
+  - swaylock
   - Waybar
+  - wireplumber
   - wlrfx
   - xorg

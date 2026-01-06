@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# cSpell: ignore Ddocumentation Drfkill Dwireplumber
+# cSpell: ignore Ddocumentation Drfkill Dwireplumber Dcava Dpam Dxcb Dwayland
 
 set -eE -u -o pipefail
 shopt -s inherit_errexit
@@ -38,26 +38,31 @@ cd /src
 build_package gitlab.freedesktop.org/wayland/wayland run_meson_ninja '-Ddocumentation=false'
 build_package gitlab.freedesktop.org/wayland/wayland-protocols
 
+build_package gitlab.freedesktop.org/pipewire/wireplumber
 build_package gitlab.freedesktop.org/libinput/libinput
 build_package gitlab.freedesktop.org/pixman/pixman
-
-function build_libxcb_errors() {
-  git submodule update --init --recursive
-  ./autogen.sh
-  ./configure
-  make install
-}
-build_package gitlab.freedesktop.org/xorg/lib/libxcb-errors build_libxcb_errors
+# function build_libxcb_errors() {
+#   git submodule update --init --recursive
+#   ./autogen.sh
+#   ./configure --prefix=/usr/local
+#   make install
+# }
+# build_package gitlab.freedesktop.org/xorg/lib/libxcb-errors build_libxcb_errors
 
 build_package gitlab.freedesktop.org/wlroots/wlroots
 build_package github.com/swaywm/sway
+build_package github.com/swaywm/swaybg
+build_package github.com/swaywm/swayidle
+build_package github.com/swaywm/swaylock run_meson_ninja -Dpam=enabled
 
-#build_package github.com/wlrfx/scenefx
-#build_package github.com/WillPower3309/swayfx
+build_package github.com/wlrfx/scenefx
+build_package github.com/WillPower3309/swayfx
 
-build_package github.com/davatorium/rofi
+build_package github.com/davatorium/rofi run_meson_ninja \
+  -Dxcb=disabled -Dwayland=enabled
 build_package github.com/ErikReider/SwayNotificationCenter
-build_package github.com/Alexays/Waybar run_meson_ninja -Drfkill=enabled -Dwireplumber=enabled
+build_package github.com/Alexays/Waybar run_meson_ninja \
+  -Drfkill=enabled -Dwireplumber=enabled -Dcava=disabled
 
 rm -rf /out/*
 cp -rf /usr/local/* /out/

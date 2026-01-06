@@ -4,7 +4,7 @@ services:
     container_name: builder-alacritty
 
     volumes:
-      - ./target:/target
+      - ./src:/src
 
     #tty: true
     #stdin_open: true
@@ -12,11 +12,11 @@ services:
     command: >
       /bin/bash -c "
       set -eE -u -o pipefail
-      && export CARGO_HOME=/target/rust/cargo/home RUSTUP_HOME=/target/rust/rustup/home
+      && export CARGO_HOME=/src/rust/cargo/home RUSTUP_HOME=/src/rust/rustup/home
       && rustup default 1.91.0
       && { [[ -d alacritty ]] || git clone https://github.com/alacritty/alacritty.git ; }
       && cd alacritty
-      && git fetch -apt
+      && git fetch -ptf
       && git checkout v0.16.1
       && cargo build --release --no-default-features --features=wayland
       "
@@ -24,11 +24,12 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM docker.io/rust:1.91.0-slim-trixie
+        FROM docker.io/rust:1.92.0-slim-trixie
         USER root
-        WORKDIR /target
+        WORKDIR /src
 
-        RUN apt-get update && apt-get --yes install cmake g++ git pkg-config \
+        RUN apt-get update && apt-get --yes install \
+            cmake g++ git pkg-config \
             libfontconfig1-dev \
             libxcb-xfixes0-dev \
             libxkbcommon-dev python3

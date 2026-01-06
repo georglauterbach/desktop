@@ -1,15 +1,28 @@
-# syntax=docker.io/docker/dockerfile:1
 #
 # cSpell: disable
 
-FROM docker.io/ubuntu:24.04
-
 RUN apt-get update && apt-get --yes install \
-    autoconf automake bison build-essential clang-tidy cmake curl flex gcc git make meson ninja-build pkg-config \
+    bison \
     bash-completion \
-    blueprint-compiler \
-    cava \
+    build-essential \
+    cmake \
+    curl \
+    flex \
+    gcc \
+    git \
+    make \
+    meson \
+    ninja-build \
+    pkg-config \
+    scdoc \
+    \
+    lua5.4 \
+    liblua5.4-0 \
+    liblua5.4-dev \
+    \
     dbus \
+    libpam0g-dev \
+    \
     glslang-dev \
     glslang-tools \
     gobject-introspection \
@@ -31,16 +44,17 @@ RUN apt-get update && apt-get --yes install \
     libgirepository1.0-dev \
     libgles2-mesa-dev \
     libglib2.0-dev \
-    libgtk4-layer-shell-dev \
+    libgtk-layer-shell-dev \
     libgtk-4-dev \
     libgtk-3-dev \
     libgdk-pixbuf-2.0-dev \
     libgtkmm-3.0-dev \
+    libgranite-dev \
     libgranite-7-dev \
     libgudev-1.0-dev \
+    libhandy-1-dev \
     libiniparser-dev \
     libinotifytools0-dev \
-    libinput-dev \
     libjson-c-dev \
     libjson-glib-dev \
     libjsoncpp-dev \
@@ -55,41 +69,28 @@ RUN apt-get update && apt-get --yes install \
     libnotify-dev \
     libpango1.0-dev \
     libpangocairo-1.0-0 \
+    libpipewire-0.3-dev \
     libpng-dev \
     libpulse-dev \
     libreadline-dev \
     libseat-dev \
     libsigc++-2.0-dev \
     libsndio-dev \
+    libspa-0.2-dev \
     libspdlog-dev \
     libstartup-notification0-dev \
     libsystemd-dev \
     libtool-bin \
     libvulkan-dev \
     libvulkan1 \
-    libwireplumber-0.5-dev \
-    libx11-dev \
-    libx11-xcb-dev \
-    libxft-dev \
-    '^libxcb.*' \
-    libxcomposite-dev \
-    libxdamage-dev \
-    libxinerama-dev \
     libxkbcommon-dev \
-    libxkbcommon-x11-dev \
     libxkbregistry-dev \
     libxml2-dev \
     libxtst-dev \
     libwacom-dev \
-    lua5.4 \
-    liblua5.4-0 \
-    liblua5.4-dev \
     rfkill \
     sassc \
-    scdoc \
     upower \
     valac \
     vulkan-tools \
-    xcb-proto \
-    xutils-dev \
     xwayland
