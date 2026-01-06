@@ -19,7 +19,6 @@ if [[ ${RESPONSE,,} =~ ^(y(es)?)$ ]]; then
   readonly EXTRA_PROGRAMS=(
     'app.zen_browser.zen'
     'com.bitwarden.desktop'
-    'com.discordapp.Discord'
     'com.github.tchx84.Flatseal'
     'com.valvesoftware.Steam'
     'eu.betterbird.Betterbird'
@@ -30,4 +29,4 @@ if [[ ${RESPONSE,,} =~ ^(y(es)?)$ ]]; then
   flatpak install --noninteractive --or-update flathub "${EXTRA_PROGRAMS[@]}"
 fi
 
-echo "Restart you machine for changes to take effect"
+echo 'Restart you machine for changes to take effect'

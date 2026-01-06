@@ -1,6 +1,6 @@
 #############################################################################
 #
-# Ubuntu 25.04 (Plucky Puffin)
+# Ubuntu 25.04 (questing Puffin)
 # /etc/apt/sources.list
 #
 # main       => officially supported open-source software
@@ -16,7 +16,7 @@
 
 Types: deb
 URIs: http://de.archive.ubuntu.com/ubuntu/
-Suites: plucky plucky-updates plucky-backports
+Suites: questing questing-updates questing-backports
 Components: main restricted universe multiverse
 Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
@@ -24,7 +24,7 @@ Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 # Aside from URIs and Suites, this should mirror your choices in the previous section.
 Types: deb
 URIs: http://security.ubuntu.com/ubuntu
-Suites: plucky-security
+Suites: questing-security
 Components: main restricted universe multiverse
 Architectures: amd64
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg

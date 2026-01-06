@@ -11,27 +11,8 @@ dictionaries:
 
 words: []
 
-# ignoreWords:
-#   - alacritty
-#   - bindsym
-#   - dbus
-#   - everforest
-#   - flatpak
-#   - flatpaks
-#   - gruvbox
-#   - nodeadkeys
-#   - numlock
-#   - pipefail
-#   - pipewire
-#   - rofi
-#   - ryzen
-#   - swayfx
-#   - swayidle
-#   - swaylock
-#   - swaync
-#   - uefi
-#   - waybar
-#   - wireplumber
-#   - wlroots
-#   - xwayland
-#   - yubikey
+ignoreWords:
+  - georglauterbach
+
+  - xwayland
+  - Yubikey

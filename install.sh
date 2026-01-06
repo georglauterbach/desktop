@@ -20,7 +20,7 @@ readonly DIST_DIR
 
 # Runs the part of the setup for which superuser privileges are required
 function root_setup() {
-  # shellcheck source=distributions/ubuntu/25.04/install.sh
+  # shellcheck source=releases/25.10/install.sh
   if ! source "${DIST_DIR}/install.sh"; then
     exit_failure_show_callstack 2 "Could not source install script for ${PRETTY_NAME}"
   fi

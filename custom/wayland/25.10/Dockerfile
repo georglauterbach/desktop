@@ -1,8 +1,8 @@
-# syntax=docker.io/docker/dockerfile:1
+# syntax=docker.packages.rsint.net/docker.io/docker/dockerfile:1
 #
 # cSpell: disable
 
-FROM docker.io/ubuntu:25.10
+FROM docker.packages.rsint.net/docker.io/ubuntu:25.10
 
 RUN apt-get update && apt-get --yes install \
     bison \

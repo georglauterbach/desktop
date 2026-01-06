@@ -1,7 +1,7 @@
 # NeoVIM | https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable
 Types: deb
 URIs: https://ppa.launchpadcontent.net/neovim-ppa/unstable/ubuntu/
-Suites: plucky
+Suites: questing
 Components: main
 Architectures: amd64,arm64
 Signed-By:

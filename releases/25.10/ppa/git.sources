@@ -1,7 +1,7 @@
 # git | https://launchpad.net/~git-core/+archive/ubuntu/ppa
 Types: deb
 URIs: http://ppa.launchpad.net/git-core/ppa/ubuntu/
-Suites: plucky
+Suites: questing
 Components: main
 Architectures: amd64,arm64
 Signed-By:
