@@ -25,6 +25,7 @@ RUN apt-get update && apt-get --yes install \
     \
     dbus \
     libpam0g-dev \
+    libsystemd-dev \
     \
     glslang-dev \
     glslang-tools \
@@ -82,7 +83,6 @@ RUN apt-get update && apt-get --yes install \
     libspa-0.2-dev \
     libspdlog-dev \
     libstartup-notification0-dev \
-    libsystemd-dev \
     libtool-bin \
     libvulkan-dev \
     libvulkan1 \
@@ -96,4 +96,14 @@ RUN apt-get update && apt-get --yes install \
     upower \
     valac \
     vulkan-tools \
+    \
+    libx11-dev \
+    libx11-xcb-dev \
+    libxft-dev \
+    '^libxcb.*' \
+    libxcomposite-dev \
+    libxdamage-dev \
+    libxinerama-dev \
+    xcb-proto \
+    xutils-dev \
     xwayland

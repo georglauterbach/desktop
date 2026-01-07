@@ -1,0 +1,2 @@
+releases/25.10/config/home/.local/bin/shikane filter=lfs diff=lfs merge=lfs -text
+releases/25.10/config/home/.local/bin/shikanectl filter=lfs diff=lfs merge=lfs -text

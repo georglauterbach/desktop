@@ -1,0 +1,30 @@
+# -----------------------------------------------
+# ----  Theming  --------------------------------
+# -----------------------------------------------
+
+bindsym $spr+$alt+l exec "${HOME}/.local/bin/theme" light
+bindsym $spr+$alt+d exec "${HOME}/.local/bin/theme" dark
+
+# -----------------------------------------------
+# ----  Key Bindings  ---------------------------
+# -----------------------------------------------
+
+# browser
+bindsym $spr+f exec dex \
+  /var/lib/flatpak/exports/share/applications/app.zen_browser.zen.desktop
+for_window [app_id="zen"] \
+  move to workspace $wm.ws.03.name, workspace $wm.ws.03.name
+
+# files
+bindsym $spr+n exec kitty yazi
+
+# VS Code
+bindsym $spr+c exec code --enable-features=UseOzonePlatform --ozone-platform=wayland
+assign [app_id="code"] $wm.ws.02.name
+
+# MS Teams (Flatpak)
+assign [app_id="com.github.IsmaelMartinez.teams_for_linux"] $wm.ws.10.name
+
+# -----------------------------------------------
+# ----  Custom Application Auto-Start  ----------
+# -----------------------------------------------

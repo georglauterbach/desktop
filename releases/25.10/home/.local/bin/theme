@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+# cSpell: ignore gsettings rasi
+
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
@@ -119,7 +121,8 @@ function main() {
   gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
 
   if [[ -e ${WALLPAPER} ]]; then
-    swaymsg output '*' bg "${WALLPAPER}" fill
+    ln -s "${WALLPAPER}"  "${HOME}/.config/sway/looks/wallpaper"
+    swaymsg output '*' bg "${HOME}/.config/sway/looks/wallpaper" fill
   else
     log_warn "Wallpaper file '${WALLPAPER}' does not exist"
   fi

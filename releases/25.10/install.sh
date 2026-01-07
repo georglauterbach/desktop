@@ -10,9 +10,15 @@ function __root_setup() {
       gnome-desktop-minimal
 
       # programs associated with Sway for core functionality
+      adwaita-icon-theme
+      libdisplay-info1
       libgtk4-layer-shell0
+      libliftoff0
       librsvg2-2
+      libseat1
+      libxcb-ewmh2
       jq
+      wdisplays
 
       # to support applications that only run on X11,
       # xwayland provides a compatibility layer
@@ -35,8 +41,14 @@ function __root_setup() {
       # document viewer
       papers
 
+      # application launcher
+      dex
+
       # terminal that visualizes files
       kitty
+
+      # secrets manager
+      gnome-keyring
   )
 
   # shellcheck disable=SC2154

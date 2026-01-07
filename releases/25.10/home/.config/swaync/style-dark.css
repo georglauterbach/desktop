@@ -2,29 +2,20 @@
 /* ----  General  ---------------------------- */
 /* ------------------------------------------- */
 
-:root {
-  --border-radius: 10px;
-
-  --default-background-color: 22, 22, 17;
-  --default-background-color-accent: 123, 182, 116;
-
-  --text-color: #DDC7A1;
-
-  --noti-bg-alpha: 0.85;
-  --noti-bg: rgba(var(--default-background-color), var(--noti-bg-alpha));
-  --noti-bg-focus: rgba(var(--default-background-color-accent), 0.2);
-  --noti-bg-hover: rgba(var(--default-background-color-accent), 0.3);
-
-  --cc-bg: var(--noti-bg);
-
-  --notification-icon-size: 48px;
-  --notification-app-icon-size: calc(var(--notification-icon-size) / 4);
-}
+@define-color color-background       rgba(22, 22, 17, 0.85);
+@define-color color-background-hover rgba(123, 182, 116, 0.3);
+@define-color color-text             rgba(221, 199, 161, 1);
 
 * {
   box-shadow: none;
   text-shadow: none;
   outline: none;
+
+  transition: 200ms;
+
+  color: @color-text;
+  font-size: 14px;
+  font-family: "JetBrains Mono Nerd Font 10";
 }
 
 /* ------------------------------------------- */
@@ -33,23 +24,23 @@
 
 .notification-row {
   background: none;
-  border-radius: var(--border-radius);
+  border-radius: 10px;
 }
 
 .notification-row .notification-background {
-  border-radius: var(--border-radius);
+  border-radius: 10px;
 }
 
 /* The actual notification */
 .notification-row .notification-background .notification {
-  background: var(--noti-bg);
-  border-radius: var(--border-radius);
+  background: @color-background;
+  border-radius: 30px;
   border-width: 2px;
-  border-color: var(--noti-bg-hover);
+  border-color: @color-background-hover;
 }
 
 .notification-row .notification-background .notification {
-  border-radius: var(--border-radius);
+  border-radius: 30px;
 }
 
 /* The actual notification text */
@@ -64,12 +55,12 @@
   margin-right: 25px;
   min-width: 35px;
   min-height: 35px;
-  background: var(--noti-bg);
-  color: var(--text-color);
+  background: @color-background;
+  color: @color-text;
 }
 
 .close-button:hover {
-  background: var(--noti-bg-hover);
+  background: @color-background-hover;
 }
 
 /* ------------------------------------------- */
@@ -79,7 +70,7 @@
 .control-center {
   padding: 15px;
   margin: 25px;
-  border-color: var(--text-color);
+  border-color: @color-text;
   border-width: 5px;
 }
 
@@ -97,7 +88,7 @@
 }
 
 .notification-group {
-  border-radius: var(--border-radius);
+  border-radius: 10px;
   margin-top: 25px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -114,14 +105,11 @@
 }
 
 .notification-row .notification-background .notification .notification-default-action .notification-content .image {
-  -gtk-icon-filter: none;
-  -gtk-icon-size: var(--notification-icon-size);
   border-radius: 0;
   margin-top: 14px;
   margin-right: 15px;
 }
 
 .notification-group .notification-group-headers .notification-group-icon {
-  color: #00000000;
-  -gtk-icon-size: 1px;
+  color: rgba(0, 0, 0, 0);
 }

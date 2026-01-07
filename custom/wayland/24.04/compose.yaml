@@ -30,6 +30,7 @@ services:
       GIT_REV_SWAYBG: 'master'
       GIT_REV_SWAYIDLE: 'master'
       GIT_REV_SWAYLOCK: 'v1.8.4'
+      GIT_REV_SWAYAUDIOIDLEINHIBIT: 'main'
 
       GIT_REV_SCENEFX: '0.4.1'
       GIT_REV_SWAYFX: '0.5.3'

@@ -12,7 +12,17 @@ dictionaries:
 words: []
 
 ignoreWords:
+  - Everforest
   - georglauterbach
+  - Gruvbox
 
+  - bindsym
+  - lockscreen
+  - pkill
+  - shikane
+  - shikanectl
+  - swaymsg
+  - swaync
   - xwayland
+  - yazi
   - Yubikey

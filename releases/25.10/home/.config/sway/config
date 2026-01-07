@@ -4,17 +4,50 @@
 # ----  https://github.com/swaywm/sway/wiki  ----
 # -----------------------------------------------
 
+# cSpell: ignore combi drun lightctl
+# cSpell: ignore pango swaynag SWAYSOCK wpctl
+
 # -----------------------------------------------
-# ----  Prologue  -------------------------------
+# ----  Application Auto-Start  -----------------
 # -----------------------------------------------
 
-# https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
-exec systemctl --user import-environment HOME DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+# Some variables need to be exported to systemd
+# and/or dbus activation environments so tools
+# that rely on them work properly.
+#
+# Applications that are started as systemd (user)
+# services or that rely on dbus MUST be chained
+# (`&& ...`) after the following commands:
+#
+# ref: https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
+# ref: https://github.com/swaywm/sway/issues/5841
+exec systemctl --user import-environment PATH HOME            \
+  XDG_CURRENT_DESKTOP DISPLAY WAYLAND_DISPLAY SWAYSOCK I3SOCK \
+  && exec dbus-update-activation-environment                  \
+  XDG_CURRENT_DESKTOP DISPLAY WAYLAND_DISPLAY SWAYSOCK I3SOCK
 
-exec swaync >/tmp/swaync.log 2>&1
-exec sway-audio-idle-inhibit >/tmp/sway-audio-idle-inhibit.log 2>&1
+# `shikane` manages screen arrangements.
+#
+# We execute `shikanectl` before we run `shikane`
+# because we want it to fail on the first run to
+# not needlessly apply a configuration twice
+# when shikane is started afterward.
+exec_always "sleep 0.2s ; shikanectl reload >>/tmp/.sway.shikanectl.log 2>>/tmp/.sway.shikanectl.err.log || :"
+exec "sleep 0.4s ; exec shikane >/tmp/.sway.shikane.log 2>/tmp/.sway.shikane.err.log"
 
-include "${HOME}/.config/sway/user_early.conf"
+# `swaync` provides a notification center.
+exec exec swaync >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log
+
+# `waybar` provides a bar.
+exec 'pkill waybar ; exec waybar --log-level warning >/tmp/.sway.waybar.log 2>/tmp/.sway.waybar.err.log'
+
+exec swaymsg output '*' bg "${HOME}/.config/sway/looks/wallpaper" fill
+
+# -----------------------------------------------
+# ----  User-Defined Prologue  ------------------
+# -----------------------------------------------
+
+#include "${HOME}/.config/sway/user/early"
 
 # -----------------------------------------------
 # ----  Meta Key Mappings  ----------------------
@@ -197,7 +230,7 @@ bindsym $spr+$sft+t      focus      mode_toggle
 bindsym $spr+$sft+l exec '__way_lock'
 
 # lock screen after inactivity and when going to sleep
-exec --no-startup-id swayidle -w \
+exec exec swayidle -w \
     timeout 600  'swaymsg exec __way_lock' \
     before-sleep 'swaymsg exec __way_lock'
 
@@ -219,6 +252,7 @@ bindsym XF86MonBrightnessDown         exec lightctl - $5
 
 # ---- Screenshots
 
+# TODO
 bindsym $spr+s exec "grimshot copy anything"
 
 # -----------------------------------------------
@@ -248,21 +282,22 @@ client.urgent           $color.foreground $color.background $color.foreground $c
 # ----  Borders
 
 smart_borders     on
-default_border    pixel 2
+default_border    pixel 4
 hide_edge_borders smart
 
 # ensure all windows - even floating ones - have a border
-for_window [class=".*"]  border pixel 2
-for_window [app_id=".*"] border pixel 2
+for_window [class=".*"]  border pixel 4
+for_window [app_id=".*"] border pixel 4
 
 # ----  Gaps
 
 smart_gaps on
-gaps inner  2
-gaps outer -2
+gaps inner  6
+gaps outer -5
 
 # ---- Focus
 
+mouse_warping container
 focus_follows_mouse yes
 focus_on_window_activation none
 
@@ -287,19 +322,10 @@ seat * hide_cursor when-typing enable
 
 # ----  Typography
 
-set $typography.font.default   Ubuntu 11
+set $typography.font.default   Ubuntu Sans 11
 set $typography.font.monospace JetBrainsMono Nerd Font 11
 
 font pango:$typography.font.default
-
-# -----------------------------------------------
-# ----  Bar  ------------------------------------
-# -----------------------------------------------
-
-bar {
-    swaybar_command waybar
-    position top
-}
 
 # -----------------------------------------------
 # ----  Common Key Bindings  --------------------
@@ -319,10 +345,16 @@ bindsym $spr+$sft+n     exec swaync-client --toggle-panel --skip-wait
 bindsym $spr+Return     exec --no-startup-id systemd-run --user --scope /usr/bin/x-terminal-emulator
 
 # -----------------------------------------------
-# ----  Epilogue  -------------------------------
+# ----  SwayFX  ---------------------------------
 # -----------------------------------------------
 
-# include this file when using SwayFX to enable additional effects
-#include "${HOME}/.config/sway/swayfx.conf"
+#blur enable
+#shadows disable
+#corner_radius 7
+#default_dim_inactive 0.1
 
-include "${HOME}/.config/sway/user_late.conf"
+# -----------------------------------------------
+# ----  User-Defined Epilogue  ------------------
+# -----------------------------------------------
+
+#include "${HOME}/.config/sway/user/late"
