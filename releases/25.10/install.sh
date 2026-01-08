@@ -6,49 +6,29 @@ function __root_setup() {
   readonly PACKAGES=(
       # sway and its associates are built from source; see custom/wayland/
 
-      # fallback DE & applications
-      gnome-desktop-minimal
-
-      # programs associated with Sway for core functionality
-      adwaita-icon-theme
+      # ? TODO can this be removed?
       libdisplay-info1
       libgtk4-layer-shell0
       libliftoff0
       librsvg2-2
       libseat1
       libxcb-ewmh2
-      jq
-      wdisplays
-
-      # to support applications that only run on X11,
-      # xwayland provides a compatibility layer
-      xwayland
-
-      # fonts
-      fonts-font-awesome
 
       # desktop portals
       xdg-desktop-portal
       xdg-desktop-portal-gtk
       xdg-desktop-portal-wlr
 
-      # audio (processing engine)
-      pipewire pipewire-audio-client-libraries rtkit
-
-      # graphics (API)
-      libvulkan1 mesa-vulkan-drivers vulkan-tools
-
-      # document viewer
-      papers
-
-      # application launcher
-      dex
-
-      # terminal that visualizes files
-      kitty
-
-      # secrets manager
-      gnome-keyring
+      gnome-desktop-minimal                          # fallback DE & applications
+      jq wdisplays wl-clipboard                      # sway companions
+      pipewire pipewire-audio-client-libraries rtkit # audio
+      libvulkan1 mesa-vulkan-drivers vulkan-tools    # graphics
+      gnome-keyring                                  # secrets manager
+      dex                                            # desktop file application launcher
+      papers                                         # document viewer
+      kitty                                          # terminal that visualizes files
+      fonts-font-awesome                             # fonts
+      adwaita-icon-theme                             # icons
   )
 
   # shellcheck disable=SC2154

@@ -11,8 +11,10 @@ RUN apt-get update && apt-get --yes install \
     cmake \
     curl \
     flex \
+    g++ \
     gcc \
     git \
+    gzip \
     make \
     meson \
     ninja-build \
@@ -27,6 +29,7 @@ RUN apt-get update && apt-get --yes install \
     libpam0g-dev \
     libsystemd-dev \
     \
+    fonts-font-awesome \
     glslang-dev \
     glslang-tools \
     gobject-introspection \
@@ -41,8 +44,11 @@ RUN apt-get update && apt-get --yes install \
     libdbusmenu-gtk3-dev \
     libdrm-dev \
     libegl1-mesa-dev \
+    libepoxy-dev \
     libevdev-dev \
+    libffi-dev \
     libfmt-dev \
+    libfontconfig1-dev \
     libgbm-dev \
     libgee-0.8-dev \
     libgirepository1.0-dev \
@@ -91,19 +97,29 @@ RUN apt-get update && apt-get --yes install \
     libxml2-dev \
     libxtst-dev \
     libwacom-dev \
+    mesa-common-dev \
+    python3 \
     rfkill \
     sassc \
     upower \
     valac \
     vulkan-tools \
+    wl-clipboard \
     \
+    libgcrypt20-dev \
+    libtirpc-dev \
     libx11-dev \
     libx11-xcb-dev \
     libxft-dev \
     '^libxcb.*' \
     libxcomposite-dev \
+    libxcvt-dev \
     libxdamage-dev \
+    libxfont-dev \
     libxinerama-dev \
+    libxkbfile-dev \
+    libxshmfence-dev \
     xcb-proto \
-    xutils-dev \
-    xwayland
+    xutils-dev
+
+RUN curl -sSfL https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly

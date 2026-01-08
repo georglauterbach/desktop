@@ -2,7 +2,7 @@
 
 # cSpell: ignore gsettings rasi
 
-set -eE -u -o pipefail
+set +eE -u -o pipefail
 shopt -s inherit_errexit
 
 function log_info() {
@@ -121,7 +121,7 @@ function main() {
   gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
 
   if [[ -e ${WALLPAPER} ]]; then
-    ln -s "${WALLPAPER}"  "${HOME}/.config/sway/looks/wallpaper"
+    ln -sf "${WALLPAPER}" "${HOME}/.config/sway/looks/wallpaper"
     swaymsg output '*' bg "${HOME}/.config/sway/looks/wallpaper" fill
   else
     log_warn "Wallpaper file '${WALLPAPER}' does not exist"

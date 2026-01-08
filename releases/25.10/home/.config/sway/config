@@ -4,44 +4,26 @@
 # ----  https://github.com/swaywm/sway/wiki  ----
 # -----------------------------------------------
 
-# cSpell: ignore combi drun lightctl
-# cSpell: ignore pango swaynag SWAYSOCK wpctl
+# cSpell: ignore pango drun combi
 
 # -----------------------------------------------
-# ----  Application Auto-Start  -----------------
+# ----  Application Initialization  -------------
 # -----------------------------------------------
 
-# Some variables need to be exported to systemd
-# and/or dbus activation environments so tools
-# that rely on them work properly.
-#
-# Applications that are started as systemd (user)
-# services or that rely on dbus MUST be chained
-# (`&& ...`) after the following commands:
-#
-# ref: https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
-# ref: https://github.com/swaywm/sway/issues/5841
-exec systemctl --user import-environment PATH HOME            \
-  XDG_CURRENT_DESKTOP DISPLAY WAYLAND_DISPLAY SWAYSOCK I3SOCK \
-  && exec dbus-update-activation-environment                  \
-  XDG_CURRENT_DESKTOP DISPLAY WAYLAND_DISPLAY SWAYSOCK I3SOCK
+# Sway does not natively support in-order startup
+# of applications; hence, we use a shell script
+# to get rid of this limitation.
+exec "exec ${HOME}/.config/sway/init.sh"
 
-# `shikane` manages screen arrangements.
-#
-# We execute `shikanectl` before we run `shikane`
+# We execute `shikanectl` directly without waiting
 # because we want it to fail on the first run to
 # not needlessly apply a configuration twice
 # when shikane is started afterward.
-exec_always "sleep 0.2s ; shikanectl reload >>/tmp/.sway.shikanectl.log 2>>/tmp/.sway.shikanectl.err.log || :"
-exec "sleep 0.4s ; exec shikane >/tmp/.sway.shikane.log 2>/tmp/.sway.shikane.err.log"
+exec_always "shikanectl reload >>/tmp/.sway.shikanectl.log 2>>/tmp/.sway.shikanectl.err.log || :"
 
-# `swaync` provides a notification center.
-exec exec swaync >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log
-
-# `waybar` provides a bar.
-exec 'pkill waybar ; exec waybar --log-level warning >/tmp/.sway.waybar.log 2>/tmp/.sway.waybar.err.log'
-
-exec swaymsg output '*' bg "${HOME}/.config/sway/looks/wallpaper" fill
+# We can directly set the background image
+# for all outputs.
+exec_always "swaymsg output '*' bg \"${HOME}/.config/sway/looks/wallpaper\" fill"
 
 # -----------------------------------------------
 # ----  User-Defined Prologue  ------------------
@@ -199,16 +181,16 @@ bindsym $spr+r mode "Resize Mode"
 set $wm.resize.size.single 60
 set $wm.resize.size.multi   5
 mode "Resize Mode" {
-        bindsym {
-                Left  resize shrink width  $wm.resize.size.single px or $wm.resize.size.multi ppt
-                Right resize grow   width  $wm.resize.size.single px or $wm.resize.size.multi ppt
-                Down  resize grow   height $wm.resize.size.single px or $wm.resize.size.multi ppt
-                Up    resize shrink height $wm.resize.size.single px or $wm.resize.size.multi ppt
-        }
+    bindsym {
+        Left  resize shrink width  $wm.resize.size.single px or $wm.resize.size.multi ppt
+        Right resize grow   width  $wm.resize.size.single px or $wm.resize.size.multi ppt
+        Down  resize grow   height $wm.resize.size.single px or $wm.resize.size.multi ppt
+        Up    resize shrink height $wm.resize.size.single px or $wm.resize.size.multi ppt
+    }
 
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-        bindsym $spr+r mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $spr+r mode "default"
 }
 
 # ----  Miscellaneous
@@ -230,7 +212,7 @@ bindsym $spr+$sft+t      focus      mode_toggle
 bindsym $spr+$sft+l exec '__way_lock'
 
 # lock screen after inactivity and when going to sleep
-exec exec swayidle -w \
+exec exec swayidle -w                      \
     timeout 600  'swaymsg exec __way_lock' \
     before-sleep 'swaymsg exec __way_lock'
 
@@ -247,13 +229,8 @@ bindsym --locked XF86AudioMicMute     exec wpctl set-mute   "@DEFAULT_AUDIO_SINK
 
 # ---- Brightness
 
-bindsym XF86MonBrightnessUp           exec lightctl + $5
-bindsym XF86MonBrightnessDown         exec lightctl - $5
-
-# ---- Screenshots
-
-# TODO
-bindsym $spr+s exec "grimshot copy anything"
+bindsym XF86MonBrightnessUp           exec lightctl set '+5%'
+bindsym XF86MonBrightnessDown         exec lightctl set '-5%'
 
 # -----------------------------------------------
 # ----  Design  ---------------------------------
@@ -335,14 +312,14 @@ font pango:$typography.font.default
 bindsym $spr+q [con_id="__focused__"] kill
 
 # application launcher
-bindsym $spr+$ctl+Space exec --no-startup-id rofi -show drun
-bindsym $spr+Space      exec --no-startup-id rofi -show combi
+bindsym $spr+$ctl+Space exec rofi -show drun
+bindsym $spr+Space      exec rofi -show combi
 
 # notification center
 bindsym $spr+$sft+n     exec swaync-client --toggle-panel --skip-wait
 
 # terminal
-bindsym $spr+Return     exec --no-startup-id systemd-run --user --scope /usr/bin/x-terminal-emulator
+bindsym $spr+Return     exec systemd-run --user --scope /usr/bin/x-terminal-emulator
 
 # -----------------------------------------------
 # ----  SwayFX  ---------------------------------

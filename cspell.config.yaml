@@ -1,28 +1,35 @@
 ---
 version: '0.2'
 
-import:
-  - custom/wayland/cspell.config.yaml
+ignorePaths:
+  - '*/src'
+  - '*/out'
 
 dictionaries:
   - en_US
   - softwareTerms
   - bash
 
-words: []
+words:
+  - lockscreen
 
 ignoreWords:
   - Everforest
   - georglauterbach
   - Gruvbox
 
+  - swaybg
+  - swayidle
+  - swaylock
+  - swaymsg
+  - swaynag
+  - swaync
+  - swaywm
+
   - bindsym
-  - lockscreen
-  - pkill
+
+  - lightctl
+  - rofi
   - shikane
   - shikanectl
-  - swaymsg
-  - swaync
-  - xwayland
-  - yazi
-  - Yubikey
+  - wpctl
