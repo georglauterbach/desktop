@@ -10,7 +10,7 @@ services:
     volumes:
       - ./src:/src
       - ./out:/usr/local
-      - ../build.sh:/build.sh
+      - ../scripts/build.sh:/build.sh
 
     #tty: true
     #stdin_open: true

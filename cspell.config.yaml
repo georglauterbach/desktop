@@ -14,11 +14,14 @@ words:
   - lockscreen
 
 ignoreWords:
+  # names
   - Everforest
   - georglauterbach
   - Gruvbox
 
+  # related to Sway
   - swaybg
+  - swayfx
   - swayidle
   - swaylock
   - swaymsg
@@ -26,10 +29,26 @@ ignoreWords:
   - swaync
   - swaywm
 
-  - bindsym
-
+  # commands
   - lightctl
+  - pipewire
   - rofi
+  - rustup
+  - scdoc
   - shikane
   - shikanectl
+  - waybar
+  - wireplumber
   - wpctl
+
+  # acronyms
+  - PKCS11
+
+  # miscellaneous
+  - bindsym
+  - buildtype
+  - libinput
+  - pixman
+  - xorg
+  - xorgproto
+  - xwayland

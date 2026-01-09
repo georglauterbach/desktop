@@ -23,7 +23,7 @@ function __root_setup() {
       jq wdisplays wl-clipboard                      # sway companions
       pipewire pipewire-audio-client-libraries rtkit # audio
       libvulkan1 mesa-vulkan-drivers vulkan-tools    # graphics
-      gnome-keyring                                  # secrets manager
+      gnome-keyring libsecret-1-0 seahorse           # secrets manager
       dex                                            # desktop file application launcher
       papers                                         # document viewer
       kitty                                          # terminal that visualizes files

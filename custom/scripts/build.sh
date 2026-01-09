@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # cSpell: ignore Ddocumentation Drfkill Dwireplumber Dcava Dpam Dxcb Dwayland Dxwayland Dlogind
-# cSpell: ignore waycrate
+# cSpell: ignore Alexays davatorium ErikReider Satty scenefx waycrate wlrfx
 
 set -eE -u -o pipefail
 shopt -s inherit_errexit
@@ -164,6 +164,7 @@ for PROGRAM in "${INSTALLATION_PREFIX}/bin/"*; do
   grep --quiet 'dynamically linked' <(file "${PROGRAM}") || continue
 
   while read -r _ _ FILE _; do
+    # cSpell: disable-next-line
     [[ ${FILE} =~ .*lib(c|stdc\+\+)\.so\.[0-9]+ ]] && continue
     [[ -e ${INSTALLATION_PREFIX}${FILE} ]] && continue
 

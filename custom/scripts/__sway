@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+
+# This script starts `sway` is a proper,
+# pre-defined environment.
+
+set +eE -u -o pipefail
+shopt -s inherit_errexit
+
+exec >/tmp/.sway.swy.log 2>/tmp/.sway.sway.err.log
+
+echo 'Custom pre-start setup is running'
+
+export XDG_CURRENT_DESKTOP=sway
+systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP}"
+
+eval "$(gnome-keyring-daemon --components=ssh,secrets,pkcs11 --start)"
+export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK
+
+echo 'Starting Sway now'
+exec /usr/local/bin/sway

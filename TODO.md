@@ -1,9 +1,8 @@
 ## desktop
 
-- secrets manager
 - screensharing
 - screenshot tool
-- GTK theme name defaults are wrong
+- style logout / https://github.com/AMNatty/wleave
 
 ## hermes
 

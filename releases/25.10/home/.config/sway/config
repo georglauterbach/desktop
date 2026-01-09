@@ -29,7 +29,7 @@ exec_always "swaymsg output '*' bg \"${HOME}/.config/sway/looks/wallpaper\" fill
 # ----  User-Defined Prologue  ------------------
 # -----------------------------------------------
 
-#include "${HOME}/.config/sway/user/early"
+#include "${HOME}/.config/sway/user/early.conf"
 
 # -----------------------------------------------
 # ----  Meta Key Mappings  ----------------------
@@ -334,4 +334,4 @@ bindsym $spr+Return     exec systemd-run --user --scope /usr/bin/x-terminal-emul
 # ----  User-Defined Epilogue  ------------------
 # -----------------------------------------------
 
-#include "${HOME}/.config/sway/user/late"
+#include "${HOME}/.config/sway/user/late.conf"
