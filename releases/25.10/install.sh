@@ -14,21 +14,38 @@ function __root_setup() {
       libseat1
       libxcb-ewmh2
 
+      # sway companions
+      jq
+      wdisplays
+      wl-clipboard
+
       # desktop portals
       xdg-desktop-portal
       xdg-desktop-portal-gtk
       xdg-desktop-portal-wlr
 
-      gnome-desktop-minimal                          # fallback DE & applications
-      jq wdisplays wl-clipboard                      # sway companions
-      pipewire pipewire-audio-client-libraries rtkit # audio
-      libvulkan1 mesa-vulkan-drivers vulkan-tools    # graphics
-      gnome-keyring libsecret-1-0 seahorse           # secrets manager
-      dex                                            # desktop file application launcher
-      papers                                         # document viewer
-      kitty                                          # terminal that visualizes files
-      fonts-font-awesome                             # fonts
-      adwaita-icon-theme                             # icons
+      # secrets manager
+      gnome-keyring
+      libsecret-1-0
+      libsecret-tools
+      seahorse
+
+      # audio
+      pipewire
+      pipewire-audio-client-libraries
+      rtkit
+
+      # graphics
+      libvulkan1
+      mesa-vulkan-drivers
+      vulkan-tools
+
+      gnome-desktop-minimal     # fallback DE & applications
+      dex                       # desktop file application launcher
+      papers                    # document viewer
+      kitty                     # terminal that visualizes files
+      fonts-font-awesome        # fonts
+      adwaita-icon-theme        # icons
   )
 
   # shellcheck disable=SC2154
