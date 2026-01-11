@@ -46,7 +46,7 @@ export CARGO_HOME=/src/rust/cargo/home RUSTUP_HOME=/src/rust/rustup/home
 readonly CARGO_HOME RUSTUP_HOME
 # shellcheck source=/dev/null
 source "${HOME}/.cargo/env"
-rustup default "${RUST_TOOLCHAIN_VERSION:?}"
+rustup --quiet default "${RUST_TOOLCHAIN_VERSION:?}"
 
 # -----------------------------------------------
 # ----  Prologue  -------------------------------
@@ -58,39 +58,48 @@ mkdir --parents "${INSTALLATION_PREFIX}/share/"{applications,man/{1,5,7}}
 cd /src
 
 # -----------------------------------------------
-# ----  Wayland Base Dependencies  --------------
+# ----  (X)Wayland & Dependencies  --------------
 # -----------------------------------------------
 
-# build_package gitlab.freedesktop.org/wayland/wayland run_meson_ninja -Ddocumentation=false
-# build_package gitlab.freedesktop.org/wayland/wayland-protocols
+build_package gitlab.freedesktop.org/wayland/wayland run_meson_ninja -Ddocumentation=false
+build_package gitlab.freedesktop.org/wayland/wayland-protocols
 
-# -----------------------------------------------
-# ----  Xwayland  -------------------------------
-# -----------------------------------------------
+build_package gitlab.freedesktop.org/libinput/libinput
+build_package gitlab.freedesktop.org/pixman/pixman
 
 build_package gitlab.freedesktop.org/xorg/proto/xorgproto
-build_package gitlab.freedesktop.org/xorg/xserver run_meson_ninja
+build_package gitlab.freedesktop.org/xorg/xserver
 
 # -----------------------------------------------
-# ----  Additional Libraries  -------------------
+# ----  Sway & Core Companions  -----------------
 # -----------------------------------------------
 
-# build_package gitlab.freedesktop.org/pipewire/wireplumber
-# build_package gitlab.freedesktop.org/libinput/libinput
-# build_package gitlab.freedesktop.org/pixman/pixman
+build_package gitlab.freedesktop.org/wlroots/wlroots run_meson_ninja \
+  -Dxwayland=enabled
+build_package github.com/swaywm/sway run_meson_ninja \
+  -Ddefault-wallpaper=false \
+  -Dzsh-completions=false   \
+  -Dbash-completions=true   \
+  -Dfish-completions=false  \
+  -Dswaybar=false           \
+  -Dswaynag=false           \
+  -Dman-pages=enabled       \
+  -Dsd-bus-provider=libsystemd
+build_package github.com/swaywm/swaybg run_meson_ninja \
+  -Dgdk-pixbuf=enabled \
+  -Dman-pages=enabled
 
-# -----------------------------------------------
-# ----  Sway & Companions  ----------------------
-# -----------------------------------------------
-
-# build_package gitlab.freedesktop.org/wlroots/wlroots run_meson_ninja -Dxwayland=enabled
-# build_package github.com/swaywm/sway
-# build_package github.com/swaywm/swaybg
 # build_package github.com/swaywm/swayidle
 # build_package github.com/swaywm/swaylock \
 #   run_meson_ninja -Dpam=enabled
 # build_package github.com/ErikReider/SwayAudioIdleInhibit \
 #   run_meson_ninja -Dlogind-provider=systemd
+
+
+# build_package gitlab.freedesktop.org/pipewire/wireplumber
+#libavif16,libcairo2,libexif12,libfontconfig1,libfreetype6,libgif7,libglib2.0-0t64,libheif1,libjpeg8,libjson-c5,libjxl0.7,libopenexr-3-1-30,libpng16-16t64,librsvg2-2,libtiff6,libwayland-client0,libwebp7,libwebpdemux2,libxkbcommon0
+
+# build_package github.com/bugaevc/wl-clipboard
 
 # -----------------------------------------------
 # ----  SwayFX  ---------------------------------
@@ -108,6 +117,7 @@ build_package gitlab.freedesktop.org/xorg/xserver run_meson_ninja
 # build_package github.com/ErikReider/SwayNotificationCenter
 # build_package github.com/Alexays/Waybar \
 #   run_meson_ninja -Drfkill=enabled -Dwireplumber=enabled -Dcava=disabled
+build_package sr.ht/~kennylevinsen/wlsunset
 
 function install_alacritty() {
   cargo build --release --no-default-features --features=wayland
@@ -128,15 +138,6 @@ function install_shikane() {
 }
 # build_package gitlab.com/w0lff/shikane install_shikane
 
-# function install_wayshot() {
-#   cargo build --release
-#   install -s -Dm755 target/release/wayshot -t "${INSTALLATION_PREFIX}/bin"
-#   find ./docs -type f -iname '*.1.gz' -exec cp -f {} /out/share/man/man1/ \;
-#   find ./docs -type f -iname '*.5.gz' -exec cp -f {} /out/share/man/man5/ \;
-#   find ./docs -type f -iname '*.7.gz' -exec cp -f {} /out/share/man/man7/ \;
-# }
-# build_package github.com/waycrate/wayshot install_wayshot
-
 function install_satty() {
   cargo build --release
   install -s -Dm755 target/release/satty -t "${INSTALLATION_PREFIX}/bin/"
@@ -155,6 +156,30 @@ function install_lightctl() {
   install -s -Dm755 target/release/lightctl -t "${INSTALLATION_PREFIX}/bin/"
 }
 # build_package https://github.com/blurrycat/lightctl.git
+
+apt-get install --yes python3-dev
+apt-get --yes remove libglib2.0-dev
+build_package gitlab.gnome.org/GNOME/gtk run_meson_ninja \
+  -Dx11-backend=true \
+  -Dwayland-backend=true \
+  -Dbroadway-backend=false \
+  -Dmedia-gstreamer=enabled \
+  -Dvulkan=enabled \
+  -Dintrospection=enabled \
+  -Dman-pages=true \
+  -Dprofile=auto \
+  -Dbuild-demos=false \
+  -Dbuild-testsuite=false \
+  -Dbuild-examples=false \
+  -Dbuild-tests=false
+
+function install_wleave() {
+  PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 pkg-config --libs --cflags gtk4 'gtk4 >= 4.17'
+  exit 0
+  cargo build --release
+  install -s -Dm755 target/release/wleave -t "${INSTALLATION_PREFIX}/bin/"
+}
+build_package github.com/AMNatty/wleave install_wleave
 
 # -----------------------------------------------
 # ----  Epilogue  -------------------------------

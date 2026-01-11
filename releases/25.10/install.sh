@@ -7,17 +7,16 @@ function __root_setup() {
       # sway and its associates are built from source; see custom/wayland/
 
       # ? TODO can this be removed?
-      libdisplay-info1
+      libdisplay-info1 # yes
       libgtk4-layer-shell0
-      libliftoff0
-      librsvg2-2
+      libliftoff0 # yes
+      librsvg2-2  => librsvg2-dev
       libseat1
       libxcb-ewmh2
 
       # sway companions
       jq
       wdisplays
-      wl-clipboard
 
       # desktop portals
       xdg-desktop-portal
@@ -40,7 +39,7 @@ function __root_setup() {
       mesa-vulkan-drivers
       vulkan-tools
 
-      gnome-desktop-minimal     # fallback DE & applications
+      #gnome-desktop-minimal    # fallback DE & applications
       dex                       # desktop file application launcher
       papers                    # document viewer
       kitty                     # terminal that visualizes files

@@ -22,16 +22,16 @@ services:
       GIT_REV_WAYLAND: '1.24.0'
       GIT_REV_WAYLAND_PROTOCOLS: '1.47'
 
-      GIT_REV_XORGPROTO: xorgproto-2025.1
-      GIT_REV_XSERVER: 'xwayland-24.1.9'
-
-      GIT_REV_WIREPLUMBER: '0.5.13'
       GIT_REV_LIBINPUT: '1.30.1'
       GIT_REV_PIXMAN: 'pixman-0.46.4'
+
+      GIT_REV_XORGPROTO: xorgproto-2025.1
+      GIT_REV_XSERVER: 'xwayland-24.1.9'
 
       GIT_REV_WLROOTS: '0.19.2'
       GIT_REV_SWAY: '1.11'
       GIT_REV_SWAYBG: 'master'
+
       GIT_REV_SWAYIDLE: 'master'
       GIT_REV_SWAYLOCK: 'v1.8.4'
       GIT_REV_SWAYAUDIOIDLEINHIBIT: 'main'
@@ -39,11 +39,17 @@ services:
       GIT_REV_SCENEFX: '0.4.1'
       GIT_REV_SWAYFX: '0.5.3'
 
+      GIT_REV_WIREPLUMBER: '0.5.13'
+      GIT_REV_WL_CLIPBOARD: 'master'
       GIT_REV_ROFI: 'next'
       GIT_REV_SWAYNOTIFICATIONCENTER: 'v0.11.0'
       GIT_REV_WAYBAR: '0.14.0'
+      GIT_REV_WLSUNSET: 'master'
       GIT_REV_ALACRITTY: 'v0.16.1'
       GIT_REV_SHIKANE: 'master'
       GIT_REV_WAYSHOT: 'v1.4.2'
       GIT_REV_SATTY: 'main'
       GIT_REV_LIGHTCTL: 'main'
+
+      GIT_REV_GTK: 'main'
+      GIT_REV_WLEAVE: 'development'

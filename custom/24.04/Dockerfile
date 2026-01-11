@@ -4,6 +4,9 @@
 
 FROM docker.packages.rsint.net/docker.io/ubuntu:24.04
 
+ENV PATH=/root/.local/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu/
+
 RUN apt-get update && apt-get --yes install \
     bison \
     bash-completion \
@@ -16,8 +19,8 @@ RUN apt-get update && apt-get --yes install \
     git \
     gzip \
     make \
-    meson \
     ninja-build \
+    pipx \
     pkg-config \
     scdoc \
     \
@@ -121,5 +124,7 @@ RUN apt-get update && apt-get --yes install \
     libxshmfence-dev \
     xcb-proto \
     xutils-dev
+
+RUN pipx install meson
 
 RUN curl -sSfL https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
