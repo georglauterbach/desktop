@@ -69,6 +69,17 @@ function set_theme_swaync() {
   fi
 }
 
+function set_theme_wleave() {
+  local CONFIG_FILE="${HOME}/.config/wleave/style-${THEME_PALETTE}.css"
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Wleave configuration'
+    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/wleave/style.css"; then
+      log_warn 'Could not update color theme of Wleave'
+    fi
+  fi
+}
+
 function set_theme_zellij() {
   local CONFIG_FILE="${HOME}/.config/zellij/config.kdl"
 
@@ -121,7 +132,7 @@ function main() {
   gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
 
   if [[ -e ${WALLPAPER} ]]; then
-    ln -sf "${WALLPAPER}" "${HOME}/.config/sway/looks/wallpaper"
+    ln -fs "${WALLPAPER}" "${HOME}/.config/sway/looks/wallpaper"
     swaymsg output '*' bg "${HOME}/.config/sway/looks/wallpaper" fill
   else
     log_warn "Wallpaper file '${WALLPAPER}' does not exist"
@@ -131,6 +142,7 @@ function main() {
   set_theme_rofi
   set_theme_swaylock
   set_theme_swaync
+  set_theme_wleave
   set_theme_zellij
 
   if ${ERROR_OCCURRED:-false}; then

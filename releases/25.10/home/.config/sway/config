@@ -186,8 +186,11 @@ floating_modifier $spr
 # reload Sway
 bindsym $spr+$sft+r exec swaymsg reload
 
+# lock the screen
+bindsym $spr+$sft+l exec __way_lock
+
 # exit Sway
-bindsym $spr+$sft+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes' 'swaymsg exit'
+bindsym $spr+$sft+e exec wleave
 
 # ----  Miscellaneous
 
@@ -212,9 +215,6 @@ bindsym $spr+Return     exec systemd-run --user --scope /usr/bin/x-terminal-emul
 
 # notification center
 bindsym $spr+$sft+n     exec swaync-client --toggle-panel --skip-wait
-
-# lock the screen
-bindsym $spr+$sft+l      exec '__way_lock'
 
 # ----  Navigation
 

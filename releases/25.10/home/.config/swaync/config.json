@@ -1,5 +1,13 @@
 {
   "$schema": "/etc/xdg/swaync/configSchema.json",
+  "control-center-layer": "overlay",
+  "control-center-width": 700,
+  "fit-to-screen": true,
+  "keyboard-shortcuts": true,
+  "notification-window-width": 700,
+  "layer": "top",
+  "layer-shell": true,
+  "transition-time": 250,
   "widgets": [
     "title",
     "dnd",
@@ -13,9 +21,6 @@
     },
     "dnd": {
       "text": "Do Not Disturb"
-    },
-    "notifications": {
-      "vexpand": true
     }
   }
 }

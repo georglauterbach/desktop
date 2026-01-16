@@ -10,8 +10,9 @@ exec >/tmp/.sway.swy.log 2>/tmp/.sway.sway.err.log
 
 echo 'Custom pre-start setup is running'
 
-export XDG_CURRENT_DESKTOP=sway
+export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu  XDG_CURRENT_DESKTOP=sway
 systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP}"
+systemctl --user set-environment "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
 eval "$(gnome-keyring-daemon --components=ssh,secrets,pkcs11 --start)"
 export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK
