@@ -12,6 +12,7 @@ typography:
 color:
   dark:
     name: Gruvbox Material Dark
+    variant: Hard
     link: https://github.com/sainnhe/gruvbox-material
     coolors: https://coolors.co/161611-282828-ddc7a1-ea6962-e78a4e-d8a657-a9b665-7bb674-7daea3-d3869b
     colors:
@@ -31,6 +32,7 @@ color:
 
   light:
     name: Everforest
+    variant: TODO
     link: https://github.com/sainnhe/everforest
     coolors: https://coolors.co/F2EFDF-FFFBEF-5C6A72-F85552-F57D26-DFA000-8DA101-35A77C-3A94C5-DF69BA
     colors:

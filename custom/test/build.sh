@@ -3,46 +3,56 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
-readonly PREPARE_SOURCES='false'
 readonly INSTALLATION_PREFIX='/usr/local'
 
 # -----------------------------------------------
-# ----  Common Build Functions  -----------------
+# ----  Functions  ------------------------------
 # -----------------------------------------------
 
-function prepare_sources() {
-  local GIT_URI=${1:?URI for cloning is required}
-  local GIT_REV=${2:?git revision is required}
-  shift 2
+function log_important() {
+  echo -e "\n\033[1m${*}\033[0m\n"
+}
 
-  [[ ${PREPARE_SOURCES} == 'true' ]] || return 0
+function prepare_sources() {
+  local GIT_URI=${2:?URI for cloning is required}
+  local GIT_REV=${3:?git revision is required}
+  shift 2
 
   local DIR_NAME=${GIT_URI/#*\/}
   DIR_NAME=${DIR_NAME%.git}
 
-  [[ -d ${DIR_NAME} ]] || git clone "${GIT_URI}"
+  log_important "Preparing ${DIR_NAME} (${GIT_REV})"
+
+
+  [[ -d ${DIR_NAME} ]] || git clone -quiet "${GIT_URI}"
   (
     cd "${DIR_NAME}"
-    git fetch --prune --tags --force
-    git checkout "${GIT_REV}"
+    git fetch --quiet --prune --tags --force
+    git checkout --quiet "${GIT_REV}"
   )
 }
 
 function build() {
-  echo -e "\n\033[1mBuilding '${1:?Directory to build in is required}'\033[0m\n"
-  cd "${1}"
-  shift 1
-  "${@}"
-  cd ..
+  log_important "Building '${1:?Directory to build in is required}'"
+  (
+    cd "${1}"
+    "${@:2}"
+  )
 }
 
 function meson_ninja() {
-  meson setup build --reconfigure --buildtype=release --prefix="${INSTALLATION_PREFIX}" "${@}"
+  # cSpell: ignore warnlevel
+  meson setup build     \
+    --reconfigure       \
+    --backend=ninja     \
+    --buildtype=release \
+    --warnlevel=0   \
+    --prefix="${INSTALLATION_PREFIX}" "${@}"
   ninja -C build install
 }
 
 function setup_rust() {
-  echo 'Setting up Rust'
+  log_important 'Setting up Rust'
   export CARGO_HOME='/src/rust/cargo/home' RUSTUP_HOME='/src/rust/rustup/home'
   readonly CARGO_HOME RUSTUP_HOME
   # shellcheck source=/dev/null
@@ -50,119 +60,249 @@ function setup_rust() {
   rustup --quiet default 1.92.0
 }
 
-function finalize_runtime_libs() {
-  for PROGRAM in "${INSTALLATION_PREFIX}/bin/"*; do
-    grep --quiet 'dynamically linked' <(file "${PROGRAM}") || continue
-    strip --strip-all "${PROGRAM}"
-
-    while read -r _ _ FILE _; do
-      # cSpell: disable-next-line
-      [[ ${FILE} =~ .*lib(c|stdc\+\+)\.so\.[0-9]+ ]] && continue
-      [[ -e ${INSTALLATION_PREFIX}${FILE} ]] && continue
-
-      echo "Copying '${FILE}' to '${INSTALLATION_PREFIX}${FILE}'"
-      mkdir --parents "${INSTALLATION_PREFIX}/$(dirname "${FILE}")"
-      cp "${FILE}" "${INSTALLATION_PREFIX}${FILE}"
-
-      if [[ -L ${FILE} ]]; then
-        LINK_TARGET=$(realpath --canonicalize-existing --logical "${FILE}")
-        [[ -e ${INSTALLATION_PREFIX}/${LINK_TARGET} ]] && continue
-        echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
-        cp "${LINK_TARGET}" "${INSTALLATION_PREFIX}/${LINK_TARGET#/usr}"
-      fi
-    done < <(ldd "${PROGRAM}" | grep ' /lib')
-  done
-}
-
 # -----------------------------------------------
 # ----  Prologue  -------------------------------
 # -----------------------------------------------
 
-echo 'Starting'
+log_important 'Starting'
 setup_rust
-mkdir --parents "${INSTALLATION_PREFIX}/share/"{applications,man/{1,5,7}}
 cd /src
-
-apt-get install libxkbcommon-dev
 
 # -----------------------------------------------
 # ----  Base Libraries & Packages  --------------
 # -----------------------------------------------
 
+# ----  Wayland  --------------------------------
 prepare_sources https://gitlab.freedesktop.org/wayland/wayland.git             1.24
 prepare_sources https://gitlab.freedesktop.org/wayland/wayland-protocols.git   1.47
 
-prepare_sources https://gitlab.freedesktop.org/xorg/proto/xorgproto.git        xorgproto-2025.1
-prepare_sources https://gitlab.freedesktop.org/xorg/xserver.git                xwayland-24.1.9
-
-prepare_sources https://gitlab.gnome.org/GNOME/glib.git                        2.87.1
-prepare_sources https://gitlab.gnome.org/GNOME/gobject-introspection.git       1.86.0
-prepare_sources https://github.com/libjxl/libjxl.git                          v0.11.1
-prepare_sources https://gitlab.gnome.org/GNOME/gdk-pixbuf.git                  2.44.4
-prepare_sources https://gitlab.freedesktop.org/cairo/cairo.git                 1.18.4
-prepare_sources https://gitlab.gnome.org/GNOME/pango.git                       1.57.0
-prepare_sources https://github.com/anholt/libepoxy.git                         1.5.10
-prepare_sources https://github.com/ebassi/graphene.git                         1.10.8
-#!CAUTION prepare_sources https://github.com/xkbcommon/libxkbcommon.git        xkbcommon-1.13.1
-
+# ----  General Dependencies  -------------------
 prepare_sources https://gitlab.freedesktop.org/libinput/libinput.git           1.30.1
 prepare_sources https://gitlab.freedesktop.org/pixman/pixman.git        pixman-0.46.4
 prepare_sources https://gitlab.freedesktop.org/pipewire/wireplumber.git        0.5.13
 
-# -----------------------------------------------
-# ----  GTK  ------------------------------------
-# -----------------------------------------------
+# ----  Xwayland  -------------------------------
+prepare_sources https://gitlab.freedesktop.org/xorg/proto/xorgproto.git        xorgproto-2025.1
+prepare_sources https://gitlab.freedesktop.org/xorg/xserver.git       xwayland-24.1.9
+
+# ----  Sway  -----------------------------------
+prepare_sources https://gitlab.freedesktop.org/wlroots/wlroots.git             0.19.2
+prepare_sources https://github.com/wlrfx/scenefx.git                           0.4.1
+#prepare_sources https://github.com/swaywm/sway.git                             1.11
+prepare_sources https://github.com/WillPower3309/swayfx.git                    0.5.3
+
+# ----  Additional Programs  --------------------
+
+# ----  Bar
+prepare_sources https://github.com/Alexays/Waybar.git                          0.14.0
+# ----  Launcher
+prepare_sources https://github.com/davatorium/rofi.git                         next
+# ----  Notification center
+prepare_sources https://github.com/ErikReider/SwayNotificationCenter.git      v0.11.0
+# ----  Screen management
+prepare_sources https://github.com/blurrycat/lightctl.git                      main
+prepare_sources https://gitlab.com/w0lff/shikane.git                           master
+prepare_sources https://github.com/ErikReider/SwayAudioIdleInhibit.git         main
+prepare_sources https://github.com/swaywm/swaybg.git                           master
+prepare_sources https://github.com/swaywm/swayidle.git                         master
+prepare_sources https://github.com/swaywm/swaylock.git                        v1.8.4
+prepare_sources https://github.com/AMNatty/wleave.git                          development
+# ----  Screenshot
+prepare_sources https://gitlab.freedesktop.org/emersion/grim.git              v1.5.0
+prepare_sources https://github.com/Satty-org/Satty.git                         main
+prepare_sources https://github.com/emersion/slurp.git                         v1.5.0
+# ----  Terminal
+prepare_sources https://github.com/alacritty/alacritty.git                    v0.16.1
+
+
+
+
+
+
+
+
+# TODO
+prepare_sources https://github.com/libjxl/libjxl.git                          v0.11.1
+prepare_sources https://gitlab.gnome.org/GNOME/gdk-pixbuf.git                  2.44.4
+prepare_sources https://github.com/ebassi/graphene.git                         1.10.8
 
 prepare_sources https://gitlab.gnome.org/GNOME/gtk.git                         4.21.4
 prepare_sources https://gitlab.gnome.org/GNOME/libadwaita.git                  1.8.3
 prepare_sources https://github.com/wmww/gtk4-layer-shell.git                  v1.3.0
 
 # -----------------------------------------------
-# ----  Sway & Companions  ----------------------
-# -----------------------------------------------
-
-prepare_sources https://gitlab.freedesktop.org/wlroots/wlroots.git             0.19.2
-prepare_sources https://github.com/swaywm/sway.git                             1.11
-prepare_sources https://github.com/swaywm/swaybg.git                           master
-prepare_sources https://github.com/swaywm/swayidle.git                         master
-prepare_sources https://github.com/swaywm/swaylock.git                        v1.8.4
-prepare_sources https://github.com/ErikReider/SwayAudioIdleInhibit.git         main
-
-prepare_sources https://github.com/wlrfx/scenefx.git                           0.4.1
-prepare_sources https://github.com/WillPower3309/swayfx.git                    0.5.3
-
-# -----------------------------------------------
-# ----  Additional Programs  --------------------
-# -----------------------------------------------
-
-prepare_sources https://github.com/alacritty/alacritty.git                    v0.16.1
-prepare_sources https://github.com/Alexays/Waybar.git                          0.14.0
-prepare_sources https://github.com/AMNatty/wleave.git                          development
-prepare_sources https://github.com/blurrycat/lightctl.git                      main
-prepare_sources https://github.com/davatorium/rofi.git                         next
-prepare_sources https://github.com/emersion/slurp.git                         v1.5.0
-prepare_sources https://github.com/ErikReider/SwayNotificationCenter.git      v0.11.0
-prepare_sources https://github.com/Satty-org/Satty.git                         main
-prepare_sources https://gitlab.com/w0lff/shikane.git                           master
-prepare_sources https://gitlab.freedesktop.org/emersion/grim.git              v1.5.0
-
-# -----------------------------------------------
 # ----  Build: Base Libraries & Packages  -------
 # -----------------------------------------------
 
-build wayland               meson_ninja -Ddocumentation=false
-build wayland-protocols     meson_ninja
+# ----  Wayland  --------------------------------
 
-build libinput              meson_ninja
-build pixman                meson_ninja
-build wireplumber           meson_ninja
+build wayland meson_ninja \
+  -Dlibraries=true        \
+  -Dscanner=true          \
+  -Dtests=false           \
+  -Ddocumentation=false   \
+  -Ddtd_validation=false
 
-build xorgproto             meson_ninja
-build xserver               meson_ninja
+build wayland-protocols meson_ninja \
+  -Dtests=false
 
-build glib                  meson_ninja -Dtests=false -Dsysprof=disabled -Dintrospection=disabled
-build gobject-introspection meson_ninja -Dtests=false
-build glib                  meson_ninja -Dtests=false -Dsysprof=disabled -Dintrospection=enabled
+apt-get install --yes --no-install-recommends
+
+# ? libglib2.0-dev gobject-introspection libcairo2-dev libpango1.0-dev
+
+libxkbcommon-dev
+
+# ----  General Dependencies  -------------------
+
+# APT: libevdev-dev libmtdev-dev
+# ! required by SwayFX
+build libinput meson_ninja \
+  -Dlibwacom=false         \
+  -Dmtdev=false            \
+  -Ddebug-gui=false        \
+  -Dtests=false            \
+  -Ddocumentation=false
+
+# ! required by wlroots
+build pixman meson_ninja \
+  -Dtests=disabled       \
+  -Ddemos=disabled
+
+# function build_glib() {
+#   build glib meson_ninja     \
+#     -Dsysprof=disabled       \
+#     -Ddocumentation=false    \
+#     -Dtests=false            \
+#     -Dglib_debug=disabled "${@}"
+# }
+
+# build_glib -Dintrospection=disabled
+
+# build gobject-introspection meson_ninja \
+#   -Ddoctool=disabled                    \
+#   -Dtests=false
+
+# build_glib -Dintrospection=enabled
+
+# # APT: liblzo2-dev libx11-xcb-dev
+# build cairo meson_ninja \
+#   -Ddwrite=enabled \
+#   -Dfontconfig=enabled \
+#   -Dfreetype=enabled \
+#   -Dpng=enabled \
+#   -Dxcb=enabled \
+#   -Dxlib=enabled \
+#   -Dxlib-xcb=enabled \
+#   -Dzlib=enabled \
+#   -Dtests=disabled \
+#   -Dlzo=enabled
+
+# # APT: libxft-dev
+# build pango meson_ninja \
+#   -Ddocumentation=false \
+#   -Dman-pages=true \
+#   -Dintrospection=enabled \
+#   -Dbuild-testsuite=false \
+#   -Dbuild-examples=false \
+#   -Dfontconfig=enabled \
+#   -Dsysprof=disabled \
+#   -Dcairo=enabled \
+#   -Dxft=enabled \
+#   -Dfreetype=enabled
+
+# # APT: libspa-0.2-dev libpipewire-0.3-dev
+# build wireplumber meson_ninja   \
+#   -Dintrospection=disabled      \
+#   -Ddoc=disabled                \
+#   -Dsystem-lua=true             \
+#   -Dsystemd=enabled             \
+#   -Dsystemd-system-service=true \
+#   -Dtests=false                 \
+#   -Ddbus-tests=false
+
+# ----  Xwayland  -------------------------------
+
+build xorgproto meson_ninja
+
+# APT: libx11-dev libxshmfence-dev x11-xkb-utils libxkbfile-dev libxkbfile-dev libxfont-dev libxcvt-dev libepoxy-dev mesa-common-dev libtirpc-dev libxcb-xinput-dev libxcb-sync-dev libxcb-damage0-dev
+build xserver meson_ninja -Ddocs=false
+
+# ----  Sway  -----------------------------------
+
+# APT: libxkbcommon-dev libgbm-dev libvulkan-dev glslang-dev glslang-tools liblcms2-dev libseat-dev hwdata libdisplay-info-dev libliftoff-dev libxcb-dri3-dev libxcb-present-dev libxcb-composite0-dev libxcb-render-util0-dev libxcb-shm0-dev libxcb-xfixes0-dev libxcb-xinput-dev libxcb-ewmh-dev libxcb-icccm4-dev libxcb-res0-dev libgles-dev
+build wlroots              meson_ninja \
+  -Dxwayland=enabled                   \
+  -Dexamples=false                     \
+  -Drenderers=gles2,vulkan             \
+  -Dbackends=drm,libinput,x11          \
+  -Dsession=enabled                    \
+  -Dcolor-management=enabled           \
+  -Dlibliftoff=enabled
+
+build scenefx meson_ninja \
+  -Dexamples=false
+
+# APT: libjson-c-dev libgdk-pixbuf-2.0-dev libgdk-pixbuf-xlib-2.0-dev
+#build sway   meson_ninja    \
+build swayfx meson_ninja    \
+  -Ddefault-wallpaper=false \
+  -Dzsh-completions=false   \
+  -Dbash-completions=false  \
+  -Dfish-completions=false  \
+  -Dswaybar=false           \
+  -Dswaynag=false           \
+  -Dtray=enabled            \
+  -Dgdk-pixbuf=enabled      \
+  -Dman-pages=enabled       \
+  -Dsd-bus-provider=libsystemd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function build_libjxl() {
   git submodule update --init --recursive --depth 1 --recommend-shallow
@@ -193,9 +333,6 @@ build gdk-pixbuf       meson_ninja \
   -Dtests=false \
   -Dinstalled_tests=false \
   -Dthumbnailer=disabled
-build cairo            meson_ninja -Dxcb=enabled -Dtests=disabled
-build pango            meson_ninja
-build libepoxy         meson_ninja
 build graphene         meson_ninja -Dtests=false -Dinstalled_tests=false
 #!CAUTION build libxkbcommon     meson_ninja -Denable-x11=true
 
@@ -216,27 +353,10 @@ build gtk4-layer-shell meson_ninja -Dvapi=false
 # ----  Build: Sway & Companions  ---------------
 # -----------------------------------------------
 
-build wlroots              meson_ninja \
-  -Dxwayland=enabled                   \
-  -Dexamples=false                     \
-  -Drenderers=gles2,vulkan             \
-  -Dbackends=drm,libinput,x11          \
-  -Dsession=enabled                    \
-  -Dcolor-management=enabled           \
-  -Dlibliftoff=enabled
-build sway                 meson_ninja \
-  -Dzsh-completions=false              \
-  -Dfish-completions=false             \
-  -Dswaybar=false                      \
-  -Dswaynag=false                      \
-  -Dman-pages=enabled                  \
-  -Dsd-bus-provider=libsystemd
 build swaybg               meson_ninja
 build swayidle             meson_ninja
 build swaylock             meson_ninja -Dpam=enabled
 build SwayAudioIdleInhibit meson_ninja -Dlogind-provider=systemd
-build scenefx              meson_ninja
-build swayfx               meson_ninja
 
 # -----------------------------------------------
 # ----  Build: Additional Programs  -------------

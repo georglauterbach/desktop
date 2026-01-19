@@ -14,4 +14,5 @@ services:
 
     #tty: true
     #stdin_open: true
-    command: /bin/bash /build.sh
+    # command: /bin/bash /build.sh
+    command: sleep 7d
