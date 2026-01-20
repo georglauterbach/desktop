@@ -1,9 +1,0 @@
-libxrandr-dev
-libxcursor-dev
-libxdamage-dev
-libxfixes-dev
-libfontconfig-dev
-
-glslc
-libdrm-dev
-python3-docutils

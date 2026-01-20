@@ -8,7 +8,7 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
-readonly NERD_FONT_VERSION='v3.3.0'
+readonly NERD_FONT_VERSION='v3.4.0'
 
 function download_extract_place() {
   local FONT_NAME=${1:?Font name required}
@@ -24,6 +24,7 @@ function download_extract_place() {
 
 download_extract_place 'FiraCode'
 download_extract_place 'JetBrainsMono'
+download_extract_place 'UbuntuSans'
 
 # we update the font cache and try again if the first time failed
 fc-cache -f &>/dev/null || fc-cache -f

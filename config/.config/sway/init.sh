@@ -41,9 +41,6 @@ bash -c 'exec shikane                    >/tmp/.sway.shikane.log 2>/tmp/.sway.sh
 bash -c 'exec swaync                     >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log'  &
 # `waybar` provides a bar
 bash -c 'exec waybar --log-level warning >/tmp/.sway.waybar.log  2>/tmp/.sway.waybar.err.log'  &
-# `wlsunset` provides day-night gamma adjustments
-readonly LATITUDE=51.0 LONGITUDE=13.7
-bash -c "exec wlsunset -t 5500 -T 8000 -l ${LATITUDE} -L ${LONGITUDE}" &
 
 # shellcheck source=/dev/null
 [[ ! -e ${HOME}/.config/sway/user/init.sh ]] || source "${HOME}/.config/sway/user/init.sh"

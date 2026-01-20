@@ -1,2 +1,31 @@
-releases/25.10/config/home/.local/bin/shikane filter=lfs diff=lfs merge=lfs -text
-releases/25.10/config/home/.local/bin/shikanectl filter=lfs diff=lfs merge=lfs -text
+# -----------------------------------------------
+# ----  GitAttributes  --------------------------
+# ----  https://git-scm.com/docs/gitattributes  -
+# -----------------------------------------------
+
+# For templates, see
+# https://github.com/alexkaratarakis/gitattributes
+
+# -----------------------------------------------
+# ----  General  --------------------------------
+# -----------------------------------------------
+
+* text=auto eol=lf
+
+.gitattributes !filter !diff
+.gitignore     !filter !diff
+*.tar.xz       !filter !diff
+
+# -----------------------------------------------
+# ----  IDEs  -----------------------------------
+# -----------------------------------------------
+
+.vscode/*.json linguist-language=JSON-with-Comments
+
+# -----------------------------------------------
+# ----  Languages  ------------------------------
+# -----------------------------------------------
+
+*.sh     text    diff=bash
+*.md     text    diff=markdown
+*.nix    text    diff=nix

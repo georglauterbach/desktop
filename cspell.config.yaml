@@ -18,28 +18,41 @@ ignoreWords:
   - Everforest
   - georglauterbach
   - Gruvbox
+  - FiraCode
 
-  # related to Sway
+  # Nix
+  - nix
+  - nixd
+  - nixfmt
+  - nixgl
+  - nixos
+  - nixpkgs
+
+  # Sway
   - swaybg
   - swayfx
   - swayidle
+  - swayimg
   - swaylock
   - swaymsg
-  - swaynag
   - swaync
-  - swaywm
+  - swaynotificationcenter
+  - xwayland
 
-  # commands
-  - lightctl
+  # packages
+  - ianny
   - pipewire
   - rofi
-  - rustup
   - satty
-  - scdoc
   - shikane
-  - shikanectl
   - waybar
-  - wireplumber
+  - wl-screenrec
+  - wleave
+  - zathura
+
+  # commands
+  - rustup
+  - shikanectl
   - wpctl
 
   # acronyms
@@ -47,9 +60,5 @@ ignoreWords:
 
   # miscellaneous
   - bindsym
-  - buildtype
-  - libinput
-  - pixman
-  - xorg
-  - xorgproto
-  - xwayland
+  - coolors
+  - stdenv

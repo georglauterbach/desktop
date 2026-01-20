@@ -1,4 +1,3 @@
-# cSpell: ignore coolors FiraCode Everforest
 ---
 typography:
   icons: https://www.nerdfonts.com/cheat-sheet
@@ -8,6 +7,8 @@ typography:
       installation: scripts/setup_fonts.sh
     - name: FiraCode Nerd Font
       installation: scripts/setup_fonts.sh
+    - name: Ubuntu Sans
+      installation: TODO
 
 color:
   dark:
