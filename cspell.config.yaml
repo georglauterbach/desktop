@@ -41,6 +41,7 @@ ignoreWords:
 
   # packages
   - ianny
+  - patchelf
   - pipewire
   - rofi
   - satty
