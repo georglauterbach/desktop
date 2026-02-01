@@ -97,8 +97,8 @@ exec exec swayidle -w                      \
 
 # ----  Colors
 
-set $color.background_dim #161611
-set $color.background     #282828
+set $color.background_dim #141617
+set $color.background     #1D2021
 set $color.foreground     #DDC7A1
 
 set $color.red            #EA6962

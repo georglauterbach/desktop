@@ -3,11 +3,11 @@ cursor = "CellForeground"
 text = "CellBackground"
 
 [colors.primary]
-background = "#282828"
+background = "#1D2021"
 foreground = "#DDC7A1"
 
 [colors.normal]
-black = "#282828"
+black = "#1D2021"
 white = "#DDC7A1"
 
 red = "#EA6962"

@@ -1,11 +1,11 @@
 show-keyboard-layout
-layout-bg-color=282828
+layout-bg-color=1D2021
 layout-text-color=DDC7A1
 
 font=JetBrainsMono Nerd Font
 font-size=20
 
-color=282828
+color=1D2021
 line-color=00000000
 separator-color=00000000
 
@@ -18,28 +18,28 @@ line-uses-inside
 
 # NORMAL
 text-color=DDC7A1
-inside-color=282828
+inside-color=1D2021
 ring-color=7BB674
-key-hl-color=282828
+key-hl-color=1D2021
 
 # CLEAR
 text-clear-color=DDC7A1
-inside-clear-color=282828
+inside-clear-color=1D2021
 ring-clear-color=D3869B
 
 # CAPS
 text-caps-lock-color=DDC7A1
-inside-caps-lock-color=282828
+inside-caps-lock-color=1D2021
 ring-caps-lock-color=D8A657
-caps-lock-key-hl-color=282828
+caps-lock-key-hl-color=1D2021
 
 # VERIFYING
 text-ver-color=DDC7A1
-inside-ver-color=282828
+inside-ver-color=1D2021
 ring-ver-color=7DAEA3
 
 # WRONG
-text-wrong-color=282828
-inside-wrong-color=282828
+text-wrong-color=1D2021
+inside-wrong-color=1D2021
 ring-wrong-color=EA6962
 

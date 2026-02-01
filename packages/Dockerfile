@@ -199,7 +199,7 @@ RUN git_clone https://github.com/swaywm/swayidle.git master
 RUN git_clone https://github.com/swaywm/swaylock.git v1.8.4
 RUN git_clone https://github.com/Alexays/Waybar.git 0.14.0
 RUN git_clone https://github.com/soreau/wayland-logout.git master
-RUN git_clone https://github.com/ErikReider/SwayNotificationCenter.git v0.11.0
+RUN git_clone https://github.com/ErikReider/SwayNotificationCenter.git v0.12.4
 RUN git_clone https://github.com/kennylevinsen/wlsunset.git master
 
 RUN apt_install blueprint-compiler desktop-file-utils libgtk-4-dev libadwaita-1-dev
@@ -253,14 +253,15 @@ RUN build Waybar                 meson_ninja \
     -Dcava=disabled        \
     -Dlogin-proxy=true
 
-RUN apt_install      \
-    valac            \
-    sassc            \
-    libgtk-3-dev     \
-    libjson-glib-dev \
-    libhandy-1-dev   \
-    libgranite-dev   \
-    libgtk-layer-shell-dev
+RUN apt_install            \
+    valac                  \
+    sassc                  \
+    libgtk-3-dev           \
+    libjson-glib-dev       \
+    libhandy-1-dev         \
+    libgranite-7-dev       \
+    libgtk-layer-shell-dev \
+    libgtk4-layer-shell-dev
 RUN build SwayNotificationCenter meson_ninja \
     -Dsystemd-service=false \
     -Dzsh-completions=false \
@@ -300,7 +301,7 @@ RUN apt_install     \
     libavdevice-dev
 RUN cb wl-screenrec                  build_wl_screenrec
 
-RUN apt_install librsvg2-dev libgtk4-layer-shell-dev
+RUN apt_install librsvg2-dev
 RUN cb wleave                        build_wleave
 
 RUN finalize_runtime_libs
