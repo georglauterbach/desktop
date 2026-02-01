@@ -158,32 +158,32 @@ window#waybar>box {
 
 #cpu {
   background: #F57D26;
-  color: #282828;
+  color: #1D2021;
 }
 
 #custom-gpu {
   background: #F57D26;
-  color: #282828;
+  color: #1D2021;
 }
 
 #memory {
   background: #DFA000;
-  color: #282828;
+  color: #1D2021;
 }
 
 #network {
   background: #8DA101;
-  color: #282828;
+  color: #1D2021;
 }
 
 #battery {
   background: #35A77C;
-  color: #282828;
+  color: #1D2021;
 }
 
 #battery.critical:not(.charging) {
   background: #F85552;
-  color: #282828;
+  color: #1D2021;
   animation-name: blink;
   animation-duration: 1s;
   animation-timing-function: linear;
@@ -193,10 +193,10 @@ window#waybar>box {
 
 #wireplumber {
   background: #3A94C5;
-  color: #282828;
+  color: #1D2021;
 }
 
 #clock {
   background: #DF69BA;
-  color: #282828;
+  color: #1D2021;
 }
