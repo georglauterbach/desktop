@@ -2,13 +2,19 @@
 
 ## Colors
 
-TODO
-
-You can find
+The theme is based on [Evergruv](https://github.com/georglauterbach/evergruv).
 
 ## Typography
 
-TODO
+### Fonts
+
+1. JetBrainsMono Nerd Font (`scripts/setup_fonts.sh`
+2. FiraCode Nerd Font (`scripts/setup_fonts.sh`)
+3. Ubuntu Sans (`apt-get install --yes fonts-ubuntu`)
+
+### Icons
+
+We use [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet). AsciiArt is generated [here](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=test).
 
 ## GTK Themes
 

@@ -16,6 +16,7 @@ words:
 ignoreWords:
   # names
   - Everforest
+  - Evergruv
   - georglauterbach
   - Gruvbox
   - FiraCode

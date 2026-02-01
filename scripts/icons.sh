@@ -4,7 +4,7 @@ set -eE -u -o pipefail
 shopt -s inherit_errexit
 
 if [[ ${EUID} -eq 0 ]]; then
-  echo "ERROR: This script must NOT be run with superuser privileges" >&2
+  echo "ERROR: This script must NOT be run WITH superuser privileges" >&2
   exit 1
 fi
 
