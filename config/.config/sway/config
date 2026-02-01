@@ -19,6 +19,8 @@
 # ----  Initialization  -------------------------
 # -----------------------------------------------
 
+xwayland enable
+
 # Sway does not natively support in-order startup
 # of applications; hence, we use a shell script
 # to get rid of this limitation.

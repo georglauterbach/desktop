@@ -35,12 +35,10 @@ for SERVICE in xdg-desktop-portal{,-wlr,-gtk}.service; do
 done
 unset SERVICE
 
-# `shikane` manages screen arrangements
 bash -c 'exec shikane                    >/tmp/.sway.shikane.log 2>/tmp/.sway.shikane.err.log' &
-# `swaync` provides a notification center
-bash -c 'exec swaync                     >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log'  &
-# `waybar` provides a bar
 bash -c 'exec waybar --log-level warning >/tmp/.sway.waybar.log  2>/tmp/.sway.waybar.err.log'  &
+bash -c 'exec ianny                      >/tmp/.sway.ianny.log   2>/tmp/.sway.ianny.err.log' &
+bash -c 'exec swaync                     >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log' &
 
 # shellcheck source=/dev/null
 [[ ! -e ${HOME}/.config/sway/user/init.sh ]] || source "${HOME}/.config/sway/user/init.sh"

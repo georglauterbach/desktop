@@ -1,6 +1,16 @@
 # Themes
 
-## GTK
+## Colors
+
+TODO
+
+You can find
+
+## Typography
+
+TODO
+
+## GTK Themes
 
 The directory `gtk/` provides two GTK themes:
 

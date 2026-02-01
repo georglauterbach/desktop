@@ -1,9 +1,12 @@
 #! /usr/bin/env bash
 
-# cSpell: ignore gsettings rasi
+# cSpell: ignore gsettings gtkrc rasi
 
 set +eE -u -o pipefail
 shopt -s inherit_errexit
+
+# satisfy `tput`
+export TERM=xterm
 
 function log_info() {
   echo -e "\033[1;34mINFO\033[0m  ${1:?Log info message required}"
@@ -127,9 +130,21 @@ function main() {
   gsettings set org.gnome.desktop.interface gtk-theme    "${GTK_THEME}"
   gsettings set org.gnome.desktop.interface icon-theme   "${ICON_THEME}"
 
-  gsettings set org.gnome.desktop.interface font-name           "Ubuntu, 11"
-  gsettings set org.gnome.desktop.interface document-font-name  "Ubuntu, 11"
-  gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font, 10"
+  gsettings set org.gnome.desktop.interface font-name           "Ubuntu Sans 12"
+  gsettings set org.gnome.desktop.interface document-font-name  "Ubuntu Sans 12"
+  gsettings set org.gnome.desktop.interface monospace-font-name "JetBrainsMono Nerd Font 11"
+
+  local GTK_CONFIG
+  for GTK_CONFIG in gtk-{2,3,4}.0; do
+    if [[ -e /usr/share/themes/${GTK_THEME}/${GTK_CONFIG} ]]; then
+      rm --recursive --force "${HOME}/.config/${GTK_CONFIG}"
+      ln --symbolic --force                            \
+        "/usr/share/themes/${GTK_THEME}/${GTK_CONFIG}" \
+        "${HOME}/.config/${GTK_CONFIG}"
+    else
+      rm --recursive --force "${HOME}/.config/${GTK_CONFIG}"
+    fi
+  done
 
   if [[ -e ${WALLPAPER} ]]; then
     ln -fs "${WALLPAPER}" "${HOME}/.config/sway/looks/wallpaper"

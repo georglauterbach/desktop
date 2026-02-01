@@ -20,10 +20,23 @@ nix profile add .
 
 # 3. Install additional packages
 readonly ADDITIONAL_PACKAGES=(
+  #code
+  dex
+  #flatpak
   fonts-font-awesome
+  gnome-keyring
+  jq
+  kitty
+  pipewire
+  rtkit
+  seahorse
+  swayimg
   xdg-desktop-portal
   xdg-desktop-portal-gtk
   xdg-desktop-portal-wlr
+  #wireplumber
+  wdisplays
+  zathura # papers on Ubuntu 25.10
 )
 apt-get install --yes --no-install-recommends "${ADDITIONAL_PACKAGES[@]}"
 
