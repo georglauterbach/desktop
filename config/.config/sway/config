@@ -118,12 +118,12 @@ client.urgent           $color.foreground $color.background $color.foreground $c
 # ----  Borders
 
 smart_borders     on
-default_border    pixel 4
+default_border    pixel 3
 hide_edge_borders smart
 
 # ensure all windows - even floating ones - have a border
-for_window [class=".*"]  border pixel 4
-for_window [app_id=".*"] border pixel 4
+for_window [class=".*"]  border pixel 3
+for_window [app_id=".*"] border pixel 3
 
 # ----  Gaps
 

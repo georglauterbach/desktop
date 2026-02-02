@@ -25,28 +25,24 @@ build_lightctl() {
 build_satty() {
   cargo build --release
   install -s -Dm755 target/release/satty -t "${INSTALLATION_PREFIX}/bin/"
-
   install -Dm644 assets/satty.svg "${INSTALLATION_PREFIX}/share/icons/hicolor/scalable/apps/satty.svg"
   install -Dm644 satty.desktop    "${INSTALLATION_PREFIX}/share/applications/satty.desktop"
 }
 
 build_shikane() {
   cargo build --release
-
   install -s -Dm755 target/release/shikane    -t "${INSTALLATION_PREFIX}/bin/"
   install -s -Dm755 target/release/shikanectl -t "${INSTALLATION_PREFIX}/bin/"
 }
 
 build_wayland_pipewire_idle_inhibit() {
   cargo build --release
-
   install -s -Dm755 target/release/wayland-pipewire-idle-inhibit -t "${INSTALLATION_PREFIX}/bin/"
 }
 
 build_wleave() {
   cargo build --release
   install -s -Dm755 target/release/wleave -t "${INSTALLATION_PREFIX}/bin/"
-  # TODO also install icons
 }
 
 build_wl_screenrec() {

@@ -12,7 +12,7 @@ The following packages are built or installed:
 4. Launcher: [rofi](https://github.com/davatorium/rofi)
 5. Notifications: [SwayNotificationCenter](https://github.com/ErikReider/SwayNotificationCenter)
 6. Locking: [swayidle](https://github.com/swaywm/swayidle) & [swaylock](https://github.com/swaywm/swaylock)
-7. Logout: [wleave](https://github.com/AMNatty/wleave) with [wayland-logout](https://github.com/soreau/wayland-logout)
+7. Logout: [wleave](https://github.com/AMNatty/wleave)
 8. Pauses: [ianny](https://github.com/zefr0x/ianny)
 9. Inhibitors: [SwayAudioIdleInhibit](https://github.com/ErikReider/SwayAudioIdleInhibit) (and [wayland-pipewire-idle-inhibit](https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit) (unused))
 10. Screenshots: [grim](https://gitlab.freedesktop.org/emersion/grim), [slurp](https://github.com/emersion/slurp) & [Satty](https://github.com/Satty-org/Satty)

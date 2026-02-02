@@ -35,6 +35,19 @@ function set_theme_alacritty() {
   fi
 }
 
+function set_theme_kitty() {
+  local CONFIG_FILE="${HOME}/.config/kitty/kitty.${THEME_PALETTE}.conf"
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Kitty configuration'
+    if ! ln --symbolic --force \
+      "${CONFIG_FILE}" \
+      "${HOME}/.config/kitty/kitty.conf"; then
+      log_warn 'Could not update color theme of Kitty'
+    fi
+  fi
+}
+
 function set_theme_rofi() {
   local CONFIG_FILE="${HOME}/.config/rofi/config.rasi"
 
@@ -154,6 +167,7 @@ function main() {
   fi
 
   set_theme_alacritty
+  set_theme_kitty
   set_theme_rofi
   set_theme_swaylock
   set_theme_swaync

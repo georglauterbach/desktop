@@ -198,7 +198,6 @@ RUN git_clone https://github.com/swaywm/swaybg.git master
 RUN git_clone https://github.com/swaywm/swayidle.git master
 RUN git_clone https://github.com/swaywm/swaylock.git v1.8.4
 RUN git_clone https://github.com/Alexays/Waybar.git 0.14.0
-RUN git_clone https://github.com/soreau/wayland-logout.git master
 RUN git_clone https://github.com/ErikReider/SwayNotificationCenter.git v0.12.4
 RUN git_clone https://github.com/kennylevinsen/wlsunset.git master
 
@@ -267,7 +266,6 @@ RUN build SwayNotificationCenter meson_ninja \
     -Dzsh-completions=false \
     -Dfish-completions=false
 
-RUN build wayland-logout         meson_ninja
 RUN build wlsunset               meson_ninja
 
 # ? Next, run custom builds

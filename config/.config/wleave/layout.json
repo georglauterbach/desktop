@@ -9,7 +9,7 @@
     },
     {
       "label": "logout",
-      "action": "loginctl terminate-user $USER",
+      "action": "swaymsg exit",
       "text": "Logout",
       "keybind": "e",
       "icon": "/usr/share/wleave/icons/logout.svg"

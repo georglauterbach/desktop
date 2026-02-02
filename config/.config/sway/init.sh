@@ -37,8 +37,10 @@ unset SERVICE
 
 bash -c 'exec shikane                    >/tmp/.sway.shikane.log 2>/tmp/.sway.shikane.err.log' &
 bash -c 'exec waybar --log-level warning >/tmp/.sway.waybar.log  2>/tmp/.sway.waybar.err.log'  &
-bash -c 'exec ianny                      >/tmp/.sway.ianny.log   2>/tmp/.sway.ianny.err.log' &
-bash -c 'exec swaync                     >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log' &
+bash -c 'exec ianny                      >/tmp/.sway.ianny.log   2>/tmp/.sway.ianny.err.log'   &
+bash -c 'exec swaync                     >/tmp/.sway.swaync.log  2>/tmp/.sway.swaync.err.log'  &
+
+disown -a
 
 # shellcheck source=/dev/null
 [[ ! -e ${HOME}/.config/sway/user/init.sh ]] || source "${HOME}/.config/sway/user/init.sh"
