@@ -44,7 +44,7 @@
 
 .notification {
   background: transparent;
-  border-radius: 7px;
+  border-radius: 5px;
   box-shadow: none;
   margin: 12px;
   outline: none;
@@ -69,7 +69,7 @@
 }
 
 .notification-default-action {
-  border-radius: 7px;
+  border-radius: 5px;
 }
 
 .notification-default-action:hover,
@@ -91,7 +91,7 @@
 /* lower actions */
 .notification-action {
   border-bottom: 3px solid @blue;
-  border-radius: 7px;
+  border-radius: 5px;
   border-right: none;
   border-top: none;
   color: @foreground;
@@ -168,7 +168,7 @@
 .control-center-clear-all {
   background: transparent;
   border: 2px solid @blue;
-  border-radius: 7px;
+  border-radius: 5px;
   color: @foreground;
   font-size: 1rem;
   text-shadow: none;
@@ -197,7 +197,7 @@
 
 .control-center-dnd slider {
   background: @blue;
-  border-radius: 7px;
+  border-radius: 5px;
 }
 
 .control-center-dnd:checked slider {
@@ -222,18 +222,18 @@
 
 .notification-group {
   border: 2px solid transparent;
-  border-radius: 7px;
+  border-radius: 5px;
   margin-bottom: 12px;
 }
 
 .notification-group:focus {
   border: 2px solid @blue;
-  border-radius: 7px;
+  border-radius: 5px;
 }
 
 .notification-group:hover {
   border: 2px solid @blue;
-  border-radius: 7px;
+  border-radius: 5px;
 }
 
 .notification-group .notification-group-headers .notification-group-header {
