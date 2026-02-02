@@ -91,15 +91,14 @@
 /* lower actions */
 .notification-action {
   border-bottom: 3px solid @blue;
-  border-radius: 5px;
+  border-radius: 0px;
   border-right: none;
   border-top: none;
-  color: @foreground;
 }
 
 /* -- round the left bottom corner when multiple actions are available */
 .notification-action:first-child {
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 5px;
 }
 
 /* -- set the correct inner border when multiple actions are available */
@@ -109,8 +108,14 @@
 
 /* -- round the right bottom corner when multiple actions are available */
 .notification-action:last-child {
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 5px;
   border-right: 3px solid @blue;
+}
+
+.notification-action > button {
+  background: transparent;
+  color: @foreground;
+  font-size: 0.8rem;
 }
 
 /* message content */
@@ -185,7 +190,7 @@
 }
 
 .control-center-dnd {
-  border-radius: 12px;
+  border-radius: 15px;
   background: transparent;
   border: 2px solid @blue;
   box-shadow: none;
@@ -197,7 +202,7 @@
 
 .control-center-dnd slider {
   background: @blue;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 .control-center-dnd:checked slider {
