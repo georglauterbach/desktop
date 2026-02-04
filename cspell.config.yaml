@@ -1,30 +1,66 @@
-version: "0.2"
-ignorePaths: []
-dictionaryDefinitions: []
-dictionaries: []
-words: []
-import: []
+---
+version: '0.2'
+
+ignorePaths:
+  - '*/src'
+  - '*/out'
+
+dictionaries:
+  - en_US
+  - softwareTerms
+  - bash
+
+words:
+  - lockscreen
 
 ignoreWords:
-  - alacritty
-  - bindsym
-  - dbus
-  - everforest
-  - flatpak
-  - flatpaks
-  - gruvbox
-  - nodeadkeys
-  - numlock
-  - pipewire
-  - rofi
-  - ryzen
+  # names
+  - Everforest
+  - Evergruv
+  - georglauterbach
+  - Gruvbox
+  - FiraCode
+
+  # Nix
+  - nix
+  - nixd
+  - nixfmt
+  - nixgl
+  - nixos
+  - nixpkgs
+
+  # Sway
+  - swaybg
   - swayfx
   - swayidle
+  - swayimg
   - swaylock
+  - swaymsg
   - swaync
-  - uefi
-  - waybar
-  - wireplumber
-  - wlroots
+  - swaynotificationcenter
   - xwayland
-  - yubikey
+
+  # packages
+  - ianny
+  - patchelf
+  - pipewire
+  - rofi
+  - satty
+  - shikane
+  - waybar
+  - wl-screenrec
+  - wleave
+  - zathura
+
+  # commands
+  - rustup
+  - shikanectl
+  - wpctl
+
+  # acronyms
+  - PKCS11
+
+  # miscellaneous
+  - bindsym
+  - coolors
+  - stdenv

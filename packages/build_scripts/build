@@ -1,0 +1,26 @@
+#! /bin/sh
+
+set -e -u
+
+log() {
+  printf "\033[1m%s\033[0m\n" "${*}"
+}
+
+meson_ninja() {
+  # cSpell: ignore buildtype warnlevel
+  meson setup build     \
+    --reconfigure       \
+    --backend=ninja     \
+    --buildtype=release \
+    --warnlevel=0   \
+    --prefix="${INSTALLATION_PREFIX}" "${@}"
+
+  ninja -C build install
+}
+
+log "Building '${1:?Directory to build in is required}'"
+(
+  cd "${1}"
+  shift 1
+  "${@}"
+)

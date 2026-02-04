@@ -1,0 +1,74 @@
+#! /bin/sh
+
+set -e -u
+
+build_alacritty() {
+  cargo build --release --no-default-features --features=wayland
+  install -s -Dm755 target/release/alacritty -t "${INSTALLATION_PREFIX}/bin/"
+
+  scdoc < extra/man/alacritty.1.scd          | gzip -c >"${INSTALLATION_PREFIX}/share/man/man1/alacritty.1.gz"
+  scdoc < extra/man/alacritty-msg.1.scd      | gzip -c >"${INSTALLATION_PREFIX}/share/man/man1/alacritty-msg.1.gz"
+  scdoc < extra/man/alacritty.5.scd          | gzip -c >"${INSTALLATION_PREFIX}/share/man/man5/alacritty.5.gz"
+  scdoc < extra/man/alacritty-bindings.5.scd | gzip -c >"${INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
+}
+
+build_ianny() {
+  cargo build --release
+  install -s -Dm755 target/release/ianny -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+build_lightctl() {
+  cargo build --release
+  install -s -Dm755 target/release/lightctl -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+build_satty() {
+  cargo build --release
+  install -s -Dm755 target/release/satty -t "${INSTALLATION_PREFIX}/bin/"
+  install -Dm644 assets/satty.svg "${INSTALLATION_PREFIX}/share/icons/hicolor/scalable/apps/satty.svg"
+  install -Dm644 satty.desktop    "${INSTALLATION_PREFIX}/share/applications/satty.desktop"
+}
+
+build_shikane() {
+  cargo build --release
+  install -s -Dm755 target/release/shikane    -t "${INSTALLATION_PREFIX}/bin/"
+  install -s -Dm755 target/release/shikanectl -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+build_wayland_pipewire_idle_inhibit() {
+  cargo build --release
+  install -s -Dm755 target/release/wayland-pipewire-idle-inhibit -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+build_wleave() {
+  cargo build --release
+  install -s -Dm755 target/release/wleave -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+build_wl_screenrec() {
+  cargo build --release
+  install -s -Dm755 target/release/wl-screenrec -t "${INSTALLATION_PREFIX}/bin/"
+}
+
+log() {
+  printf "\033[1m%s\033[0m\n" "${*}"
+}
+
+meson_ninja() {
+  # cSpell: ignore buildtype warnlevel
+  meson setup build     \
+    --reconfigure       \
+    --backend=ninja     \
+    --buildtype=release \
+    --warnlevel=0   \
+    --prefix="${INSTALLATION_PREFIX}" "${@}"
+
+  ninja -C build install
+}
+
+log "Building '${1:?Directory to build in is required}'"
+(
+  cd "${1}"
+  shift 1
+  "${@}"
+)

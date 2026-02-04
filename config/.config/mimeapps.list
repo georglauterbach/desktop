@@ -1,0 +1,16 @@
+[Default Applications]
+application/pdf=org.pwmt.zathura.desktop;
+application/xhtml+xml=app.zen_browser.zen.desktop;
+application/x-extension-html=app.zen_browser.zen.desktop;
+application/x-extension-xhtml=app.zen_browser.zen.desktop;
+application/x-zerosize=code.desktop;
+#inode/directory=
+text/plain=code.desktop;
+x-scheme-handler/chrome=app.zen_browser.zen.desktop;
+x-scheme-handler/http=app.zen_browser.zen.desktop;
+x-scheme-handler/https=app.zen_browser.zen.desktop;
+
+[Added Associations]
+
+[Removed Associations]
+x-scheme-handler/mailto=app.zen_browser.zen.desktop;

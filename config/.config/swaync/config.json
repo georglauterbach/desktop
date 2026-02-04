@@ -1,0 +1,26 @@
+{
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "control-center-layer": "overlay",
+  "control-center-width": 700,
+  "fit-to-screen": true,
+  "keyboard-shortcuts": true,
+  "notification-window-width": 700,
+  "layer": "top",
+  "layer-shell": true,
+  "transition-time": 250,
+  "widgets": [
+    "title",
+    "dnd",
+    "notifications"
+  ],
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear All"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    }
+  }
+}

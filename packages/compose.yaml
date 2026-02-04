@@ -1,0 +1,15 @@
+# docker compose up --build
+services:
+  wayland-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: desktop
+
+    volumes:
+      - ./out:/out
+
+    #tty: true
+    #stdin_open: true
+    command: /bin/bash -c "cp --recursive /usr/local/* /out/"

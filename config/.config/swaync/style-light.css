@@ -1,0 +1,258 @@
+/*
+  References:
+
+  - ErikReider/SwayNotificationCenter: https://github.com/ErikReider/SwayNotificationCenter/blob/main/data/style/style.scss
+  - FilippoBonazziSUSE/dotfiles: https://github.com/FilippoBonazziSUSE/dotfiles/blob/master/private_dot_config/swaync/style.css
+*/
+
+/* ------------------------------------------- */
+/* ----  Colors  ----------------------------- */
+/* ------------------------------------------- */
+
+@define-color background-dim #F2EFDF;
+@define-color background #FFFBEF;
+@define-color foreground #5C6A72;
+@define-color red #F85552;
+@define-color orange #F57D26;
+@define-color yellow #DFA000;
+@define-color green #8DA101;
+@define-color cyan #35A77C;
+@define-color blue #3A94C5;
+@define-color purple #DF69BA;
+
+/* ------------------------------------------- */
+/* ----  General  ---------------------------- */
+/* ------------------------------------------- */
+
+* {
+  box-shadow: none;
+  font-family: "JetBrainsMono Nerd Font";
+  transition: 300ms;
+}
+
+/* ------------------------------------------- */
+/* ----  Floating Notifications  ------------- */
+/* ------------------------------------------- */
+
+.notification-row {
+  background: transparent;
+  box-shadow: none;
+  margin: 0px;
+  outline: none;
+  padding: 0px;
+}
+
+.notification {
+  background: transparent;
+  border-radius: 5px;
+  box-shadow: none;
+  margin: 12px;
+  outline: none;
+  padding: 0px;
+}
+
+.notification-content {
+  background: transparent;
+  box-shadow: none;
+  padding: 6px;
+  outline: none;
+}
+
+/* upper message */
+.notification-default-action,
+.notification-action {
+  border: 1px solid @blue;
+  border-top: 3px solid @blue;
+  border-left: 3px solid @blue;
+  border-right: 3px solid @blue;
+  background: @background;
+}
+
+.notification-default-action {
+  border-radius: 5px;
+}
+
+.notification-default-action:hover,
+.notification-action:hover {
+  background: @background-dim;
+}
+
+/* -- do not round corners when lower content is available */
+.notification-default-action:not(:only-child) {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+/* -- provide the correct border when only upper content is available */
+.notification-default-action:only-child {
+  border-bottom: 3px solid @blue;
+}
+
+/* lower actions */
+.notification-action {
+  border-bottom: 3px solid @blue;
+  border-radius: 0px;
+  border-right: none;
+  border-top: none;
+}
+
+/* -- round the left bottom corner when multiple actions are available */
+.notification-action:first-child {
+  border-bottom-left-radius: 5px;
+}
+
+/* -- set the correct inner border when multiple actions are available */
+.notification-action:not(:first-child) {
+  border-left: 1px solid @blue;
+}
+
+/* -- round the right bottom corner when multiple actions are available */
+.notification-action:last-child {
+  border-bottom-right-radius: 5px;
+  border-right: 3px solid @blue;
+}
+
+.notification-action > button {
+  background: transparent;
+  color: @foreground;
+  font-size: 0.8rem;
+}
+
+/* message content */
+
+.image {
+  margin: 12px 6px 12px 12px;
+  border-radius: 0px;
+}
+
+.summary {
+  color: @foreground;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 12px 12px 3px 6px;
+  text-shadow: none;
+}
+
+.body {
+  color: @foreground;
+  font-size: 0.8rem;
+  padding: 3px 12px 12px 6px;
+  text-shadow: none;
+}
+
+.time {
+  color: @foreground;
+  font-size: 0.8rem;
+  font-weight: 400;
+  padding: 12px 12px 0px 0px;
+  text-shadow: none;
+}
+
+.close-button {
+  background: none;
+  color: transparent;
+  text-shadow: none;
+  box-shadow: none;
+  border: none;
+}
+
+/* ------------------------------------------- */
+/* ----  Control Center  --------------------- */
+/* ------------------------------------------- */
+
+/* widgets */
+.widget-title {
+  font-size: 1.5rem;
+}
+
+.top-action-title {
+  font-size: 1rem;
+  text-shadow: none;
+}
+
+.control-center-clear-all {
+  background: transparent;
+  border: 2px solid @blue;
+  border-radius: 5px;
+  color: @foreground;
+  font-size: 1rem;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.control-center-clear-all:hover {
+  background: @background-dim;
+}
+
+.widget-dnd {
+  font-size: 1rem;
+  margin: 20px 0px;
+}
+
+.control-center-dnd {
+  border-radius: 15px;
+  background: transparent;
+  border: 2px solid @blue;
+  box-shadow: none;
+}
+
+.control-center-dnd:checked {
+  background: @blue;
+}
+
+.control-center-dnd slider {
+  background: @blue;
+  border-radius: 10px;
+}
+
+.control-center-dnd:checked slider {
+  background: @background;
+}
+
+.control-center {
+  border: none;
+  background: none;
+  color: @foreground;
+  margin: 12px;
+  padding: 12px;
+}
+
+.control-center-list {
+  background: transparent;
+}
+
+.floating-notifications {
+  background: transparent;
+}
+
+.notification-group {
+  border: 2px solid transparent;
+  border-radius: 5px;
+  margin-bottom: 12px;
+}
+
+.notification-group:focus {
+  border: 2px solid @blue;
+  border-radius: 5px;
+}
+
+.notification-group:hover {
+  border: 2px solid @blue;
+  border-radius: 5px;
+}
+
+.notification-group .notification-group-headers .notification-group-header {
+  font-size: 1rem;
+  font-weight: 500;
+  color: @foreground;
+}
+
+.notification-group .notification-group-headers .notification-group-icon {
+  margin-left: 16px;
+}
+
+/* -- window behind control center and on all other monitors */
+.blank-window {
+  background: transparent;
+  padding: 80px;
+}

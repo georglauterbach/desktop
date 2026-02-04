@@ -4,11 +4,11 @@ set -eE -u -o pipefail
 shopt -s inherit_errexit
 
 if [[ ${EUID} -ne 0 ]]; then
-  echo "ERROR: This script needs to run with superuser privileges" >&2
+  echo "ERROR: This script needs to run WITH superuser privileges" >&2
   exit 1
 fi
 
-readonly NERD_FONT_VERSION='v3.3.0'
+readonly NERD_FONT_VERSION='v3.4.0'
 
 function download_extract_place() {
   local FONT_NAME=${1:?Font name required}
@@ -24,6 +24,7 @@ function download_extract_place() {
 
 download_extract_place 'FiraCode'
 download_extract_place 'JetBrainsMono'
+download_extract_place 'UbuntuSans'
 
 # we update the font cache and try again if the first time failed
 fc-cache -f &>/dev/null || fc-cache -f
