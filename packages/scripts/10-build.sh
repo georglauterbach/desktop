@@ -8,7 +8,7 @@ function log() {
 }
 
 if [[ ${EUID} -eq 0 ]]; then
-  log "This script needs to run WITHOUT superuser privileges" >&2
+  log 'This script needs to run WITHOUT superuser privileges' >&2
   exit 1
 fi
 

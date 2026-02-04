@@ -234,6 +234,7 @@ RUN apt_install            \
     scdoc                  \
     upower                 \
     libxkbregistry-dev     \
+    libjack-dev            \
     libwireplumber-0.5-dev \
     libsndio-dev           \
     libupower-glib-dev
@@ -248,6 +249,7 @@ RUN build Waybar                 meson_ninja \
     -Dman-pages=enabled    \
     -Drfkill=enabled       \
     -Dtests=disabled       \
+    -Djack=enabled         \
     -Dwireplumber=enabled  \
     -Dcava=disabled        \
     -Dlogin-proxy=true
