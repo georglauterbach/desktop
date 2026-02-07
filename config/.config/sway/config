@@ -165,10 +165,15 @@ font pango:$typography.font.default
 # ----  SwayFX  ---------------------------------
 # -----------------------------------------------
 
-#blur                 enable
-#shadows              disable
-#corner_radius        5
-#default_dim_inactive 0.1
+#animation_duration_ms 150
+#blur                  enable
+#corner_radius         5
+#default_dim_inactive  0.1
+#shadows               disable
+
+#layer_effects "swaync-control-center" {
+#    blur enable;
+#}
 
 # -----------------------------------------------
 # ----  Key Bindings  ---------------------------
@@ -191,7 +196,7 @@ bindsym $spr+$sft+r exec swaymsg reload
 # lock the screen
 bindsym $spr+$sft+l exec __way_lock
 
-# exit Sway
+# logout / exit / sleep / etc.
 bindsym $spr+$sft+e exec wleave
 
 # ----  Miscellaneous
@@ -299,7 +304,7 @@ bindsym $spr+$ctl+$sft+Up            move workspace to output    up
 bindsym $spr+$ctl+$sft+Down          move workspace to output    down
 
 # move workspace to next monitor
-bindsym $spr+m exec swaymsg     move workspace to "$(swaymsg -t get_outputs | jq '[.[] | select(.active == true)] | .[(map(.focused) | index(true) + 1) % length].name')"
+bindsym $spr+m exec swaymsg move workspace to "$(swaymsg -t get_outputs | jq '[.[] | select(.active == true)] | .[(map(.focused) | index(true) + 1) % length].name')"
 
 # ----  Resizing
 

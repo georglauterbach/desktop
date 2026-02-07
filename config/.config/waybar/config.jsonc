@@ -34,7 +34,7 @@
     "cpu",
     "memory",
     "network",
-    "battery",
+    //"battery",
     //"wireplumber",
     "clock"
   ],
