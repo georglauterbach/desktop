@@ -1,4 +1,6 @@
-FROM docker.packages.rsint.net/docker.io/ubuntu:25.10 AS base
+# syntax=docker.io/docker/dockerfile:1
+
+FROM docker.io/ubuntu:25.10 AS base
 USER root
 
 ENV PATH=/root/.cargo/bin:/root/.local/bin:$PATH
@@ -53,15 +55,15 @@ RUN apt-get update \
 
 RUN git config --global advice.detachedHead false
 RUN pipx install meson
-RUN curl -sSfL https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.92.0
+RUN curl -sSfL https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.93.0
 
 ENV CARGO_HOME=/src/rust/cargo/home
 ENV RUSTUP_HOME=/src/rust/rustup/home
-RUN rustup --quiet default 1.92.0
+RUN rustup --quiet default 1.93.0
 
 ENV INSTALLATION_PREFIX=/usr/local
 
-FROM base AS git-clone
+# ? git clone
 
 COPY build_scripts/git_clone /root/.local/bin/git_clone
 
@@ -74,12 +76,7 @@ RUN git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
 RUN git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2025.1
 RUN git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-24.1.9
 
-RUN git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.19.2
-RUN git_clone https://github.com/wlrfx/scenefx.git 0.4.1
-RUN git_clone https://github.com/swaywm/sway.git 1.11
-RUN git_clone https://github.com/WillPower3309/swayfx.git 0.5.3
-
-FROM git-clone AS wayland
+# ? Wayland
 
 COPY build_scripts/build /root/.local/bin/build
 
@@ -92,7 +89,7 @@ RUN build wayland meson_ninja \
 
 RUN build wayland-protocols meson_ninja -Dtests=false
 
-FROM wayland AS generic-dependencies
+# ? generic dependencies
 
 COPY build_scripts/apt_install /root/.local/bin/apt_install
 
@@ -106,7 +103,7 @@ RUN build libinput meson_ninja \
 
 RUN build pixman meson_ninja -Dtests=disabled -Ddemos=disabled
 
-FROM generic-dependencies AS xorg
+# ? Xorg
 
 RUN build xorgproto meson_ninja
 
@@ -130,8 +127,9 @@ RUN build xserver meson_ninja -Ddocs=false
 COPY build_scripts/finalize_runtime_libs /root/.local/bin/finalize_runtime_libs
 RUN finalize_runtime_libs
 
-FROM xorg AS sway
+# ? Sway
 
+RUN git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.19.2
 RUN apt_install             \
     libxkbcommon-dev        \
     libgbm-dev              \
@@ -162,6 +160,7 @@ RUN build wlroots meson_ninja   \
     -Dcolor-management=enabled  \
     -Dlibliftoff=enabled
 
+RUN git_clone https://github.com/wlrfx/scenefx.git main
 RUN build scenefx meson_ninja -Dexamples=false
 
 RUN apt_install                \
@@ -171,6 +170,7 @@ RUN apt_install                \
     libgdk-pixbuf-xlib-2.0-dev \
     libpango1.0-dev
     #RUN build sway meson_ninja
+RUN git_clone https://github.com/WillPower3309/swayfx.git master
 RUN build swayfx meson_ninja \
     -Ddefault-wallpaper=false    \
     -Dzsh-completions=false      \
@@ -185,9 +185,9 @@ RUN build swayfx meson_ninja \
 
 RUN finalize_runtime_libs
 
-FROM sway AS associates
+# ? Associates
 
-# ? Firstly, run normal meson-ninja-based builds
+# * firstly, run normal meson-ninja-based builds
 
 RUN git_clone https://codeberg.org/tytan652/door-knocker.git main
 RUN git_clone https://gitlab.freedesktop.org/emersion/grim.git v1.5.0
@@ -270,7 +270,7 @@ RUN build SwayNotificationCenter meson_ninja \
 
 RUN build wlsunset               meson_ninja
 
-# ? Next, run custom builds
+# * next, run custom builds
 
 RUN git_clone https://github.com/alacritty/alacritty.git v0.16.1
 RUN git_clone https://github.com/zefr0x/ianny.git v2.1.3
@@ -306,7 +306,7 @@ RUN cb wleave                        build_wleave
 
 RUN finalize_runtime_libs
 
-FROM associates AS finish
+# ? finish
 
 RUN cd /usr/local/lib/x86_64-linux-gnu \
     && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
