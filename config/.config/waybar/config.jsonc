@@ -14,7 +14,7 @@
   // -------------------------------------------
   // ----  General  ----------------------------
   // -------------------------------------------
-  "layer": "bottom",
+  "layer": "top",
   "position": "top",
   "spacing": 5,
   "reload_style_on_change": true,
@@ -30,11 +30,12 @@
     "sway/workspaces"
   ],
   "modules-right": [
-    "cpu",
     //"custom/gpu",
+    "cpu",
     "memory",
     "network",
-    "wireplumber",
+    "battery",
+    //"wireplumber",
     "clock"
   ],
   // -------------------------------------------
@@ -70,7 +71,7 @@
     "exec": "swaync-client --subscribe-waybar",
     "return-type": "json",
     "escape": true,
-    "format": "{icon} {:>2}",
+    "format": "{icon} {text:>2}",
     "format-icons": {
       "notification": " ",
       "none": " ",

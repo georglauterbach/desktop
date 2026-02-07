@@ -253,6 +253,6 @@
 
 /* -- window behind control center and on all other monitors */
 .blank-window {
-  background: transparent;
+  background: alpha(@background, 0.75);
   padding: 80px;
 }
