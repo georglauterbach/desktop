@@ -12,7 +12,5 @@ if [[ ${EUID} -eq 0 ]]; then
   exit 1
 fi
 
-mkdir --parents /usr/local/bin
-sudo ln --symbolic --force         \
-  "${HOME}/.local/bin/__sway" \
-  /usr/local/bin/__sway
+sudo mkdir --parents /usr/local/bin
+sudo ln --symbolic --force "${HOME}/.local/bin/__sway" /usr/local/bin/__sway

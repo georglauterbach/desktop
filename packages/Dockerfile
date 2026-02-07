@@ -63,20 +63,12 @@ RUN rustup --quiet default 1.93.0
 
 ENV INSTALLATION_PREFIX=/usr/local
 
-# ? git clone
-
 COPY build_scripts/git_clone /root/.local/bin/git_clone
+
+# ? Wayland
 
 RUN git_clone https://gitlab.freedesktop.org/wayland/wayland.git 1.24
 RUN git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git 1.47
-
-RUN git_clone https://gitlab.freedesktop.org/libinput/libinput.git 1.30.1
-RUN git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
-
-RUN git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2025.1
-RUN git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-24.1.9
-
-# ? Wayland
 
 COPY build_scripts/build /root/.local/bin/build
 
@@ -91,6 +83,9 @@ RUN build wayland-protocols meson_ninja -Dtests=false
 
 # ? generic dependencies
 
+RUN git_clone https://gitlab.freedesktop.org/libinput/libinput.git 1.30.1
+RUN git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
+
 COPY build_scripts/apt_install /root/.local/bin/apt_install
 
 RUN apt_install libevdev-dev libmtdev-dev
@@ -104,6 +99,9 @@ RUN build libinput meson_ninja \
 RUN build pixman meson_ninja -Dtests=disabled -Ddemos=disabled
 
 # ? Xorg
+
+RUN git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2025.1
+RUN git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-24.1.9
 
 RUN build xorgproto meson_ninja
 
