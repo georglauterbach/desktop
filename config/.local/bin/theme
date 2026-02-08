@@ -81,7 +81,13 @@ function set_theme_swaync() {
       log_warn 'Could not update color theme of SwayNC'
     fi
 
-    swaync-client --reload-css >/dev/null
+    if ! pgrep '^swaync$' &>/dev/null; then
+      log_warn 'SwayNC is not running - restarting it'
+      swaync >/tmp/.sway.swaync.log 2>/tmp/.sway.swaync.err.log &
+      disown -a
+    fi
+
+    swaync-client --skip-wait --reload-css >/dev/null
   fi
 }
 
