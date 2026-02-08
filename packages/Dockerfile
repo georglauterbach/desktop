@@ -304,12 +304,16 @@ RUN cb wleave                        build_wleave
 
 RUN finalize_runtime_libs
 
-# ? finish
+# ? final custom adjustments
 
 RUN cd /usr/local/lib/x86_64-linux-gnu \
     && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
     && mkdir --parents pulseaudio \
     && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so
 
-RUN mkdir --parents /usr/local/lib/stdc++/ \
-    && cp /lib/x86_64-linux-gnu/libstdc++.so.6 /usr/local/lib/stdc++/
+RUN mkdir --parents /usr/local/lib/libstdc++/ \
+    && cp /lib/x86_64-linux-gnu/libstdc++.so.6 /usr/local/lib/libstdc++/
+
+RUN mkdir --parents /usr/local/lib/custom/libc/ \
+    && cp /lib/x86_64-linux-gnu/libc.so.6 /usr/local/lib/libc/ \
+    && cp /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /usr/local/lib/libc/ld-linux-x86-64.so.2

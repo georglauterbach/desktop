@@ -30,6 +30,11 @@ while read -r SHARED_OBJECT; do
 done < <(command find "${OUT_DIR}/lib/" -type f -name '*.so*')
 unset SHARED_OBJECT
 
-patchelf --add-rpath "${OUT_DIR}/lib/stdc++" "${OUT_DIR}/bin/waybar"
+# ? final custom adjustments
+
+patchelf --add-rpath "${OUT_DIR}/lib/libstdc++" "${OUT_DIR}/bin/waybar"
+
+patchelf --add-rpath       "${OUT_DIR}/lib/libc"                      "${OUT_DIR}/bin/wl-screenrec"
+patchelf --set-interpreter "${OUT_DIR}/lib/libc/ld-linux-x86-64.so.2" "${OUT_DIR}/bin/wl-screenrec"
 
 log Finished
