@@ -29,8 +29,8 @@ readonly ADDITIONAL_PACKAGES=(
   xdg-desktop-portal-wlr
   #wireplumber
   wdisplays
-  zathura # papers on Ubuntu 25.10
+  wl-clipboard
+  zathura # papers also possible if host >= Ubuntu 25.04
 )
-apt-get install --yes     \
-  --no-install-recommends \
-  "${ADDITIONAL_PACKAGES[@]}"
+
+apt-get install --yes --no-install-recommends "${ADDITIONAL_PACKAGES[@]}"
