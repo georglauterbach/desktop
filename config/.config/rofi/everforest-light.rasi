@@ -1,10 +1,9 @@
 * {
     color-background: #FFFBEF;
     color-foreground: #5C6A72;
-    red: #F85552;
-    yellow: #DFA000;
-    green: #8DA101;
-    purple: #DF69BA;
+    color-red: #F85552;
+    color-yellow: #DFA000;
+    color-green: #8DA101;
 
     background-color: @color-background;
     text-color: @color-foreground;
@@ -16,9 +15,9 @@
 
     padding: 10px;
 
-    border: 2px;
-    border-radius: 20px;
-    border-color: @color-foreground;
+    border: 3px;
+    border-radius: 10px;
+    border-color: @color-yellow;
 }
 
 // the outermost container
@@ -28,13 +27,13 @@
 
 // the search bar
 #inputbar {
-    text-color: @purple;
+    text-color: @color-green;
     padding: 10px;
 }
 
 // message shown when this configuration contains an error
 #message {
-    background-color: @yellow;
+    background-color: @color-yellow;
     text-color: @color-background;
 
     margin: 10px;
@@ -45,7 +44,7 @@
 
 // message shown when execution yields an error
 #error-message {
-    background-color: @red;
+    background-color: @color-red;
     text-color: @color-background;
 
     margin: 10px;
@@ -71,12 +70,13 @@
 #element {
     vertical-align: 0.5;
     padding: 5px;
-    border-radius: 10px;
+    border-radius: 25px;
 }
 
 // the currently selected entry
 #element.selected.normal {
-    background-color: @green;
+    background-color: @color-foreground;
+    color: @color-background;
     text-color: @color-background;
 }
 
