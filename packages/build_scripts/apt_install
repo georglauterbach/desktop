@@ -2,4 +2,5 @@
 
 set -e -u
 
-apt-get install --quiet --yes --no-install-recommends "${@}"
+__log "Installing ${*}"
+apt-get install --quiet=2 -o=Dpkg::Use-Pty=0 --yes --no-install-recommends "${@}"

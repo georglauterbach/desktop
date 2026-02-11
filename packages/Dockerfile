@@ -63,6 +63,7 @@ RUN rustup --quiet default 1.93.0
 
 ENV INSTALLATION_PREFIX=/usr/local
 
+COPY build_scripts/log.sh /root/.local/bin/__log
 COPY build_scripts/git_clone /root/.local/bin/git_clone
 
 # ? Wayland
@@ -167,7 +168,6 @@ RUN apt_install                \
     libgdk-pixbuf-2.0-dev      \
     libgdk-pixbuf-xlib-2.0-dev \
     libpango1.0-dev
-    #RUN build sway meson_ninja
 RUN git_clone https://github.com/WillPower3309/swayfx.git master
 RUN build swayfx meson_ninja \
     -Ddefault-wallpaper=false    \
@@ -195,8 +195,8 @@ RUN git_clone https://github.com/ErikReider/SwayAudioIdleInhibit.git main
 RUN git_clone https://github.com/swaywm/swaybg.git master
 RUN git_clone https://github.com/swaywm/swayidle.git master
 RUN git_clone https://github.com/swaywm/swaylock.git v1.8.4
-RUN git_clone https://github.com/Alexays/Waybar.git 0.14.0
-RUN git_clone https://github.com/ErikReider/SwayNotificationCenter.git v0.12.4
+RUN git_clone https://github.com/Alexays/Waybar.git 0.15.0
+RUN git_clone https://github.com/ErikReider/SwayNotificationCenter.git main
 RUN git_clone https://github.com/kennylevinsen/wlsunset.git master
 
 RUN apt_install blueprint-compiler desktop-file-utils libgtk-4-dev libadwaita-1-dev
@@ -273,7 +273,7 @@ RUN build wlsunset               meson_ninja
 RUN git_clone https://github.com/alacritty/alacritty.git v0.16.1
 RUN git_clone https://github.com/zefr0x/ianny.git v2.1.3
 RUN git_clone https://github.com/blurrycat/lightctl.git main
-RUN git_clone https://github.com/Satty-org/Satty.git main
+RUN git_clone https://github.com/Satty-org/Satty.git v0.20.1
 RUN git_clone https://gitlab.com/w0lff/shikane.git master
 RUN git_clone https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit.git master
 RUN git_clone https://github.com/russelltg/wl-screenrec.git main
@@ -306,14 +306,11 @@ RUN finalize_runtime_libs
 
 # ? final custom adjustments
 
+# ! Take care when adjusting these paths;
+# ! especially libc + ld-linux MUST remain in sync
+# ! and MUST be the correct files from the correct place.
 RUN cd /usr/local/lib/x86_64-linux-gnu \
     && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
-    && mkdir --parents pulseaudio \
-    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so
-
-RUN mkdir --parents /usr/local/lib/libstdc++/ \
-    && cp /lib/x86_64-linux-gnu/libstdc++.so.6 /usr/local/lib/libstdc++/
-
-RUN mkdir --parents /usr/local/lib/custom/libc/ \
-    && cp /lib/x86_64-linux-gnu/libc.so.6 /usr/local/lib/libc/ \
-    && cp /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /usr/local/lib/libc/ld-linux-x86-64.so.2
+    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so \
+    && cp /usr/lib/x86_64-linux-gnu/libc.so.6 . \
+    && cp /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 .

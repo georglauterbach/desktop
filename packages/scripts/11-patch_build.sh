@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+# If there are issues with shared objects or the loader, use 'libtree'
+# (apt-get install libtree) and run it with 'libtree -p -vvv <ELF>'
+
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
@@ -19,22 +22,17 @@ find "${OUT_DIR}" -type d -empty -delete
 
 while read -r EXECUTABLE; do
   [[ $(file --mime-type --brief "${EXECUTABLE}") == *executable* ]] || continue
-  patchelf --set-rpath "${OUT_DIR}/lib/x86_64-linux-gnu" "${EXECUTABLE}"
+  patchelf --add-rpath       "${OUT_DIR}/lib/x86_64-linux-gnu"                      "${EXECUTABLE}"
+  patchelf --set-interpreter "${OUT_DIR}/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2" "${EXECUTABLE}"
   patchelf --shrink-rpath                                "${EXECUTABLE}"
 done < <(command find "${OUT_DIR}" -type f -executable)
 unset EXECUTABLE
 
 while read -r SHARED_OBJECT; do
-  patchelf --set-rpath "${OUT_DIR}/lib/x86_64-linux-gnu" "${SHARED_OBJECT}"
+  [[ ${SHARED_OBJECT} == *ld-linux-x86-64.so.2 ]] && continue
+  patchelf --add-rpath "${OUT_DIR}/lib/x86_64-linux-gnu" "${SHARED_OBJECT}"
   patchelf --shrink-rpath                                "${SHARED_OBJECT}"
 done < <(command find "${OUT_DIR}/lib/" -type f -name '*.so*')
 unset SHARED_OBJECT
-
-# ? final custom adjustments
-
-patchelf --add-rpath "${OUT_DIR}/lib/libstdc++" "${OUT_DIR}/bin/waybar"
-
-patchelf --add-rpath       "${OUT_DIR}/lib/libc"                      "${OUT_DIR}/bin/wl-screenrec"
-patchelf --set-interpreter "${OUT_DIR}/lib/libc/ld-linux-x86-64.so.2" "${OUT_DIR}/bin/wl-screenrec"
 
 log Finished

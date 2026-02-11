@@ -20,6 +20,7 @@ readonly ADDITIONAL_PACKAGES=(
   gnome-keyring
   jq
   kitty
+  libtree
   pipewire
   rtkit
   seahorse
@@ -30,7 +31,7 @@ readonly ADDITIONAL_PACKAGES=(
   #wireplumber
   wdisplays
   wl-clipboard
-  zathura # papers also possible if host >= Ubuntu 25.04
+  papers # or use 'zathura' with 'org.pwmt.zathura.desktop' in 'mimeapps.list' if Ubuntu version < Ubuntu 25.04
 )
 
 apt-get install --yes --no-install-recommends "${ADDITIONAL_PACKAGES[@]}"

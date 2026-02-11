@@ -8,10 +8,6 @@ for PROGRAM in "${INSTALLATION_PREFIX}/bin/"*; do
 
   ldd "${PROGRAM}" | grep ' /lib/' | while read -r _ _ FILE _; do
     [ -e "${INSTALLATION_PREFIX}${FILE}" ] && continue
-    case "${FILE}" in
-      ( *libc.so* | *libstdc\+\+*.so* ) continue ;;
-      ( * ) : ;;
-    esac
 
     echo "Copying '${FILE}' to '${INSTALLATION_PREFIX}${FILE}'"
     mkdir --parents "${INSTALLATION_PREFIX}/$(dirname "${FILE}")"
