@@ -75,8 +75,7 @@
 
 // the currently selected entry
 #element.selected.normal {
-    background-color: @color-foreground;
-    color: @color-background;
+    background-color: @color-green;
     text-color: @color-background;
 }
 
