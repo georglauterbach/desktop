@@ -1,14 +1,12 @@
 // ----------------------------------------------
 // ----  Waybar Configuration  ------------------
-// ----  https://github.com/Alexays/Waybar  ------
+// ----  https://github.com/Alexays/Waybar  -----
 // ----------------------------------------------
 //
-// ----------------------------------------------
-// ----  About This Configuration  --------------
-// ----------------------------------------------
+// cSpell: ignore gwaddr ifname swaync waybar wireplumber wpctl
 //
-// Font Cheat Sheet:
-// https://www.nerdfonts.com/cheat-sheet
+// ref: https://github.com/Alexays/Waybar/wiki/Configuration
+//      https://www.nerdfonts.com/cheat-sheet
 //
 {
   // -------------------------------------------
@@ -30,12 +28,12 @@
     "sway/workspaces"
   ],
   "modules-right": [
-    //"custom/gpu",
+    "custom/gpu",
     "cpu",
     "memory",
     "network",
-    //"battery",
-    //"wireplumber",
+    "wireplumber",
+    "wireplumber#source",
     "clock"
   ],
   // -------------------------------------------
@@ -148,15 +146,24 @@
     "format-plugged": " {capacity:3}%"
   },
   "wireplumber": {
+    "node-type": "Audio/Sink",
     "format": "{icon} {volume:3}%",
     "format-icons": [
       "",
       "",
       ""
     ],
-    "max-volume": 100.0,
     "format-muted": "󰝟 HUSH",
-    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "scroll-step": 5,
+    "max-volume": 100
+  },
+  "wireplumber#source": {
+    "node-type": "Audio/Source",
+    "format": "󰍬 {volume:3}%",
+    "format-muted": "󰍭 MUTE",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+    "scroll-step": 5
   },
   "clock": {
     "locale": "de_DE.UTF-8",

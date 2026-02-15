@@ -1,11 +1,8 @@
 /* ------------------------------------------- */
-/* ----  General  ---------------------------- */
+/* ----  Waybar Styling [Light]  ------------- */
 /* ------------------------------------------- */
 
-/*
-  Waybar Styling [Light System Theme]
-    - GitHub wiki: https://github.com/Alexays/Waybar/wiki/Styling
-*/
+/* ref: https://github.com/Alexays/Waybar/wiki/Styling */
 
 * {
   font-family: "JetbrainsMono Nerd Font";
