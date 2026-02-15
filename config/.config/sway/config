@@ -133,7 +133,7 @@ gaps outer -5
 
 # ---- Focus
 
-mouse_warping container
+mouse_warping none
 focus_follows_mouse yes
 focus_on_window_activation none
 
