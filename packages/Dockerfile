@@ -1,5 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1
 
+# cspell: disable
+
 FROM docker.io/ubuntu:25.10 AS base
 USER root
 
@@ -123,9 +125,6 @@ RUN apt_install       \
     libxcb-damage0-dev
 RUN build xserver meson_ninja -Ddocs=false
 
-COPY build_scripts/finalize_runtime_libs /root/.local/bin/finalize_runtime_libs
-RUN finalize_runtime_libs
-
 # ? Sway
 
 RUN git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.19.2
@@ -180,8 +179,6 @@ RUN build swayfx meson_ninja \
     -Dgdk-pixbuf=enabled         \
     -Dman-pages=enabled          \
     -Dsd-bus-provider=libsystemd
-
-RUN finalize_runtime_libs
 
 # ? Associates
 
@@ -302,6 +299,7 @@ RUN cb wl-screenrec                  build_wl_screenrec
 RUN apt_install librsvg2-dev
 RUN cb wleave                        build_wleave
 
+COPY build_scripts/finalize_runtime_libs /root/.local/bin/finalize_runtime_libs
 RUN finalize_runtime_libs
 
 # ? final custom adjustments

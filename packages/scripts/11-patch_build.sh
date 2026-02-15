@@ -24,14 +24,14 @@ while read -r EXECUTABLE; do
   [[ $(file --mime-type --brief "${EXECUTABLE}") == *executable* ]] || continue
   patchelf --add-rpath       "${OUT_DIR}/lib/x86_64-linux-gnu"                      "${EXECUTABLE}"
   patchelf --set-interpreter "${OUT_DIR}/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2" "${EXECUTABLE}"
-  patchelf --shrink-rpath                                "${EXECUTABLE}"
+  patchelf --shrink-rpath    --allowed-rpath-prefixes "${OUT_DIR}"                  "${EXECUTABLE}"
 done < <(command find "${OUT_DIR}" -type f -executable)
 unset EXECUTABLE
 
 while read -r SHARED_OBJECT; do
   [[ ${SHARED_OBJECT} == *ld-linux-x86-64.so.2 ]] && continue
-  patchelf --add-rpath "${OUT_DIR}/lib/x86_64-linux-gnu" "${SHARED_OBJECT}"
-  patchelf --shrink-rpath                                "${SHARED_OBJECT}"
+  patchelf --add-rpath "${OUT_DIR}/lib/x86_64-linux-gnu"        "${SHARED_OBJECT}"
+  patchelf --shrink-rpath --allowed-rpath-prefixes "${OUT_DIR}" "${SHARED_OBJECT}"
 done < <(command find "${OUT_DIR}/lib/" -type f -name '*.so*')
 unset SHARED_OBJECT
 

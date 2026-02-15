@@ -19,4 +19,4 @@ while read -r FILE; do
   LINK_NAME=/usr/local/${FILE#"${OUT_DIR}/"}
   mkdir -p "$(dirname "${LINK_NAME}")"
   ln --symbolic --force "${FILE}" "${LINK_NAME}"
-done < <(command find "${OUT_DIR}/"{bin,etc,lib/udev,libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,icons,libinput,man,rofi,wayland*}} -type f)
+done < <(command find "${OUT_DIR}/"{bin,etc,lib/udev,libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,icons,libinput,man,metainfo,rofi,wayland*}} -type f)
