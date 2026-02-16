@@ -28,7 +28,7 @@
     "sway/workspaces"
   ],
   "modules-right": [
-    "custom/gpu",
+    //"custom/gpu",
     "cpu",
     "memory",
     "network",
