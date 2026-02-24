@@ -24,6 +24,19 @@ xwayland enable
 # Sway does not natively support in-order startup
 # of applications; hence, we use a shell script
 # to get rid of this limitation.
+#
+# Applications that are started as systemd (user)
+# services or that rely on D-Bus, or those that
+# trigger D-Bus, MUST be started in
+#
+# ${HOME}/.config/sway/user/init.sh
+#
+# to ensure they are started AFTER we imported
+# the correct environment variables to systemd
+# and D-Bus.
+#
+# ref: https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
+#      https://github.com/swaywm/sway/issues/5841
 exec "exec ${HOME}/.config/sway/init.sh"
 
 # We need to ensure the background image is set correctly

@@ -50,6 +50,7 @@ ignoreWords:
   - waybar
   - wl-screenrec
   - wleave
+  - wlsunset
   - zathura
 
   # commands
@@ -63,4 +64,5 @@ ignoreWords:
   # miscellaneous
   - bindsym
   - coolors
+  - SIGUSR
   - stdenv
