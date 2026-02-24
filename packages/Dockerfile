@@ -310,5 +310,8 @@ RUN finalize_runtime_libs
 RUN cd /usr/local/lib/x86_64-linux-gnu \
     && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
     && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so \
-    && cp /usr/lib/x86_64-linux-gnu/libc.so.6 . \
-    && cp /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 .
+    && cp /usr/lib/x86_64-linux-gnu/libc.so.6 \
+          /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 \
+          /usr/lib/x86_64-linux-gnu/libdl.so.2 \
+          /usr/lib/x86_64-linux-gnu/libpthread.so.0 \
+          .
