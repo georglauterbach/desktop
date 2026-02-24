@@ -11,5 +11,3 @@ StandardOutput=journal
 
 Restart=on-failure
 RestartSec=3
-
-Documentation=https://gitlab.com/w0lff/shikane

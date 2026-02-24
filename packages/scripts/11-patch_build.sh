@@ -7,7 +7,7 @@ function log() {
   echo -ne "\033[1m${*}\033[0m"
 }
 
-if command -v lief-patchelf &>/dev/null; then
+if ! command -v lief-patchelf &>/dev/null; then
   echo "ERROR The command 'lief-patchelf' could not be found. Download it from"       >&2
   echo '      https://lief.re/blog/2025-07-13-patchelf/#download or build it (see'    >&2
   echo '      https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation)' >&2

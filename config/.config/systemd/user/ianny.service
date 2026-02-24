@@ -11,5 +11,3 @@ StandardOutput=journal
 
 Restart=on-failure
 RestartSec=3
-
-Documentation=https://github.com/zefr0x/ianny
