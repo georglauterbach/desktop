@@ -8,18 +8,14 @@ function log() {
 }
 
 if [[ ${EUID} -eq 0 ]]; then
-  log 'This script needs to run WITHOUT superuser privileges' >&2
+  log 'ERROR  This script needs to run WITHOUT superuser privileges' >&2
   exit 1
 fi
 
-log 'Running pre-build commands'
-
-for COMMAND in patchelf file earthly; do
-  if ! command -v "${COMMAND}" &>/dev/null; then
-    log "Command '${COMMAND}' not found but required"
-    exit 1
-  fi
-done
+if ! command -v docker &>/dev/null; then
+  log "ERROR  The command 'docker' could not be found" >&2
+  exit 1
+fi
 
 log 'Starting build'
 
