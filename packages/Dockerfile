@@ -113,6 +113,10 @@ RUN apt_install       \
     libxshmfence-dev  \
     x11-xkb-utils     \
     xutils-dev        \
+    libgbm-dev        \
+    libegl-dev        \
+    libgl-dev         \
+    libpixman-1-dev   \
     libxkbfile-dev    \
     libxkbfile-dev    \
     libxfont-dev      \
@@ -120,17 +124,22 @@ RUN apt_install       \
     libepoxy-dev      \
     mesa-common-dev   \
     libtirpc-dev      \
+    libxcb-dri3-dev   \
     libxcb-xinput-dev \
     libxcb-sync-dev   \
     libxcb-damage0-dev
-RUN build xserver meson_ninja -Ddocs=false
+RUN build xserver meson_ninja \
+  -Ddocs=false \
+  -Dglamor=true \
+  -Ddri3=true \
+  -Ddrm=true \
+  -Dglx=true
 
 # ? Sway
 
 RUN git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.19.2
 RUN apt_install             \
     libxkbcommon-dev        \
-    libgbm-dev              \
     libvulkan-dev           \
     glslang-dev             \
     glslang-tools           \
@@ -139,7 +148,6 @@ RUN apt_install             \
     hwdata                  \
     libdisplay-info-dev     \
     libliftoff-dev          \
-    libxcb-dri3-dev         \
     libxcb-present-dev      \
     libxcb-composite0-dev   \
     libxcb-render-util0-dev \
@@ -225,7 +233,6 @@ RUN apt_install            \
     libpulse-dev           \
     libsigc++-2.0-dev      \
     libspdlog-dev          \
-    libwayland-dev         \
     scdoc                  \
     upower                 \
     libxkbregistry-dev     \

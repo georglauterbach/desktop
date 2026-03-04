@@ -5,7 +5,7 @@
 # ----  https://github.com/swaywm/sway/wiki  ----
 # -----------------------------------------------
 
-# cSpell: ignore bindsym bindswitch swayidle swaymsg swaynag
+# cSpell: ignore bindsym bindswitch swayidle swaymsg
 # cSpell: ignore shikanectl lightctl rofi satty swaync wpctl
 # cSpell: ignore acpi combi drun lockscreen pango
 
