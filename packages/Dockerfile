@@ -75,14 +75,14 @@ RUN git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git 1.47
 
 COPY build_scripts/build /root/.local/bin/build
 
-RUN build wayland meson_ninja \
-    -Dlibraries=true          \
-    -Dscanner=true            \
-    -Dtests=false             \
-    -Ddocumentation=false     \
-    -Ddtd_validation=false
+RUN build wayland meson_ninja  \
+    -D libraries=true          \
+    -D scanner=true            \
+    -D tests=false             \
+    -D documentation=false     \
+    -D dtd_validation=false
 
-RUN build wayland-protocols meson_ninja -Dtests=false
+RUN build wayland-protocols meson_ninja -D tests=false
 
 # ? generic dependencies
 
@@ -92,14 +92,16 @@ RUN git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
 COPY build_scripts/apt_install /root/.local/bin/apt_install
 
 RUN apt_install libevdev-dev libmtdev-dev
-RUN build libinput meson_ninja \
-    -Dlibwacom=false           \
-    -Dmtdev=false              \
-    -Ddebug-gui=false          \
-    -Dtests=false              \
-    -Ddocumentation=false
+RUN build libinput meson_ninja  \
+    -D libwacom=false           \
+    -D mtdev=false              \
+    -D debug-gui=false          \
+    -D tests=false              \
+    -D documentation=false
 
-RUN build pixman meson_ninja -Dtests=disabled -Ddemos=disabled
+RUN build pixman meson_ninja \
+    -D tests=disabled        \
+    -D demos=disabled
 
 # ? Xorg
 
@@ -129,11 +131,11 @@ RUN apt_install       \
     libxcb-sync-dev   \
     libxcb-damage0-dev
 RUN build xserver meson_ninja \
-  -Ddocs=false \
-  -Dglamor=true \
-  -Ddri3=true \
-  -Ddrm=true \
-  -Dglx=true
+    -D docs=false             \
+    -D glamor=true            \
+    -D dri3=true              \
+    -D drm=true               \
+    -D glx=true
 
 # ? Sway
 
@@ -157,17 +159,17 @@ RUN apt_install             \
     libxcb-ewmh-dev         \
     libxcb-icccm4-dev       \
     libxcb-res0-dev libgles-dev
-RUN build wlroots meson_ninja   \
-    -Dxwayland=enabled          \
-    -Dexamples=false            \
-    -Drenderers=gles2,vulkan    \
-    -Dbackends=drm,libinput,x11 \
-    -Dsession=enabled           \
-    -Dcolor-management=enabled  \
-    -Dlibliftoff=enabled
+RUN build wlroots meson_ninja    \
+    -D xwayland=enabled          \
+    -D examples=false            \
+    -D renderers=gles2,vulkan    \
+    -D backends=drm,libinput,x11 \
+    -D session=enabled           \
+    -D color-management=enabled  \
+    -D libliftoff=enabled
 
 RUN git_clone https://github.com/wlrfx/scenefx.git main
-RUN build scenefx meson_ninja -Dexamples=false
+RUN build scenefx meson_ninja -D examples=false
 
 RUN apt_install                \
     libjson-c-dev              \
@@ -177,16 +179,16 @@ RUN apt_install                \
     libpango1.0-dev
 RUN git_clone https://github.com/WillPower3309/swayfx.git master
 RUN build swayfx meson_ninja \
-    -Ddefault-wallpaper=false    \
-    -Dzsh-completions=false      \
-    -Dbash-completions=false     \
-    -Dfish-completions=false     \
-    -Dswaybar=false              \
-    -Dswaynag=false              \
-    -Dtray=enabled               \
-    -Dgdk-pixbuf=enabled         \
-    -Dman-pages=enabled          \
-    -Dsd-bus-provider=libsystemd
+    -D default-wallpaper=false    \
+    -D zsh-completions=false      \
+    -D bash-completions=false     \
+    -D fish-completions=false     \
+    -D swaybar=false              \
+    -D swaynag=false              \
+    -D tray=enabled               \
+    -D gdk-pixbuf=enabled         \
+    -D man-pages=enabled          \
+    -D sd-bus-provider=libsystemd
 
 # ? Associates
 
@@ -208,15 +210,15 @@ RUN apt_install blueprint-compiler desktop-file-utils libgtk-4-dev libadwaita-1-
 RUN build door-knocker           meson_ninja
 
 RUN build grim                   meson_ninja
-RUN build rofi                   meson_ninja -Dxcb=disabled -Dwayland=enabled
+RUN build rofi                   meson_ninja -D xcb=disabled -D wayland=enabled
 RUN build slurp                  meson_ninja
 
 RUN apt_install systemd-dev libpulse-dev
-RUN build SwayAudioIdleInhibit   meson_ninja -Dlogind-provider=systemd
+RUN build SwayAudioIdleInhibit   meson_ninja -D logind-provider=systemd
 
 RUN build swaybg                 meson_ninja
 RUN build swayidle               meson_ninja
-RUN build swaylock               meson_ninja -Dpam=enabled
+RUN build swaylock               meson_ninja -D pam=enabled
 
 RUN apt_install            \
     gobject-introspection  \
@@ -241,20 +243,20 @@ RUN apt_install            \
     libsndio-dev           \
     libupower-glib-dev
 RUN build Waybar                 meson_ninja \
-    -Dlibinput=enabled     \
-    -Dlibnl=enabled        \
-    -Dlibudev=enabled      \
-    -Dlibevdev=enabled     \
-    -Dpipewire=enabled     \
-    -Dsystemd=disabled     \
-    -Ddbusmenu-gtk=enabled \
-    -Dman-pages=enabled    \
-    -Drfkill=enabled       \
-    -Dtests=disabled       \
-    -Djack=enabled         \
-    -Dwireplumber=enabled  \
-    -Dcava=disabled        \
-    -Dlogin-proxy=true
+    -D libinput=enabled     \
+    -D libnl=enabled        \
+    -D libudev=enabled      \
+    -D libevdev=enabled     \
+    -D pipewire=enabled     \
+    -D systemd=disabled     \
+    -D dbusmenu-gtk=enabled \
+    -D man-pages=enabled    \
+    -D rfkill=enabled       \
+    -D tests=disabled       \
+    -D jack=enabled         \
+    -D wireplumber=enabled  \
+    -D cava=disabled        \
+    -D login-proxy=true
 
 RUN apt_install            \
     valac                  \
@@ -266,9 +268,9 @@ RUN apt_install            \
     libgtk-layer-shell-dev \
     libgtk4-layer-shell-dev
 RUN build SwayNotificationCenter meson_ninja \
-    -Dsystemd-service=false \
-    -Dzsh-completions=false \
-    -Dfish-completions=false
+    -D systemd-service=false \
+    -D zsh-completions=false \
+    -D fish-completions=false
 
 RUN build wlsunset               meson_ninja
 
@@ -296,11 +298,7 @@ RUN cb shikane                       build_shikane
 
 RUN cb wayland-pipewire-idle-inhibit build_wayland_pipewire_idle_inhibit
 
-RUN apt_install     \
-    libavutil-dev   \
-    libavformat-dev \
-    libavfilter-dev \
-    libavdevice-dev
+RUN apt_install libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
 RUN cb wl-screenrec                  build_wl_screenrec
 
 RUN apt_install librsvg2-dev
