@@ -21,6 +21,7 @@ readonly ADDITIONAL_PACKAGES=(
   jq
   kitty
   libtree
+  mesa-vulkan-drivers
   pipewire
   rtkit
   seahorse
