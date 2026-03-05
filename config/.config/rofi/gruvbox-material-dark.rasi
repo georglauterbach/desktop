@@ -75,8 +75,7 @@
 
 // the currently selected entry
 #element.selected.normal {
-    background-color: @color-green;
-    text-color: @color-background;
+    color: @color-green;
 }
 
 // meta-classes for background and text colors
