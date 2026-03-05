@@ -17,4 +17,5 @@ eval "$(gnome-keyring-daemon --components=ssh,secrets,pkcs11 --start)"
 export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK
 
 echo 'Starting Sway now'
+export WLR_RENDERER=vulkan
 exec sway
