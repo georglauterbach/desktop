@@ -59,7 +59,6 @@ meson_ninja() {
     --optimization 3        \
     --strip                 \
     --warnlevel=0           \
-    --auto-features=enabled \
     --prefix="${INSTALLATION_PREFIX}" "${@}"
 
   ninja -C build install
