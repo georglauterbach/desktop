@@ -22,7 +22,7 @@
 /* ------------------------------------------- */
 
 tooltip {
-  background-color: #FFFBEF;
+  background-color: #F5F5F2;
 }
 
 tooltip label {
@@ -38,7 +38,7 @@ tooltip label {
 #tray {
   padding-left: 5px;
   padding-right: 5px;
-  background: #F2EFDF;
+  background: #EBEBE4;
 }
 
 #tray label {
@@ -46,17 +46,17 @@ tooltip label {
 }
 
 #idle_inhibitor {
-  background: #F2EFDF;
+  background: #EBEBE4;
   color: #5C6A72;
 }
 
 #custom-audio_idle_inhibitor {
-  background: #F2EFDF;
+  background: #EBEBE4;
   color: #5C6A72;
 }
 
 #custom-notifications {
-  background: #F2EFDF;
+  background: #EBEBE4;
   color: #5C6A72;
 }
 
@@ -80,7 +80,7 @@ window#waybar.stacked #window,
 window#waybar.tabbed #window,
 window#waybar.tiled #window {
   color: #5C6A72;
-  /* background: #FFFBEF; */
+  /* background: #F5F5F2; */
   background-color: transparent;
 }
 
@@ -92,7 +92,7 @@ window#waybar>box {
 }
 
 #mode {
-  background: #FFFBEF;
+  background: #F5F5F2;
   color: #5C6A72;
 }
 
@@ -105,7 +105,7 @@ window#waybar>box {
   padding-right: 5px;
   margin-left: 5px;
   margin-right: 5px;
-  background: #F2EFDF;
+  background: #EBEBE4;
 }
 
 #workspaces button label {
@@ -123,7 +123,7 @@ window#waybar>box {
 }
 
 #workspaces button.focused label {
-  color: #FFFBEF;
+  color: #F5F5F2;
 }
 
 #workspaces button.urgent {
@@ -164,7 +164,7 @@ window#waybar>box {
 }
 
 #memory {
-  background: #DFA000;
+  background: #D69A00;
   color: #1D2021;
 }
 

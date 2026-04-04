@@ -48,6 +48,7 @@ ignoreWords:
   - satty
   - shikane
   - waybar
+  - wireplumber
   - wl-screenrec
   - wleave
   - wlsunset

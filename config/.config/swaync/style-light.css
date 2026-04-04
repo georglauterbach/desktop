@@ -9,12 +9,12 @@
 /* ----  Colors  ----------------------------- */
 /* ------------------------------------------- */
 
-@define-color background-dim #F2EFDF;
-@define-color background #FFFBEF;
+@define-color background-dim #EBEBE4;
+@define-color background #F5F5F2;
 @define-color foreground #5C6A72;
 @define-color red #F85552;
 @define-color orange #F57D26;
-@define-color yellow #DFA000;
+@define-color yellow #D69A00;
 @define-color green #8DA101;
 @define-color cyan #35A77C;
 @define-color blue #3A94C5;

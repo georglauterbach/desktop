@@ -1,8 +1,8 @@
 * {
-    color-background: #FFFBEF;
+    color-background: #F5F5F2;
     color-foreground: #5C6A72;
     color-red: #F85552;
-    color-yellow: #DFA000;
+    color-yellow: #D69A00;
     color-green: #8DA101;
 
     background-color: @color-background;
