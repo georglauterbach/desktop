@@ -1,7 +1,7 @@
 {
   "Exclude": [
     "^LICENSE",
-    "^theme/gtk/",
-    "^data/.config/sway/theme/"
+    "^theme/",
+    "^home/.config/sway/theme/"
   ]
 }
