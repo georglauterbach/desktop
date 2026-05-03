@@ -1,0 +1,26 @@
+#! /bin/sh
+
+set -e -u
+
+for PROGRAM in "${__INSTALLATION_PREFIX}/bin/"*; do
+  file "${PROGRAM}" | grep --quiet 'dynamically linked' || continue
+  strip --strip-all "${PROGRAM}"
+
+  ldd "${PROGRAM}" | grep -E ' /(usr/)?lib/' | while read -r _ _ FILE _; do
+    FILE=${FILE#/usr}
+    [ -e "${__INSTALLATION_PREFIX}${FILE}" ] && continue
+
+    echo "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
+    mkdir --parents "${__INSTALLATION_PREFIX}/$(dirname "${FILE}")"
+    cp "${FILE}" "${__INSTALLATION_PREFIX}${FILE}"
+
+    if [ -L "${FILE}" ]; then
+      LINK_TARGET=$(realpath --canonicalize-existing --logical "${FILE}")
+      [ -e "${__INSTALLATION_PREFIX}/${LINK_TARGET#/usr}" ] && continue
+
+      echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
+      mkdir --parents "$(dirname "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}")"
+      cp "${LINK_TARGET}" "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}"
+    fi
+  done
+done

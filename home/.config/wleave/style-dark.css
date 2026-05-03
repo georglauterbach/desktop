@@ -1,0 +1,64 @@
+:root {
+  --background-dim: #141617;
+  --background: #1D2021;
+  --foreground: #DDC7A1;
+  --red: #EA6962;
+  --orange: #E78A4E;
+  --yellow: #D8A657;
+  --green: #A9B665;
+  --cyan: #7BB674;
+  --blue: #7DAEA3;
+  --purple: #D3869B;
+}
+
+window {
+  background-color: alpha(var(--background-dim), 0.95);
+}
+
+button {
+  color: oklab(from var(--view-fg-color) var(--standalone-color-oklab));
+  background-color: var(--background);
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 1.5rem;
+  margin: 0px;
+  padding: 10px;
+}
+
+button:focus,
+button:hover {
+  background-color: color-mix(in srgb, var(--view-fg-color), var(--view-bg-color));
+}
+
+button:focus,
+button:hover,
+button:active {
+  outline: none;
+}
+
+button label.keybind {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+button#lock {
+  --view-fg-color: var(--blue);
+}
+
+button#logout {
+  --view-fg-color: var(--purple);
+}
+
+button#reboot {
+  --view-fg-color: var(--green);
+}
+
+button#suspend {
+  --view-fg-color: var(--yellow);
+}
+
+button#hibernate {
+  --view-fg-color: var(--orange);
+}
+
+button#shutdown {
+  --view-fg-color: var(--red);
+}

@@ -1,0 +1,59 @@
+#! /bin/sh
+
+set -e -u
+
+build_alacritty() {
+  cargo build --release --no-default-features --features=wayland
+  install -s -Dm755 target/release/alacritty -t "${__INSTALLATION_PREFIX}/bin/"
+
+  scdoc < extra/man/alacritty.1.scd          | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man1/alacritty.1.gz"
+  scdoc < extra/man/alacritty-msg.1.scd      | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man1/alacritty-msg.1.gz"
+  scdoc < extra/man/alacritty.5.scd          | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty.5.gz"
+  scdoc < extra/man/alacritty-bindings.5.scd | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
+}
+
+build_ianny() {
+  cargo build --release
+  install -s -Dm755 target/release/ianny -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_lightctl() {
+  cargo build --release
+  install -s -Dm755 target/release/lightctl -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_satty() {
+  cargo build --release
+  install -s -Dm755 target/release/satty -t "${__INSTALLATION_PREFIX}/bin/"
+  install -Dm644 assets/satty.svg "${__INSTALLATION_PREFIX}/share/icons/hicolor/scalable/apps/satty.svg"
+  install -Dm644 satty.desktop    "${__INSTALLATION_PREFIX}/share/applications/satty.desktop"
+}
+
+build_shikane() {
+  cargo build --release
+  install -s -Dm755 target/release/shikane    -t "${__INSTALLATION_PREFIX}/bin/"
+  install -s -Dm755 target/release/shikanectl -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_wayland_pipewire_idle_inhibit() {
+  cargo build --release
+  install -s -Dm755 target/release/wayland-pipewire-idle-inhibit -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_wl_screenrec() {
+  cargo build --release
+  install -s -Dm755 target/release/wl-screenrec -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_wleave() {
+  cargo build --release
+  install -s -Dm755 target/release/wleave -t "${__INSTALLATION_PREFIX}/bin/"
+}
+
+build_build_nwg_look() {
+  make build
+  make install "PREFIX=${__INSTALLATION_PREFIX}"
+}
+
+__log "Building '${1:?Directory to build in is required}'"
+( cd "${1}" ; shift 1 ; "${@}" ; )

@@ -1,0 +1,13 @@
+# ref: https://wiki.archlinux.org/title/Systemd/User
+#      https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+
+[Unit]
+Description=Ianny | Utility That Helps Preventing Repetitive Strain Injuries
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ianny
+StandardOutput=journal
+
+Restart=on-failure
+RestartSec=3

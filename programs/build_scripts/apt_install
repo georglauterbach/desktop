@@ -1,0 +1,6 @@
+#! /bin/sh
+
+set -e -u
+
+__log "Installing ${*}"
+apt-get install --quiet=2 -o=Dpkg::Use-Pty=0 --yes --no-install-recommends "${@}"

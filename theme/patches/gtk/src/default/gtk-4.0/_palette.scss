@@ -1,0 +1,50 @@
+// Evergruv palette
+//   Light: Everforest (Hard)        https://github.com/sainnhe/everforest
+//   Dark:  Gruvbox Material (Hard)  https://github.com/sainnhe/gruvbox-material
+//
+// Evergruv defines: background_dim, background, foreground, red, orange,
+// yellow, green, cyan (==aqua), blue, purple (==magenta).
+// Yaru's palette has more entries than Evergruv, so secondary tints/shades
+// are derived from the closest Evergruv color.
+
+// Blacks
+$jet: if($variant == 'light', #5C6A72, #141617);
+$inkstone: if($variant == 'light', #5C6A72, #1D2021);
+$slate: if($variant == 'light', #939F91, #3C3836);
+$graphite: if($variant == 'light', #A6B0A0, #504945);
+
+// Whites
+$white: if($variant == 'light', #F5F5F2, #DDC7A1);
+$porcelain: if($variant == 'light', #F5F5F2, #DDC7A1);
+$silk: if($variant == 'light', #EBEBE4, #BDAE93);
+$warm_gray: if($variant == 'light', #D3C6AA, #A89984);
+$ash: if($variant == 'light', #939F91, #928374);
+
+// Purples (Evergruv "purple")
+$aubergine: if($variant == 'light', #DF69BA, #D3869B);
+$purple: if($variant == 'light', #DF69BA, #D3869B);
+$light_aubergine: if($variant == 'light', #E892C5, #DDA0AE);
+$mid_aubergine: if($variant == 'light', #C7569E, #B86B82);
+$dark_aubergine: if($variant == 'light', #8E3A6A, #80485A);
+
+// Reds
+$red: if($variant == 'light', #F85552, #EA6962);
+
+// Oranges
+$orange: if($variant == 'light', #F57D26, #E78A4E);
+
+// Yellows
+$yellow: if($variant == 'light', #D69A00, #D8A657);
+
+// Greens
+$green: if($variant == 'light', #8DA101, #A9B665);
+
+// Blues (Evergruv "blue" / "cyan")
+$blue: if($variant == 'light', #3A94C5, #7DAEA3);
+$linkblue: if($variant == 'light', #35A77C, #89B482);
+$darkblue: if($variant == 'light', #2D7AA1, #5E8E86);
+
+
+// Semantic colors: green accent on light, yellow accent on dark
+$accent_bg_color: if($variant == 'light', $green, $yellow) !default;
+$accent_fg_color: if($variant == 'light', $white, $jet) !default;

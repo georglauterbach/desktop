@@ -1,0 +1,13 @@
+# ref: https://wiki.archlinux.org/title/Systemd/User
+#      https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+
+[Unit]
+Description=Shikane | Dynamic Output Configuration Tool
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/shikane
+StandardOutput=journal
+
+Restart=on-failure
+RestartSec=3
