@@ -1,0 +1,18 @@
+# ref: https://wiki.archlinux.org/title/Systemd/User
+#      https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+
+[Unit]
+Description=Waybar | Highly Customizable Wayland Bar
+Wants=xdg-desktop-portal.service swaync.service
+After=xdg-desktop-portal.service swaync.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/waybar --log-level warning
+ExecReload=kill -SIGUSR2 $MAINPID
+StandardOutput=journal
+
+Restart=on-failure
+RestartSec=1
+
+Documentation=https://github.com/Alexays/Waybar

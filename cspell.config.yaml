@@ -1,0 +1,84 @@
+---
+version: '0.2'
+
+ignorePaths:
+  - '*/src'
+  - '*/out'
+
+dictionaries:
+  - en_US
+  - softwareTerms
+  - bash
+
+words:
+  - lockscreen
+
+ignoreWords:
+  # names
+  - georglauterbach
+  - firacode
+  - patorjk
+
+  # theme
+  - everforest
+  - evergruv
+  - gruvbox
+  - yaru
+
+  # Sway
+  - swayfx
+  - swayidle
+  - swayimg
+  - swaylock
+  - swaymsg
+  - swaync
+  - swaynotificationcenter
+  - xwayland
+
+  # packages
+  - awww
+  - btop
+  - bwrap
+  - gamemode
+  - ianny
+  - lightctl
+  - patchelf
+  - pipewire
+  - ptyxis
+  - rofi
+  - rtkit
+  - satty
+  - shikane
+  - swayidle
+  - swaync
+  - waybar
+  - wdisplays
+  - wireplumber
+  - wl-screenrec
+  - wl_screenrec
+  - wleave
+  - wlsunset
+  - yazi
+
+  # commands
+  - __powerprofile
+  - gsettings
+  - lightctl
+  - powerprofilesctl
+  - rustup
+  - scdoc
+  - shikanectl
+  - swaymsg
+  - wpctl
+
+  # acronyms
+  - PKCS11
+
+  # miscellaneous
+  - acpi
+  - bindsym
+  - containerfile
+  - coolors
+  - SIGUSR
+  - titlebar
+  - userns

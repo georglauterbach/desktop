@@ -1,0 +1,6 @@
+[Context]
+filesystems=~/.local/share/themes:ro;~/.local/share/icons:ro;~/.themes;~/.icons;
+
+[Environment]
+GTK_THEME=Yaru-dark
+ICON_THEME=Yaru-dark

@@ -1,0 +1,36 @@
+#! /bin/sh
+
+set -e -u
+
+copy_shared_objects_from_file() {
+  OBJECT=${1:?TODO}
+  [ -f "${OBJECT}" ] || return 0
+  file "${OBJECT}" | grep --quiet 'dynamically linked' || return 0
+  strip --strip-all "${OBJECT}"
+
+  ldd "${OBJECT}" | grep -E ' /(usr/)?lib/' | while read -r _ _ FILE _; do
+    FILE=${FILE#/usr}
+    [ -e "${__INSTALLATION_PREFIX}${FILE}" ] && continue
+
+    echo "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
+    mkdir --parents "${__INSTALLATION_PREFIX}/$(dirname "${FILE}")"
+    cp "${FILE}" "${__INSTALLATION_PREFIX}${FILE}"
+
+    if [ -L "${FILE}" ]; then
+      LINK_TARGET=$(realpath --canonicalize-existing --logical "${FILE}")
+      [ -e "${__INSTALLATION_PREFIX}/${LINK_TARGET#/usr}" ] && continue
+
+      echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
+      mkdir --parents "$(dirname "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}")"
+      cp "${LINK_TARGET}" "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}"
+    fi
+  done
+}
+
+for PROGRAM in "${__INSTALLATION_PREFIX}/bin/"* ; do
+  copy_shared_objects_from_file "${PROGRAM}"
+done
+
+find /usr/local/libexec -executable | while read -r LIBEXEC_PROGRAM; do
+  copy_shared_objects_from_file "${LIBEXEC_PROGRAM}"
+done

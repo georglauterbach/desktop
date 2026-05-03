@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+
+CHOICE=$(powerprofilesctl list | grep -o '[a-z-]*:$' | tr -d : | rofi -dmenu -i -p "Power Profile [active=$(powerprofilesctl get)]")
+[[ -z ${CHOICE} ]] || powerprofilesctl set "${CHOICE}"

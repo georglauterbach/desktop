@@ -1,0 +1,16 @@
+{
+  "disableGpu": false,
+  "electronCLIFlags": [
+    [
+      "enable-features",
+      "WebRtcPipeWireCamera,AcceleratedVideoDecodeLinuxGL,AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoEncoder"
+    ]
+  ],
+  "logConfig": {
+    "transports": {
+      "console": {
+        "level": "warn"
+      }
+    }
+  }
+}
