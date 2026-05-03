@@ -1,0 +1,11 @@
+#! /bin/sh
+
+set -e -u
+
+GIT_URI=${1:?URI for cloning is required}
+GIT_REV=${2:?git revision is required}
+shift 2
+
+DIR_NAME=$(printf '%s' "${GIT_URI}" | sed -E 's|.*/(.*)\.git$|\1|')
+__log "Preparing ${DIR_NAME} @ ${GIT_REV}"
+git clone --quiet --depth 1 --branch "${GIT_REV}" "${GIT_URI}"

@@ -1,0 +1,169 @@
+/* Evergruv dark - standalone GTK 3 theme
+ *
+ * REF https://github.com/georglauterbach/evergruv
+ *     https://docs.gtk.org/gtk3/css-overview.html
+ *
+ * Installs as ~/.themes/Evergruv-Dark/gtk-3.0/gtk.css and is selected
+ * via `gsettings set org.gnome.desktop.interface gtk-theme Evergruv-Dark`
+ * (also affected by the GTK_THEME env var). Color palette mirrors the GTK 4 file.
+ */
+
+@define-color theme_bg_color           #1D2021;
+@define-color theme_fg_color           #DDC7A1;
+@define-color theme_base_color         #1D2021;
+@define-color theme_text_color         #DDC7A1;
+@define-color theme_selected_bg_color  #D8A657;
+@define-color theme_selected_fg_color  #141617;
+@define-color theme_unfocused_bg_color #141617;
+@define-color theme_unfocused_fg_color #DDC7A1;
+
+@define-color insensitive_bg_color   #141617;
+@define-color insensitive_fg_color   alpha(#DDC7A1, 0.5);
+@define-color insensitive_base_color #141617;
+
+@define-color borders         #DDC7A180;
+@define-color unfocused_borders #DDC7A180;
+
+@define-color warning_color     #E78A4E;
+@define-color error_color       #EA6962;
+@define-color success_color     #A9B665;
+@define-color destructive_color #EA6962;
+
+@define-color accent_bg_color #D8A657;
+@define-color accent_color    #D8A657;
+@define-color accent_fg_color #141617;
+
+@define-color window_bg_color #1D2021;
+@define-color window_fg_color #DDC7A1;
+@define-color view_bg_color   #1D2021;
+@define-color view_fg_color   #DDC7A1;
+
+@define-color headerbar_bg_color     #141617;
+@define-color headerbar_fg_color     #DDC7A1;
+@define-color headerbar_border_color #DDC7A180;
+
+@define-color sidebar_bg_color #141617;
+@define-color sidebar_fg_color #DDC7A1;
+
+@define-color card_bg_color    #1D2021;
+@define-color popover_bg_color #1D2021;
+@define-color dialog_bg_color  #1D2021;
+
+@define-color shade_color #00000080;
+
+/* Widget rules - kept minimal, mirroring the GTK 4 stylesheet. */
+
+window,
+.background {
+  background-color: @theme_bg_color;
+  color: @theme_fg_color;
+}
+
+headerbar,
+.titlebar {
+  background-color: @headerbar_bg_color;
+  color: @headerbar_fg_color;
+  border-bottom: 1px solid @headerbar_border_color;
+}
+
+button {
+  background-color: alpha(@theme_fg_color, 0.06);
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+button:hover {
+  background-color: alpha(@accent_color, 0.15);
+}
+
+button:active,
+button:checked {
+  background-color: alpha(@accent_color, 0.25);
+  color: @accent_color;
+}
+
+button.suggested-action {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+  border-color: @accent_bg_color;
+}
+
+button.destructive-action {
+  background-color: @destructive_color;
+  color: @accent_fg_color;
+  border-color: @destructive_color;
+}
+
+entry,
+spinbutton {
+  background-color: @view_bg_color;
+  color: @view_fg_color;
+  border: 1px solid @borders;
+}
+
+entry:focus,
+spinbutton:focus {
+  border-color: @accent_color;
+}
+
+selection,
+*:selected {
+  background-color: alpha(@accent_color, 0.35);
+  color: @theme_fg_color;
+}
+
+menu,
+.menu,
+popover,
+.popover {
+  background-color: @popover_bg_color;
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+menuitem:hover,
+.menuitem:hover {
+  background-color: alpha(@accent_color, 0.2);
+  color: @theme_fg_color;
+}
+
+tooltip,
+tooltip.background {
+  background-color: @popover_bg_color;
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+scrollbar slider {
+  background-color: alpha(@theme_fg_color, 0.35);
+}
+
+scrollbar slider:hover {
+  background-color: alpha(@accent_color, 0.6);
+}
+
+progressbar > trough > progress,
+progressbar progress {
+  background-color: @accent_bg_color;
+}
+
+switch:checked {
+  background-color: @accent_bg_color;
+}
+
+check:checked,
+radio:checked,
+checkbutton:checked,
+radiobutton:checked {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+notebook > header {
+  background-color: @headerbar_bg_color;
+  border-color: @borders;
+}
+
+notebook > header tab:checked {
+  color: @accent_color;
+}

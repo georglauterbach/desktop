@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Evergruv-Dark
+Comment=Inspired by Everforest Light & Gruvbox Material Dark
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Evergruv-Dark
+MetacityTheme=Adwaita
+IconTheme=gruvbox-plus-dark
+CursorTheme=Adwaita
+ButtonLayout=

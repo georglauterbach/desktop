@@ -1,0 +1,69 @@
+---
+version: '0.2'
+
+ignorePaths:
+  - '*/src'
+  - '*/out'
+
+dictionaries:
+  - en_US
+  - softwareTerms
+  - bash
+
+words:
+  - lockscreen
+
+ignoreWords:
+  # names
+  - Everforest
+  - Evergruv
+  - georglauterbach
+  - Gruvbox
+  - FiraCode
+
+  # Nix
+  - nix
+  - nixd
+  - nixfmt
+  - nixgl
+  - nixos
+  - nixpkgs
+
+  # Sway
+  - swaybg
+  - swayfx
+  - swayidle
+  - swayimg
+  - swaylock
+  - swaymsg
+  - swaync
+  - swaynotificationcenter
+  - xwayland
+
+  # packages
+  - ianny
+  - patchelf
+  - pipewire
+  - rofi
+  - satty
+  - shikane
+  - waybar
+  - wireplumber
+  - wl-screenrec
+  - wleave
+  - wlsunset
+  - zathura
+
+  # commands
+  - rustup
+  - shikanectl
+  - wpctl
+
+  # acronyms
+  - PKCS11
+
+  # miscellaneous
+  - bindsym
+  - coolors
+  - SIGUSR
+  - stdenv

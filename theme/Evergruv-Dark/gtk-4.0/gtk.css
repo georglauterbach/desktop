@@ -1,0 +1,167 @@
+/* Evergruv dark - standalone GTK 4 theme
+ *
+ * REF https://github.com/georglauterbach/evergruv
+ *     https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/named-colors.html
+ *
+ * Installs as ~/.themes/Evergruv-Dark/gtk-4.0/gtk.css and is selected via
+ * `gsettings set org.gnome.desktop.interface gtk-theme Evergruv-Dark` or
+ * `GTK_THEME=Evergruv-Dark <app>`. Affects plain GTK 4 apps; libadwaita
+ * apps only honor the named-color overrides below, not the widget rules.
+ */
+
+@define-color accent_bg_color #D8A657;
+@define-color accent_color    #D8A657;
+@define-color accent_fg_color #141617;
+
+@define-color window_bg_color #1D2021;
+@define-color window_fg_color #DDC7A1;
+
+@define-color view_bg_color #1D2021;
+@define-color view_fg_color #DDC7A1;
+
+@define-color headerbar_bg_color       #141617;
+@define-color headerbar_fg_color       #DDC7A1;
+@define-color headerbar_border_color   #DDC7A180;
+@define-color headerbar_backdrop_color #1D2021;
+@define-color headerbar_shade_color    #00000080;
+
+@define-color sidebar_bg_color       #141617;
+@define-color sidebar_fg_color       #DDC7A1;
+@define-color sidebar_backdrop_color #1D2021;
+@define-color sidebar_border_color   #DDC7A180;
+@define-color sidebar_shade_color    #00000080;
+
+@define-color secondary_sidebar_bg_color       #141617;
+@define-color secondary_sidebar_fg_color       #DDC7A1;
+@define-color secondary_sidebar_backdrop_color #1D2021;
+@define-color secondary_sidebar_border_color   #DDC7A180;
+@define-color secondary_sidebar_shade_color    #00000080;
+
+@define-color card_bg_color    #1D2021;
+@define-color card_fg_color    #DDC7A1;
+@define-color card_shade_color #00000080;
+
+@define-color popover_bg_color    #1D2021;
+@define-color popover_fg_color    #DDC7A1;
+@define-color popover_shade_color #00000080;
+
+@define-color dialog_bg_color #1D2021;
+@define-color dialog_fg_color #DDC7A1;
+
+@define-color destructive_bg_color #EA6962;
+@define-color destructive_color    #EA6962;
+@define-color destructive_fg_color #141617;
+
+@define-color error_bg_color #EA6962;
+@define-color error_color    #EA6962;
+@define-color error_fg_color #141617;
+
+@define-color warning_bg_color #E78A4E;
+@define-color warning_color    #E78A4E;
+@define-color warning_fg_color #141617;
+
+@define-color success_bg_color #A9B665;
+@define-color success_color    #A9B665;
+@define-color success_fg_color #141617;
+
+@define-color borders     #DDC7A180;
+@define-color shade_color #00000080;
+
+/*
+ * Minimal widget rules for plain (non-libadwaita) GTK 4 apps.
+ * libadwaita styles its widgets independently and ignores most of these.
+ */
+
+window,
+.background {
+  background-color: @window_bg_color;
+  color: @window_fg_color;
+}
+
+headerbar {
+  background-color: @headerbar_bg_color;
+  color: @headerbar_fg_color;
+  border-bottom: 1px solid @headerbar_border_color;
+}
+
+button {
+  background-color: alpha(@view_fg_color, 0.06);
+  color: @window_fg_color;
+  border: 1px solid @borders;
+}
+
+button:hover {
+  background-color: alpha(@accent_color, 0.15);
+}
+
+button:active,
+button:checked {
+  background-color: alpha(@accent_color, 0.25);
+  color: @accent_color;
+}
+
+button.suggested-action {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+  border-color: @accent_bg_color;
+}
+
+button.destructive-action {
+  background-color: @destructive_bg_color;
+  color: @destructive_fg_color;
+  border-color: @destructive_bg_color;
+}
+
+entry,
+spinbutton {
+  background-color: @view_bg_color;
+  color: @view_fg_color;
+  border: 1px solid @borders;
+}
+
+entry:focus,
+spinbutton:focus {
+  border-color: @accent_color;
+  outline-color: alpha(@accent_color, 0.5);
+}
+
+selection,
+*:selected {
+  background-color: alpha(@accent_color, 0.35);
+  color: @window_fg_color;
+}
+
+popover > contents,
+popover.menu > contents {
+  background-color: @popover_bg_color;
+  color: @popover_fg_color;
+  border: 1px solid @borders;
+}
+
+tooltip {
+  background-color: @popover_bg_color;
+  color: @popover_fg_color;
+  border: 1px solid @borders;
+}
+
+scrollbar slider {
+  background-color: alpha(@view_fg_color, 0.35);
+}
+
+scrollbar slider:hover {
+  background-color: alpha(@accent_color, 0.6);
+}
+
+progressbar > trough > progress {
+  background-color: @accent_bg_color;
+}
+
+switch:checked {
+  background-color: @accent_bg_color;
+}
+
+check:checked,
+radio:checked {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}

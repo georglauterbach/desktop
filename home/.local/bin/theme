@@ -1,0 +1,208 @@
+#! /usr/bin/env bash
+
+# cSpell: ignore btop gsettings gtkrc rasi
+
+set +eE -u -o pipefail
+shopt -s inherit_errexit
+
+# satisfy `tput`
+export TERM=xterm
+
+function log_info() {
+  echo -e "\033[1;34mINFO\033[0m  ${1:?Log info message required}"
+}
+
+function log_warn() {
+  echo -e "\033[1;33mWARN\033[0m  ${1:?Log warning message required}" >&2
+  ERROR_OCCURRED=true
+}
+
+function log_error_and_exit() {
+  echo -e "\033[1;31mERROR\033[0m ${1:?Log error message required}" >&2
+  exit 1
+}
+
+function set_theme_alacritty() {
+  local CONFIG_FILE=${HOME}/.config/alacritty/style-${THEME_VARIANT}.toml
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Alacritty configuration'
+    if ! ln --symbolic --force \
+      "${CONFIG_FILE}" \
+      "${HOME}/.config/alacritty/style-active.toml"; then
+      log_warn 'Could not update color theme of Alacritty'
+    fi
+  fi
+}
+
+function set_theme_btop() {
+  local CONFIG_FILE=${HOME}/.config/btop/btop.conf
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating btop configuration'
+    if ! sed --in-place --regexp-extended \
+      "s/^(color_theme =).*/\1 \"${THEME_NAME_COMPLETE}\"/" "${CONFIG_FILE}"; then
+      log_warn 'Could not update color theme of btop'
+    fi
+  fi
+}
+
+function set_theme_kitty() {
+  local CONFIG_FILE=${HOME}/.config/kitty/style-${THEME_VARIANT}.conf
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Kitty configuration'
+    if ! ln --symbolic --force \
+      "${CONFIG_FILE}" \
+      "${HOME}/.config/kitty/kitty.conf"; then
+      log_warn 'Could not update color theme of Kitty'
+    fi
+  fi
+}
+
+function set_theme_rofi() {
+  local CONFIG_FILE=${HOME}/.config/rofi/config.rasi
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Rofi configuration'
+    if ! sed --in-place --regexp-extended \
+      "s/(theme )\".*\"/\1\"style-${THEME_VARIANT}\"/" \
+      "${CONFIG_FILE}"; then
+      log_warn 'Could not update color theme of Rofi'
+    fi
+  fi
+}
+
+function set_theme_swaylock() {
+  local CONFIG_FILE=${HOME}/.config/swaylock/style-${THEME_VARIANT}
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Swaylock configuration'
+    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaylock/config"; then
+      log_warn 'Could not update color theme of Swaylock'
+    fi
+  fi
+}
+
+function set_theme_swaync() {
+  local CONFIG_FILE=${HOME}/.config/swaync/style-${THEME_VARIANT}.css
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating SwayNC configuration'
+    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaync/style.css"; then
+      log_warn 'Could not update color theme of SwayNC'
+    fi
+
+    if ! pgrep '^swaync$' &>/dev/null; then
+      log_warn 'SwayNC is not running - restarting it'
+      swaync >/tmp/.sway.swaync.log 2>/tmp/.sway.swaync.err.log &
+      disown -a
+    fi
+
+    swaync-client --skip-wait --reload-css >/dev/null
+  fi
+}
+
+function set_theme_wleave() {
+  local CONFIG_FILE=${HOME}/.config/wleave/style-${THEME_VARIANT}.css
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Wleave configuration'
+    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/wleave/style.css"; then
+      log_warn 'Could not update color theme of Wleave'
+    fi
+  fi
+}
+
+function set_theme_zellij() {
+  local CONFIG_FILE=${HOME}/.config/zellij/config.kdl
+
+  if [[ -f ${CONFIG_FILE} ]]; then
+    log_info 'Updating Zellij configuration'
+    if ! sed --in-place --regexp-extended \
+      "s/(theme )\".*\"/\1\"evergruv-${THEME_VARIANT}\"/" \
+      "${CONFIG_FILE}"; then
+      log_warn 'Could not update color theme of Zellij'
+    fi
+  fi
+}
+
+function set_theme_gtk() {
+  gsettings set org.gnome.desktop.interface color-scheme        "prefer-${THEME_VARIANT}"
+  gsettings set org.gnome.desktop.interface gtk-theme           "${GTK_THEME}"
+  gsettings set org.gnome.desktop.interface icon-theme          "${ICON_THEME}"
+
+  gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
+  gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
+  gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
+
+  local GTK_CONFIG
+  for GTK_CONFIG in gtk-{2,3,4}.0; do
+    if [[ -e /usr/share/themes/${GTK_THEME}/${GTK_CONFIG} ]]; then
+      rm --recursive --force "${HOME}/.config/${GTK_CONFIG}"
+      ln --symbolic --force                            \
+        "/usr/share/themes/${GTK_THEME}/${GTK_CONFIG}" \
+        "${HOME}/.config/${GTK_CONFIG}"
+    else
+      rm --recursive --force "${HOME}/.config/${GTK_CONFIG}"
+    fi
+  done
+}
+
+function set_wallpaper() {
+  if [[ -e ${WALLPAPER} ]]; then
+    local WALLPAPER_LINK="${HOME}/.config/sway/theme/wallpaper.svg"
+    ln --symbolic --force "${WALLPAPER}" "${WALLPAPER_LINK}"
+    swaymsg output '*' bg "${WALLPAPER_LINK}" fill
+  else
+    log_warn "Wallpaper file '${WALLPAPER}' does not exist"
+  fi
+}
+
+function main() {
+  local THEME_VARIANT GTK_THEME ICON_THEME
+
+  case "${1:-}" in
+    ( d | dark )
+      readonly THEME_VARIANT=dark
+      readonly GTK_THEME=Gruvbox-Material-Dark
+      readonly ICON_THEME=gruvbox-plus-dark
+      ;;
+
+    ( l | light )
+      readonly THEME_VARIANT=light
+      readonly GTK_THEME=Everforest-Light
+      readonly ICON_THEME=everforest-light
+      ;;
+
+    ( * )
+      log_error_and_exit "Argument '${1:-}' is invalid - use 'light|l' or 'dark|d'"
+      ;;
+  esac
+
+  readonly THEME_NAME_COMPLETE=evergruv-${THEME_VARIANT}
+  readonly WALLPAPER=${HOME}/.config/sway/theme/${THEME_VARIANT}/wallpaper.svg
+  ERROR_OCCURRED=false
+
+  log_info "Updating preferred color palette to $(tput bold)${THEME_VARIANT}$(tput sgr0)"
+
+  set_theme_gtk
+  set_wallpaper
+
+  set_theme_alacritty
+  set_theme_btop
+  set_theme_kitty
+  set_theme_rofi
+  set_theme_swaylock
+  set_theme_swaync
+  set_theme_wleave
+  set_theme_zellij
+
+  if "${ERROR_OCCURRED}"; then
+    exit 1
+  else
+    exit 0
+  fi
+}
+
+main "${@}"

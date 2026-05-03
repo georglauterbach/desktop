@@ -1,0 +1,169 @@
+/* Evergruv light - standalone GTK 3 theme
+ *
+ * REF https://github.com/georglauterbach/evergruv
+ *     https://docs.gtk.org/gtk3/css-overview.html
+ *
+ * Installs as ~/.themes/Evergruv-Light/gtk-3.0/gtk.css and is selected
+ * via `gsettings set org.gnome.desktop.interface gtk-theme Evergruv-Light`
+ * (also affected by the GTK_THEME env var). Color palette mirrors the GTK 4 file.
+ */
+
+@define-color theme_bg_color           #F5F5F2;
+@define-color theme_fg_color           #5C6A72;
+@define-color theme_base_color         #F5F5F2;
+@define-color theme_text_color         #5C6A72;
+@define-color theme_selected_bg_color  #8DA101;
+@define-color theme_selected_fg_color  #F5F5F2;
+@define-color theme_unfocused_bg_color #EBEBE4;
+@define-color theme_unfocused_fg_color #5C6A72;
+
+@define-color insensitive_bg_color   #EBEBE4;
+@define-color insensitive_fg_color   alpha(#5C6A72, 0.5);
+@define-color insensitive_base_color #EBEBE4;
+
+@define-color borders         #5C6A7280;
+@define-color unfocused_borders #5C6A7280;
+
+@define-color warning_color     #F57D26;
+@define-color error_color       #F85552;
+@define-color success_color     #8DA101;
+@define-color destructive_color #F85552;
+
+@define-color accent_bg_color #8DA101;
+@define-color accent_color    #8DA101;
+@define-color accent_fg_color #F5F5F2;
+
+@define-color window_bg_color #F5F5F2;
+@define-color window_fg_color #5C6A72;
+@define-color view_bg_color   #F5F5F2;
+@define-color view_fg_color   #5C6A72;
+
+@define-color headerbar_bg_color     #EBEBE4;
+@define-color headerbar_fg_color     #5C6A72;
+@define-color headerbar_border_color #5C6A7280;
+
+@define-color sidebar_bg_color #EBEBE4;
+@define-color sidebar_fg_color #5C6A72;
+
+@define-color card_bg_color    #F5F5F2;
+@define-color popover_bg_color #F5F5F2;
+@define-color dialog_bg_color  #F5F5F2;
+
+@define-color shade_color #00000040;
+
+/* Widget rules - kept minimal, mirroring the GTK 4 stylesheet. */
+
+window,
+.background {
+  background-color: @theme_bg_color;
+  color: @theme_fg_color;
+}
+
+headerbar,
+.titlebar {
+  background-color: @headerbar_bg_color;
+  color: @headerbar_fg_color;
+  border-bottom: 1px solid @headerbar_border_color;
+}
+
+button {
+  background-color: alpha(@theme_fg_color, 0.06);
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+button:hover {
+  background-color: alpha(@accent_color, 0.15);
+}
+
+button:active,
+button:checked {
+  background-color: alpha(@accent_color, 0.25);
+  color: @accent_color;
+}
+
+button.suggested-action {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+  border-color: @accent_bg_color;
+}
+
+button.destructive-action {
+  background-color: @destructive_color;
+  color: @accent_fg_color;
+  border-color: @destructive_color;
+}
+
+entry,
+spinbutton {
+  background-color: @view_bg_color;
+  color: @view_fg_color;
+  border: 1px solid @borders;
+}
+
+entry:focus,
+spinbutton:focus {
+  border-color: @accent_color;
+}
+
+selection,
+*:selected {
+  background-color: alpha(@accent_color, 0.35);
+  color: @theme_fg_color;
+}
+
+menu,
+.menu,
+popover,
+.popover {
+  background-color: @popover_bg_color;
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+menuitem:hover,
+.menuitem:hover {
+  background-color: alpha(@accent_color, 0.2);
+  color: @theme_fg_color;
+}
+
+tooltip,
+tooltip.background {
+  background-color: @popover_bg_color;
+  color: @theme_fg_color;
+  border: 1px solid @borders;
+}
+
+scrollbar slider {
+  background-color: alpha(@theme_fg_color, 0.35);
+}
+
+scrollbar slider:hover {
+  background-color: alpha(@accent_color, 0.6);
+}
+
+progressbar > trough > progress,
+progressbar progress {
+  background-color: @accent_bg_color;
+}
+
+switch:checked {
+  background-color: @accent_bg_color;
+}
+
+check:checked,
+radio:checked,
+checkbutton:checked,
+radiobutton:checked {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+notebook > header {
+  background-color: @headerbar_bg_color;
+  border-color: @borders;
+}
+
+notebook > header tab:checked {
+  color: @accent_color;
+}

@@ -1,0 +1,384 @@
+/* Evergruv dark - GNOME Shell theme
+ *
+ * REF https://github.com/georglauterbach/evergruv
+ *     https://gitlab.gnome.org/GNOME/gnome-shell/-/tree/main/data/theme
+ *
+ * Installs as ~/.themes/Evergruv-Dark/gnome-shell/gnome-shell.css
+ * and is selected via the User Themes extension:
+ *   gsettings set org.gnome.shell.extensions.user-theme name Evergruv-Dark
+ *
+ * GNOME Shell CSS does not support @define-color, so palette values are inlined
+ * by the generator. This is a minimal recolor; structural metrics (sizes,
+ * spacing) inherit from the system gnome-shell stylesheet.
+ */
+
+stage {
+  font-family: Cantarell, sans-serif;
+  color: #DDC7A1;
+}
+
+/* ----- Top panel --------------------------------------------------------- */
+
+#panel {
+  background-color: #141617;
+  color: #DDC7A1;
+  border-bottom: 1px solid #DDC7A180;
+  font-weight: bold;
+  height: 32px;
+}
+
+#panel .panel-button {
+  color: #DDC7A1;
+  -natural-hpadding: 12px;
+  -minimum-hpadding: 6px;
+  border-radius: 4px;
+}
+
+#panel .panel-button:hover {
+  background-color: #D8A65733;
+  color: #DDC7A1;
+}
+
+#panel .panel-button:active,
+#panel .panel-button:overview,
+#panel .panel-button:focus,
+#panel .panel-button:checked {
+  background-color: #D8A657;
+  color: #141617;
+}
+
+#panel #panelActivities.panel-button > * {
+  color: inherit;
+}
+
+#panel .clock-display {
+  color: #DDC7A1;
+}
+
+#panel .panel-status-indicators-box,
+#panel .panel-status-menu-box {
+  spacing: 2px;
+}
+
+/* ----- Popup menus / boxpointer ------------------------------------------ */
+
+.popup-menu-boxpointer,
+.candidate-popup-boxpointer {
+  -arrow-border-radius: 8px;
+  -arrow-background-color: #1D2021;
+  -arrow-border-width: 1px;
+  -arrow-border-color: #DDC7A180;
+  -arrow-base: 24px;
+  -arrow-rise: 11px;
+  -arrow-box-shadow: 0 1px 3px #00000080;
+}
+
+.popup-menu {
+  color: #DDC7A1;
+}
+
+.popup-menu .popup-menu-content {
+  background-color: #1D2021;
+  border: 1px solid #DDC7A180;
+  border-radius: 8px;
+}
+
+.popup-menu-item {
+  color: #DDC7A1;
+  padding: 6px 12px;
+  spacing: 12px;
+}
+
+.popup-menu-item:hover,
+.popup-menu-item:focus,
+.popup-menu-item.selected {
+  background-color: #D8A65726;
+  color: #DDC7A1;
+}
+
+.popup-menu-item:active,
+.popup-menu-item:checked {
+  background-color: #D8A657;
+  color: #141617;
+}
+
+.popup-menu-item:insensitive {
+  color: #DDC7A180;
+}
+
+.popup-separator-menu-item .popup-separator-menu-item-separator,
+.popup-sub-menu .popup-separator-menu-item .popup-separator-menu-item-separator {
+  background-color: #DDC7A180;
+  height: 1px;
+  margin: 6px 0;
+}
+
+.popup-sub-menu {
+  background-color: #141617;
+  border: none;
+}
+
+/* ----- Quick settings (GNOME 43+) ---------------------------------------- */
+
+.quick-settings {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.quick-toggle {
+  background-color: #141617;
+  color: #DDC7A1;
+  border-radius: 999px;
+  border: 1px solid #DDC7A180;
+}
+
+.quick-toggle:hover {
+  background-color: #D8A65726;
+}
+
+.quick-toggle:checked {
+  background-color: #D8A657;
+  color: #141617;
+  border-color: #D8A657;
+}
+
+.quick-slider {
+  color: #DDC7A1;
+}
+
+.quick-slider .slider {
+  color: #D8A657;
+  -barlevel-background-color: #DDC7A133;
+  -barlevel-active-background-color: #D8A657;
+  -barlevel-border-color: transparent;
+  -barlevel-active-border-color: transparent;
+}
+
+/* ----- OSD (volume / brightness) ---------------------------------------- */
+
+.osd-window {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.osd-window .level-bar {
+  background-color: #D8A657;
+}
+
+/* ----- Dash / overview --------------------------------------------------- */
+
+#dash {
+  background-color: #141617cc;
+  border-radius: 18px;
+  padding: 6px;
+}
+
+.dash-background {
+  background-color: #141617cc;
+  border-radius: 18px;
+}
+
+.dash-item-container .app-well-app:hover .overview-icon,
+.dash-item-container .show-apps:hover .overview-icon {
+  background-color: #D8A65733;
+}
+
+.app-well-app:running .overview-icon,
+.show-apps-icon {
+  color: #DDC7A1;
+}
+
+.app-well-app-running-dot,
+.dash-app-running-dot {
+  background-color: #D8A657;
+}
+
+.search-section .search-section-content {
+  background-color: #1D2021;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+  color: #DDC7A1;
+}
+
+.search-entry,
+.search-entry:focus {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 999px;
+  selection-background-color: #D8A65759;
+  selected-color: #141617;
+}
+
+.search-entry:focus {
+  border-color: #D8A657;
+}
+
+/* ----- Window picker / workspace thumbnails ----------------------------- */
+
+.window-picker {
+  spacing: 16px;
+}
+
+.window-clone-border {
+  border: 2px solid #D8A657;
+  border-radius: 6px;
+}
+
+.workspace-thumbnails .workspace-thumbnail {
+  border: 1px solid #DDC7A180;
+  border-radius: 6px;
+  background-color: #141617;
+}
+
+.workspace-thumbnails .workspace-thumbnail:active,
+.workspace-thumbnails .workspace-thumbnail:focus {
+  border-color: #D8A657;
+}
+
+/* ----- Modal dialogs ----------------------------------------------------- */
+
+.modal-dialog {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+}
+
+.modal-dialog-button-box {
+  spacing: 12px;
+  padding-top: 12px;
+}
+
+.modal-dialog-button {
+  background-color: #141617;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 6px;
+  padding: 6px 16px;
+}
+
+.modal-dialog-button:hover {
+  background-color: #D8A65726;
+}
+
+.modal-dialog-button:default {
+  background-color: #D8A657;
+  color: #141617;
+  border-color: #D8A657;
+}
+
+.modal-dialog-button.destructive-action {
+  background-color: #EA6962;
+  color: #141617;
+  border-color: #EA6962;
+}
+
+/* ----- Notifications ----------------------------------------------------- */
+
+.message-list {
+  background-color: transparent;
+  color: #DDC7A1;
+}
+
+.message {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+}
+
+.notification-banner,
+.message-banner {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+}
+
+/* ----- Calendar / world clocks / weather -------------------------------- */
+
+.calendar {
+  color: #DDC7A1;
+  padding: 6px;
+}
+
+.calendar-today {
+  background-color: #D8A657;
+  color: #141617;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.calendar-day-base:hover,
+.calendar-day-base:focus {
+  background-color: #D8A65726;
+  border-radius: 999px;
+}
+
+.calendar-other-month-day {
+  color: #DDC7A180;
+}
+
+.world-clocks-header,
+.weather-header,
+.events-section-title {
+  color: #DDC7A1;
+  font-weight: bold;
+}
+
+/* ----- Lock screen / login ---------------------------------------------- */
+
+#lockDialogGroup {
+  background-color: #141617;
+}
+
+.unlock-dialog,
+.login-dialog {
+  background-color: transparent;
+  color: #DDC7A1;
+}
+
+.login-dialog-prompt-entry,
+.unlock-dialog-promptbox .modal-dialog-button {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 6px;
+}
+
+.login-dialog-prompt-entry:focus {
+  border-color: #D8A657;
+}
+
+/* ----- Switcher (Alt-Tab) ----------------------------------------------- */
+
+.switcher-list {
+  background-color: #1D2021;
+  color: #DDC7A1;
+  border: 1px solid #DDC7A180;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.switcher-list .item-box:selected,
+.switcher-list .item-box:outlined {
+  background-color: #D8A657;
+  color: #141617;
+  border-radius: 6px;
+}
+
+/* ----- Misc -------------------------------------------------------------- */
+
+.toggle-switch:checked {
+  background-color: #D8A657;
+}
+
+.slider {
+  color: #D8A657;
+}
