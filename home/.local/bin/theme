@@ -155,11 +155,11 @@ function set_theme_system() {
   done
 
   if "${FORCE}"; then
-    for ASSET in assets gtk{,-dark}.css; do
-      if [[ -e /usr/share/themes/Yaru/gtk-4.0/${ASSET} ]]; then
+    for ASSET in gtk{,-dark}.css; do
+      if [[ -e /usr/local/share/themes/Yaru/gtk-4.0/${ASSET} ]]; then
         rm --force --recursive "${HOME}/.config/gtk-4.0/${ASSET}"
         ln --force --symbolic \
-          "/usr/share/themes/Yaru/gtk-4.0/${ASSET}" \
+          "/usr/local/share/themes/Yaru/gtk-4.0/${ASSET}" \
           "${HOME}/.config/gtk-4.0/${ASSET}"
       fi
     done
