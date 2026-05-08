@@ -1,7 +1,5 @@
 # My Linux Desktop
 
-This repository contains the setup and configuration for my Linux desktop. It focuses on GUI applications; head over to [`georglauterbach/hermes`](https://github.com/georglauterbach/hermes) to find the TUI applications that I use on a daily basis. The color theme used is [Evergruv](https://github.com/georglauterbach/evergruv)..
-
 | Property        | Description                                                                 |
 | :-------------- | :-------------------------------------------------------------------------- |
 | Programs        | See the ["Programs" section below](#programs)                               |
