@@ -129,6 +129,8 @@ function set_theme_zellij() {
 function set_theme_system() {
   log_info 'Updating system theme'
 
+  local THEME_DIR=/usr/local/share/themes/Yaru
+
   if "${FORCE}"; then
     gsettings set org.gnome.desktop.interface gtk-theme Yaru
 
@@ -156,19 +158,28 @@ function set_theme_system() {
 
   if "${FORCE}"; then
     for ASSET in gtk{,-dark}.css; do
-      if [[ -e /usr/local/share/themes/Yaru/gtk-4.0/${ASSET} ]]; then
+      if [[ -e ${THEME_DIR}/gtk-4.0/${ASSET} ]]; then
         rm --force --recursive "${HOME}/.config/gtk-4.0/${ASSET}"
         ln --force --symbolic \
-          "/usr/local/share/themes/Yaru/gtk-4.0/${ASSET}" \
+          "${THEME_DIR}/gtk-4.0/${ASSET}" \
           "${HOME}/.config/gtk-4.0/${ASSET}"
       fi
     done
 
     # cSpell: disable xsettingsd
     if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
-      sed --in-place --regexp-extended "s|^(Net/ThemeName).*|\1 \"Yaru\"|" \
+      sed --in-place --regexp-extended \
+        "s|^(Net/ThemeName).*|\1 \"Yaru\"|" \
         "${HOME}/.config/xsettingsd/xsettingsd.conf"
     fi
+
+    if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
+      sed --in-place --regexp-extended "s|~|${HOME}|g" \
+        "${HOME}/.local/share/flatpak/overrides/global"
+    fi
+
+    rm --recursive --force "${HOME}/.themes/Yaru"
+    cp --recursive "${THEME_DIR}" "${HOME}/.themes/Yaru"
 
     rm --force --recursive "${HOME}/.cache/"gtk-{3,4}.0
     gtk-update-icon-cache --force 2>/dev/null || :

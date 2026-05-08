@@ -1,0 +1,6 @@
+[Context]
+filesystems=~/.themes:ro;
+
+[Environment]
+GTK_THEME=Yaru
+ICON_THEME=Yaru
