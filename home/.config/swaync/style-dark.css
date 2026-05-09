@@ -61,10 +61,10 @@
 /* upper message */
 .notification-default-action,
 .notification-action {
-  border: 1px solid @blue;
-  border-top: 3px solid @blue;
-  border-left: 3px solid @blue;
-  border-right: 3px solid @blue;
+  border: 1px solid @yellow;
+  border-top: 3px solid @yellow;
+  border-left: 3px solid @yellow;
+  border-right: 3px solid @yellow;
   background: @background;
 }
 
@@ -85,12 +85,12 @@
 
 /* -- provide the correct border when only upper content is available */
 .notification-default-action:only-child {
-  border-bottom: 3px solid @blue;
+  border-bottom: 3px solid @yellow;
 }
 
 /* lower actions */
 .notification-action {
-  border-bottom: 3px solid @blue;
+  border-bottom: 3px solid @yellow;
   border-radius: 0px;
   border-right: none;
   border-top: none;
@@ -103,13 +103,13 @@
 
 /* -- set the correct inner border when multiple actions are available */
 .notification-action:not(:first-child) {
-  border-left: 1px solid @blue;
+  border-left: 1px solid @yellow;
 }
 
 /* -- round the right bottom corner when multiple actions are available */
 .notification-action:last-child {
   border-bottom-right-radius: 5px;
-  border-right: 3px solid @blue;
+  border-right: 3px solid @yellow;
 }
 
 .notification-action > button {
@@ -148,6 +148,22 @@
   text-shadow: none;
 }
 
+progressbar {
+  border-radius: 5px;
+}
+
+progressbar trough {
+  background: @background-dim;
+  border-radius: 5px;
+  min-height: 6px;
+}
+
+progressbar trough progress {
+  background: @green;
+  border-radius: 5px;
+  min-height: 6px;
+}
+
 .close-button {
   background: none;
   color: transparent;
@@ -172,7 +188,7 @@
 
 .control-center-clear-all {
   background: transparent;
-  border: 2px solid @blue;
+  border: 2px solid @yellow;
   border-radius: 5px;
   color: @foreground;
   font-size: 1rem;
@@ -192,16 +208,16 @@
 .control-center-dnd {
   border-radius: 15px;
   background: transparent;
-  border: 2px solid @blue;
+  border: 2px solid @yellow;
   box-shadow: none;
 }
 
 .control-center-dnd:checked {
-  background: @blue;
+  background: @yellow;
 }
 
 .control-center-dnd slider {
-  background: @blue;
+  background: @yellow;
   border-radius: 10px;
 }
 
@@ -229,15 +245,17 @@
   border: 2px solid transparent;
   border-radius: 5px;
   margin-bottom: 12px;
+  outline: none;
+  transition: opacity 200ms ease-in-out;
 }
 
 .notification-group:focus {
-  border: 2px solid @blue;
+  border: 2px solid @yellow;
   border-radius: 5px;
 }
 
 .notification-group:hover {
-  border: 2px solid @blue;
+  border: 2px solid @yellow;
   border-radius: 5px;
 }
 

@@ -49,7 +49,7 @@ The following packages are built or installed:
 
 The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The actual system theme (GTK etc.) is a patched version of [Yaru](https://github.com/ubuntu/yaru), the default Ubuntu GNOME theme. Yaru is a well-maintained, community-supported theme that has undergone extensive usage and testing. Hence, patching colors for this theme is a straightforward solution to getting a custom theme.
 
-Files that were patched or added to the Yaru repository can be found in [`theme/patches/`](./theme/patches/). The generated files, after running [`theme/patches/build_evergruv.sh`](./theme/patches/build_evergruv.sh) in the patched Yaru repository, can be found [in a GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme). Download the archive and extract it via `sudo tar xf Yaru.tar.xz /`. You can also use [`nwg-look`](https://github.com/nwg-piotr/nwg-look) to apply the theme; a pre-built binary can also be found in the mentioned [GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme).
+Files that were patched or added to the Yaru repository can be found in [`theme/patches/`](./theme/patches/). The generated files, after running [`theme/patches/build_evergruv.sh`](./theme/patches/build_evergruv.sh) in the patched Yaru repository, can be found [in a GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme). Download the archive and extract it via `tar xf Yaru.tar.xz -C "${HOME}"`. You can also use [`nwg-look`](https://github.com/nwg-piotr/nwg-look) to apply the theme; a pre-built binary can also be found in the mentioned [GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme).
 
 
 

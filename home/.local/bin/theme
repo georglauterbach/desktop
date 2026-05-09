@@ -3,16 +3,13 @@
 set +e -E -u -o pipefail
 shopt -s inherit_errexit
 
-# satisfy `tput`
-export TERM=xterm
-
 function log_info() {
   echo -e "\033[1;34mINFO\033[0m  ${1:?Log info message required}"
 }
 
 function log_warn() {
   echo -e "\033[1;33mWARN\033[0m  ${1:?Log warning message required}" >&2
-  ERROR_OCCURRED=true
+  EXIT_CODE=1
 }
 
 function log_error_and_exit() {
@@ -129,57 +126,50 @@ function set_theme_zellij() {
 function set_theme_system() {
   log_info 'Updating system theme'
 
-  local THEME_DIR=/usr/local/share/themes/Yaru
+  local THEME_DIR=${HOME}/.themes/${THEME_NAME}
+  readonly THEME_DIR
 
-  if "${FORCE}"; then
-    gsettings set org.gnome.desktop.interface gtk-theme Yaru
+  mkdir --parents "${HOME}"/.{icons,themes,config/gtk-{3,4}.0}
 
-    gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
-    gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
-    gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
-  fi
-
-  gsettings set org.gnome.desktop.interface icon-theme "${ICON_THEME}"
+  gsettings set org.gnome.desktop.interface gtk-theme    "${THEME_NAME}"
+  gsettings set org.gnome.desktop.interface icon-theme   "${THEME_NAME}"
   gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_VARIANT}"
 
-  mkdir --parents "${HOME}/.config/"gtk-{3,4}.0
-  local I; for I in 3 4; do
+  local I; for I in {3..4}; do
     if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then
-      if "${FORCE}"; then
-        sed --in-place --regexp-extended \
-          "s|^(gtk-icon-theme-name=).*|\1${ICON_THEME}|" \
-          "${HOME}/.config/gtk-${I}.0/settings.ini"
-      fi
       sed --in-place --regexp-extended \
-        "s|^(gtk-application-prefer-dark-theme=).*|\1${PREFER_DARK}|" \
+        -e "s|^(gtk-theme-name=).*|\1${THEME_NAME}|" \
+        -e "s|^(gtk-icon-theme-name=).*|\1${THEME_NAME}|" \
         "${HOME}/.config/gtk-${I}.0/settings.ini"
     fi
   done
 
+  if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
+    sed --in-place --regexp-extended          \
+      -e "s|~|${HOME}|g"                      \
+      -e "s|(GTK_THEME=).*|\1${THEME_NAME}|"  \
+      -e "s|(ICON_THEME=).*|\1${THEME_NAME}|" \
+      "${HOME}"/.local/share/flatpak/overrides/global
+  fi
+
+  # cSpell: disable xsettingsd
+  if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
+    sed --in-place --regexp-extended \
+      "s|^(Net/ThemeName).*|\1 \"${THEME_NAME}\"|" \
+      "${HOME}/.config/xsettingsd/xsettingsd.conf"
+  fi
+
+  for ASSET in gtk{,-dark}.css; do
+    if [[ -e ${THEME_DIR}/gtk-4.0/${ASSET} ]]; then
+      rm --force --recursive "${HOME}/.config/gtk-4.0/${ASSET}"
+      ln --force --symbolic "${THEME_DIR}/gtk-4.0/${ASSET}" "${HOME}/.config/gtk-4.0/${ASSET}"
+    fi
+  done
+
   if "${FORCE}"; then
-    for ASSET in gtk{,-dark}.css; do
-      if [[ -e ${THEME_DIR}/gtk-4.0/${ASSET} ]]; then
-        rm --force --recursive "${HOME}/.config/gtk-4.0/${ASSET}"
-        ln --force --symbolic \
-          "${THEME_DIR}/gtk-4.0/${ASSET}" \
-          "${HOME}/.config/gtk-4.0/${ASSET}"
-      fi
-    done
-
-    # cSpell: disable xsettingsd
-    if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
-      sed --in-place --regexp-extended \
-        "s|^(Net/ThemeName).*|\1 \"Yaru\"|" \
-        "${HOME}/.config/xsettingsd/xsettingsd.conf"
-    fi
-
-    if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
-      sed --in-place --regexp-extended "s|~|${HOME}|g" \
-        "${HOME}/.local/share/flatpak/overrides/global"
-    fi
-
-    rm --recursive --force "${HOME}/.themes/Yaru"
-    cp --recursive "${THEME_DIR}" "${HOME}/.themes/Yaru"
+    gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
+    gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
+    gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
 
     rm --force --recursive "${HOME}/.cache/"gtk-{3,4}.0
     gtk-update-icon-cache --force 2>/dev/null || :
@@ -197,33 +187,31 @@ function set_theme_system() {
 }
 
 function main() {
-  local THEME_VARIANT PREFER_DARK ICON_THEME FORCE=false
+  local THEME_VARIANT=light THEME_NAME=Yaru FORCE=false EXIT_CODE=0
 
-  if [[ ${1:-} =~ -(-force|f) ]]; then
-    FORCE=true
+  while [[ ${#} -gt 0 ]]; do
+    case "${1:-}" in
+      ( l | light ) ;;
+
+      ( d | dark )
+        THEME_VARIANT=dark
+        THEME_NAME+=-${THEME_VARIANT}
+        ;;
+
+      ( -f | --force )
+        FORCE=true
+        log_info 'Forcing update'
+        ;;
+
+      ( * )
+        log_error_and_exit "Argument '${1:-}' is invalid - use 'light|l' or 'dark|d' or '-f|--force'"
+        ;;
+    esac
     shift 1
-    log_info 'Forcing theme switch'
-  fi
+  done
 
-  case "${1:-}" in
-    ( l | light )
-      readonly THEME_VARIANT=light PREFER_DARK=0
-      readonly ICON_THEME=Yaru
-      ;;
-
-    ( d | dark )
-      readonly THEME_VARIANT=dark PREFER_DARK=1
-      readonly ICON_THEME=Yaru-${THEME_VARIANT}
-      ;;
-
-    ( * )
-      log_error_and_exit "Argument '${1:-}' is invalid - use 'light|l' or 'dark|d'"
-      ;;
-  esac
-
-  ERROR_OCCURRED=false
-
-  log_info "Updating preferred color palette to $(tput bold)${THEME_VARIANT}$(tput sgr0)"
+  readonly THEME_VARIANT THEME_NAME FORCE EXIT_CODE
+  log_info "Updating system theme to \033[1m${THEME_VARIANT}\033[0m"
 
   set_theme_system
   set_theme_alacritty
@@ -235,11 +223,7 @@ function main() {
   set_theme_wleave
   set_theme_zellij
 
-  if "${ERROR_OCCURRED}"; then
-    exit 1
-  else
-    exit 0
-  fi
+  exit "${EXIT_CODE}"
 }
 
 main "${@}"
