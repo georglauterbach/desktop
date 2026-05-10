@@ -4,7 +4,7 @@ set -eE -u -o pipefail
 shopt -s inherit_errexit
 
 function log() {
-  echo -ne "\033[1m${*}\033[0m"
+  echo -e "\033[1m${*}\033[0m"
 }
 
 if [[ ${EUID} -eq 0 ]]; then
@@ -23,7 +23,7 @@ RUNTIME_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/..")
 
 cd "${RUNTIME_DIR}"
 docker build --tag desktop-builder --file Dockerfile .
-docker run --rm --volume ./out_new:/out desktop-builder \
-  /bin/bash -c "cp --recursive /usr/local/* /out/"
+#docker run --rm --volume ./out:/out desktop-builder \
+#  /bin/bash -c "cp --recursive /usr/local/* /out/"
 
 log Finished

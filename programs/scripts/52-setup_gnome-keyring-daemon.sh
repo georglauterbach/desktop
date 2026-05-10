@@ -12,8 +12,5 @@ if [[ ${EUID} -eq 0 ]]; then
   exit 1
 fi
 
-RUNTIME_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/../..")
-
-cp "${@:-'--no-clobber'}" --recursive     \
-  "${RUNTIME_DIR}config/"{.config,.local} \
-  "${HOME}"
+systemctl --user disable --now gnome-keyring-daemon.s{ocket,ervice} 2>/dev/null
+sudo systemctl --user disable --global gnome-keyring-daemon.s{ocket,ervice}

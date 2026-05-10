@@ -1,22 +1,36 @@
+
 # My Linux Desktop
 
-| Property        | Description                                                                 |
-| :-------------- | :-------------------------------------------------------------------------- |
-| Programs        | See the ["Programs" section below](#programs)                               |
-| (Icon) Theme    | See the ["Theme" section below](#theme)                                     |
-| Configuration   | Files contained in [`home/`](./home/) go into `${HOME}`                     |
-| Normal Font     | Ubuntu Sans (`apt-get install --yes fonts-ubuntu`)                          |
-| Monospaced Font | JetBrainsMono Nerd Font & FiraCode Nerd Font (`./scripts/setup_fonts.sh`)   |
-| Icon Font       | [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet)                   |
-| AsciiArt        | [patorjk](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=A) |
+| Property        | Description                                                                                |
+| :-------------- | :----------------------------------------------------------------------------------------- |
+| Programs        | See the ["Programs" section below](#programs)                                              |
+| (Icon) Theme    | See the ["Theme" section below](#theme)                                                    |
+| Configuration   | Files contained in [`home/`](./home/) go into `${HOME}`                                    |
+| Fonts           | See `20-install_packages.sh` & `22-fonts.sh` in [`programs/scripts/`](./programs/scripts/) |
+| Icon Font       | [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet)                                  |
+| AsciiArt        | [patorjk](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=A)                |
 
 ## Programs
 
-Essential programs are built from source in a container to have as much control over them as possible; other programs are installed via `apt`. To build the essential packages from source, use the scripts in [`programs/scripts/`](./programs/scripts/).
+### Installation
 
-### Built from Source
+Essential programs are built from source in a container to have as much control over them as possible; other programs are [installed via `apt`](programs/scripts/20-install_packages.sh). Perform the following steps for a system installation:
 
-The following packages are built or installed:
+1. [Install Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script): `curl -fsSL https://get.docker.com | sudo bash`
+2. [Run Docker's post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/): `sudo groupadd docker ; sudo usermod -aG docker "${USER}"` and reboot
+3. [Install `lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or build it ([documentation](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation), [repository](https://github.com/lief-project/LIEF))):
+    ```bash
+    sudo curl -sSfL -o /usr/local/bin/lief-patchelf \
+      https://github.com/georglauterbach/desktop/releases/download/system-theme/lief-patchelf
+    sudo chmod +x /usr/local/bin/lief-patchelf
+    ```
+4. The run the scripts in [`programs/scripts/`](./programs/scripts/) one after another
+5. Configure Sway by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
+6. Configure Shikane by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
+
+### Packages Built From Source
+
+The following packages are built from source:
 
 1. Wayland compositor: [SwayFX](https://github.com/WillPower3309/swayfx) with Xwayland support
 2. Terminal: [Alacritty](https://github.com/alacritty/alacritty)
@@ -36,22 +50,11 @@ The following packages are built or installed:
 16. Portal Checker: [door-knocker](https://codeberg.org/tytan652/door-knocker)
 17. GTK3 Settings Editor: [nwg-look](https://github.com/nwg-piotr/nwg-look)
 
-### Installed
-
-1. Desktop File Opener: [dex](https://github.com/jceb/dex)
-2. Keyring Daemon: [gnome-keyring](https://gitlab.gnome.org/GNOME/gnome-keyring)
-3. Fallback Terminal: [kitty](https://github.com/kovidgoyal/kitty)
-4. Image viewer: [swayimg](https://github.com/artemsen/swayimg)
-5. Display Visualizer: [wdisplays](https://github.com/artizirk/wdisplays)
-6. Document Viewer: [Zathura](https://pwmt.org/projects/zathura/)
-
 ## Theme
 
 The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The actual system theme (GTK etc.) is a patched version of [Yaru](https://github.com/ubuntu/yaru), the default Ubuntu GNOME theme. Yaru is a well-maintained, community-supported theme that has undergone extensive usage and testing. Hence, patching colors for this theme is a straightforward solution to getting a custom theme.
 
 Files that were patched or added to the Yaru repository can be found in [`theme/patches/`](./theme/patches/). The generated files, after running [`theme/patches/build_evergruv.sh`](./theme/patches/build_evergruv.sh) in the patched Yaru repository, can be found [in a GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme). Download the archive and extract it via `tar xf Yaru.tar.xz -C "${HOME}"`. You can also use [`nwg-look`](https://github.com/nwg-piotr/nwg-look) to apply the theme; a pre-built binary can also be found in the mentioned [GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme).
-
-
 
 ## Licensing
 

@@ -210,7 +210,7 @@ function main() {
     shift 1
   done
 
-  readonly THEME_VARIANT THEME_NAME FORCE EXIT_CODE
+  readonly THEME_VARIANT THEME_NAME FORCE
   log_info "Updating system theme to \033[1m${THEME_VARIANT}\033[0m"
 
   set_theme_system

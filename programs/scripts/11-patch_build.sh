@@ -13,7 +13,7 @@ if [[ ${EUID} -ne 0 ]]; then
 fi
 
 if ! command -v lief-patchelf &>/dev/null; then
-  log "ERROR  The command 'lief-patchelf' could not be found. Download it from https://lief.re/blog/2025-07-13-patchelf/#download or build it (see https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation and https://github.com/lief-project/LIEF)" >&2
+  log "ERROR  The command 'lief-patchelf' could not be found" >&2
   exit 1
 fi
 

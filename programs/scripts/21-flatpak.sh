@@ -8,7 +8,6 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
-sudo apt-get --no-install-recommends install flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 readonly EXTRA_PROGRAMS=(

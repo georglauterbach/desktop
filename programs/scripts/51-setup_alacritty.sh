@@ -12,11 +12,7 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
-mkdir --parents /usr/share/wayland-sessions
-cat >/usr/share/wayland-sessions/sway.desktop <<"EOF"
-[Desktop Entry]
-Name=Sway
-Comment=SwayFX built from source
-Exec=/usr/local/bin/__sway
-Type=Application
-EOF
+update-alternatives --install  \
+  /usr/bin/x-terminal-emulator \
+  x-terminal-emulator          \
+  /usr/local/bin/alacritty 50

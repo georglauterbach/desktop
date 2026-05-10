@@ -1,6 +1,7 @@
 {
   "Exclude": [
     "^LICENSE",
+    "^programs/out/",
     "^theme/",
     "^home/.config/sway/theme/"
   ]

@@ -50,7 +50,7 @@ build_wleave() {
   install -s -Dm755 target/release/wleave -t "${__INSTALLATION_PREFIX}/bin/"
 }
 
-build_build_nwg_look() {
+build_nwg_look() {
   make build
   make install "PREFIX=${__INSTALLATION_PREFIX}"
 }
