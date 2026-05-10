@@ -35,8 +35,23 @@ button:active {
   outline: none;
 }
 
+button label.action-name {
+    font-size: 24px;
+    font-weight: 400;
+    opacity: 0.6;
+}
+
 button label.keybind {
+  font-size: 18px;
   font-family: "JetBrainsMono Nerd Font";
+  opacity: 0.6;
+}
+
+button:hover label.keybind,
+button:focus label.keybind,
+button:hover label.action-name,
+button:focus label.action-name {
+  opacity: 1;
 }
 
 button#lock {

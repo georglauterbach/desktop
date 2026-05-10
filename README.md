@@ -18,15 +18,16 @@ Essential programs are built from source in a container to have as much control 
 
 1. [Install Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script): `curl -fsSL https://get.docker.com | sudo bash`
 2. [Run Docker's post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/): `sudo groupadd docker ; sudo usermod -aG docker "${USER}"` and reboot
-3. [Install `lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or build it ([documentation](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation), [repository](https://github.com/lief-project/LIEF))):
+3. [Install `lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or build it \[[documentation](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation)\]\[[repository](https://github.com/lief-project/LIEF)\]):
     ```bash
     sudo curl -sSfL -o /usr/local/bin/lief-patchelf \
       https://github.com/georglauterbach/desktop/releases/download/system-theme/lief-patchelf
     sudo chmod +x /usr/local/bin/lief-patchelf
     ```
 4. The run the scripts in [`programs/scripts/`](./programs/scripts/) one after another
-5. Configure Sway by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
-6. Configure Shikane by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
+5. Configure SwayFX by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
+6. Configure [shikane](https://gitlab.com/w0lff/shikane) by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
+7. Copy [wleave's icons](https://github.com/AMNatty/wleave/tree/development/icons) to `/usr/local/share/wleave/icons/`
 
 ### Packages Built From Source
 
