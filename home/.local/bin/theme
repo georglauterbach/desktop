@@ -36,7 +36,7 @@ function set_theme_btop() {
   if [[ -f ${CONFIG_FILE} ]]; then
     log_info 'Updating btop configuration'
     if ! sed --in-place --regexp-extended \
-      "s/^(color_theme =).*/\1 \"Evergruv-${THEME_VARIANT^}\"/" "${CONFIG_FILE}"; then
+      "s/^(color_theme =).*/\1 \"evergruv-${THEME_VARIANT}\"/" "${CONFIG_FILE}"; then
       log_warn 'Could not update color theme of btop'
     fi
   fi
