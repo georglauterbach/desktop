@@ -336,7 +336,7 @@ RUN apt_install librsvg2-dev
 RUN cb wleave                        build_wleave
 
 ENV __GO_TOOLCHAIN_VERSION=1.26.3
-RUN wget --quiet -O go.tar.gz "https://go.dev/dl/go${__GO_TOOLCHAIN_VERSION}.linux-amd64.tar.gz" \
+RUN curl -sSfL -o go.tar.gz "https://go.dev/dl/go${__GO_TOOLCHAIN_VERSION}.linux-amd64.tar.gz" \
     && tar xf go.tar.gz -C /usr/local
 ENV PATH=$PATH:/usr/local/go/bin
 RUN cb nwg-look                      build_nwg_look
