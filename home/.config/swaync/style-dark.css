@@ -159,7 +159,7 @@ progressbar trough {
 }
 
 progressbar trough progress {
-  background: @green;
+  background: @purple;
   border-radius: 5px;
   min-height: 6px;
 }
