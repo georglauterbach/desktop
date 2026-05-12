@@ -1,5 +1,5 @@
 [Context]
-filesystems=~/.themes:ro;~/.icons:ro;
+filesystems=~/.local/share/themes:ro;~/.local/share/icons:ro;~/.themes:ro;~/.icons:ro;
 
 [Environment]
 GTK_THEME=Yaru

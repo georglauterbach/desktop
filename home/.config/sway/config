@@ -19,29 +19,17 @@
 # ----  Initialization  -------------------------
 # -----------------------------------------------
 
+# Enable XWayland support to run X11 in Wayland
 xwayland enable
 
 # Sway does not natively support in-order startup
 # of applications; hence, we use a shell script
 # to get rid of this limitation.
-#
-# Applications that are started as systemd (user)
-# services or that rely on D-Bus, or those that
-# trigger D-Bus, MUST be started in
-#
-# ${HOME}/.config/sway/user/init.sh
-#
-# to ensure they are started AFTER we imported
-# the correct environment variables to systemd
-# and D-Bus.
-#
-# ref: https://github.com/swaywm/sway/wiki#systemd-and-dbus-activation-environments
-#      https://github.com/swaywm/sway/issues/5841
-exec "exec ${HOME}/.config/sway/init.sh"
+exec 'exec "${HOME}/.config/sway/init.sh"'
 
 # We need to ensure the background image is set correctly
 # when we start and we reload the configuration.
-exec_always 'swaymsg output "*" bg "${HOME}/.config/sway/theme/wallpaper" fill'
+exec_always 'swaymsg output "*" bg "${HOME}/.config/sway/theme/wallpaper" fill >/dev/null 2>&1'
 
 # When the Sway configuration is reloaded, we need
 # to ensure that the display configuration is
@@ -94,6 +82,7 @@ set $wm.ws.08.key 8
 set $wm.ws.09.key 9
 set $wm.ws.10.key 0
 
+workspace_layout default
 workspace_auto_back_and_forth no
 
 # -----------------------------------------------
@@ -108,30 +97,51 @@ exec exec swayidle -w                      \
 # ----  Design  ---------------------------------
 # -----------------------------------------------
 
-# ----  Colors
+set $color.transparent          #00000000
 
-set $color.background_dim #141617
-set $color.background     #1D2021
-set $color.foreground     #DDC7A1
+# ----  Colors Light
+set $color.light.background_dim #EBEBE4
+set $color.light.background     #F5F5F2
+set $color.light.foreground     #5C6A72
+set $color.light.red            #F85552
+set $color.light.orange         #F57D26
+set $color.light.yellow         #D69A00
+set $color.light.green          #8DA101
+set $color.light.cyan           #35A77C
+set $color.light.blue           #3A94C5
+set $color.light.violet         #DF69BA
 
-set $color.red            #EA6962
-set $color.orange         #E78A4E
-set $color.yellow         #D8A657
-set $color.green          #A9B665
-set $color.cyan           #7BB674
-set $color.blue           #7DAEA3
-set $color.violet         #D3869B
+# ----  Colors Dark
+set $color.dark.background_dim  #141617
+set $color.dark.background      #1D2021
+set $color.dark.foreground      #DDC7A1
+set $color.dark.red             #EA6962
+set $color.dark.orange          #E78A4E
+set $color.dark.yellow          #D8A657
+set $color.dark.green           #A9B665
+set $color.dark.cyan            #89B482
+set $color.dark.blue            #7DAEA3
+set $color.dark.violet          #D3869B
 
-# class                 border            background        text              indicator     child_border
-client.focused          $color.foreground $color.background $color.foreground $color.yellow $color.green
-client.focused_inactive $color.foreground $color.background $color.foreground $color.yellow $color.cyan
-client.unfocused        $color.foreground $color.background $color.foreground $color.yellow $color.foreground
-client.urgent           $color.foreground $color.background $color.foreground $color.yellow $color.red
+#                       Border around the title bar
+#                       |                  Background of the title bar
+#                       |                  |                  Text color of the title bar
+#                       |                  |                  |                  The color used to indicate where a new window will open. In
+#                       |                  |                  |                  a tiled container, this would paint the right border of the
+#                       |                  |                  |                  current window if a new window would be opened to the right
+#                       |                  |                  |                  |                   Border around the window itself
+#                       |                  |                  |                  |                   |
+# class                 border             background         text               indicator           child_border
+client.focused          $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.blue
+client.focused_inactive $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.blue80
+client.unfocused        $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.foregroundB0
+client.urgent           $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.red
 
 # ----  Borders
 
 smart_borders     on
-default_border    pixel 3
+border            pixel 2
+default_border    pixel 2
 hide_edge_borders smart
 
 # ensure all windows - even floating ones - have a border
@@ -169,7 +179,7 @@ seat * hide_cursor when-typing enable
 
 # ----  Typography
 
-set $typography.font.default   Ubuntu Sans 11
+set $typography.font.default   Ubuntu Sans 12
 set $typography.font.monospace JetBrainsMono Nerd Font 11
 
 font pango:$typography.font.default
@@ -178,11 +188,12 @@ font pango:$typography.font.default
 # ----  SwayFX  ---------------------------------
 # -----------------------------------------------
 
-#animation_duration_ms 150
+#animation_duration_ms 100
 #blur                  enable
-#corner_radius         5
-#default_dim_inactive  0.1
+#corner_radius         2
+#default_dim_inactive  0
 #shadows               disable
+#titlebar_separator    disable
 
 #layer_effects "swaync-control-center" {
 #    blur enable;
@@ -210,7 +221,7 @@ bindsym $spr+$sft+r exec swaymsg reload
 bindsym $spr+$sft+l exec __way_lock
 
 # logout / exit / sleep / etc.
-bindsym $spr+$sft+e exec wleave
+bindsym $spr+$sft+e exec 'wleave >/dev/null 2>&1'
 
 # ----  Miscellaneous
 
@@ -342,6 +353,7 @@ mode "Resize Mode" {
 
 set $satty satty -f - --copy-command=wl-copy --actions-on-escape="save-to-clipboard,exit" --brush-smooth-history-size=5 --disable-notifications
 set $mode_screenshot 'printscreen (r:region, f:full, w:window)'
+
 mode $mode_screenshot {
     bindsym r exec swaymsg 'mode "default"' && grim -t ppm -g "$(slurp -d)" - | $satty
     bindsym f exec swaymsg 'mode "default"' && grim -t ppm - | $satty

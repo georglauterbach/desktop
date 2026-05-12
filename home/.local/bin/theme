@@ -126,14 +126,32 @@ function set_theme_zellij() {
 function set_theme_system() {
   log_info 'Updating system theme'
 
-  local THEME_DIR=${HOME}/.themes/${THEME_NAME}
-  readonly THEME_DIR
+  local THEME_DIR_XDG=${HOME}/.local/share/themes/${THEME_NAME}
+  local THEME_DIR_OLD=${HOME}/.themes/${THEME_NAME}
+  readonly THEME_DIR_XDG THEME_DIR_OLD
 
-  mkdir --parents "${HOME}"/.{icons,themes,config/gtk-{3,4}.0}
+  mkdir --parents "${HOME}"/.{local/share/{themes,icons},icons,themes,config/gtk-{3,4}.0}
 
   gsettings set org.gnome.desktop.interface gtk-theme    "${THEME_NAME}"
   gsettings set org.gnome.desktop.interface icon-theme   "${THEME_NAME}"
   gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_VARIANT}"
+
+  # shellcheck disable=SC2016
+  swaymsg client.focused \
+    '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.blue"
+  # shellcheck disable=SC2016
+  swaymsg client.focused_inactive \
+    '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.blue80"
+  # shellcheck disable=SC2016
+  swaymsg client.unfocused \
+    '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.foregroundB0"
+  # shellcheck disable=SC2016
+  swaymsg client.urgent \
+    '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.red"
 
   local I; for I in {3..4}; do
     if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then
@@ -160,13 +178,18 @@ function set_theme_system() {
   fi
 
   for ASSET in gtk{,-dark}.css; do
-    if [[ -e ${THEME_DIR}/gtk-4.0/${ASSET} ]]; then
+    if [[ -e ${THEME_DIR_XDG}/gtk-4.0/${ASSET} ]]; then
       rm --force --recursive "${HOME}/.config/gtk-4.0/${ASSET}"
-      ln --force --symbolic "${THEME_DIR}/gtk-4.0/${ASSET}" "${HOME}/.config/gtk-4.0/${ASSET}"
+      ln --force --symbolic "${THEME_DIR_XDG}/gtk-4.0/${ASSET}" "${HOME}/.config/gtk-4.0/${ASSET}"
     fi
   done
 
   if "${FORCE}"; then
+    if [[ -d ${THEME_DIR_XDG} ]]; then
+      rm --recursive --force "${THEME_DIR_OLD}"
+      cp --recursive "${THEME_DIR_XDG}" "${THEME_DIR_OLD}"
+    fi
+
     gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
     gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
     gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
