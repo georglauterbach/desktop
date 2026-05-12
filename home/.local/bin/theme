@@ -139,19 +139,19 @@ function set_theme_system() {
   # shellcheck disable=SC2016
   swaymsg client.focused \
     '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.blue"
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue"
   # shellcheck disable=SC2016
   swaymsg client.focused_inactive \
     '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.blue80"
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue80"
   # shellcheck disable=SC2016
   swaymsg client.unfocused \
     '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.foregroundB0"
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.foregroundB0"
   # shellcheck disable=SC2016
   swaymsg client.urgent \
     '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.violet" "\$color.${THEME_VARIANT}.red"
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.red"
 
   local I; for I in {3..4}; do
     if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then

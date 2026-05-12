@@ -109,7 +109,7 @@ set $color.light.yellow         #D69A00
 set $color.light.green          #8DA101
 set $color.light.cyan           #35A77C
 set $color.light.blue           #3A94C5
-set $color.light.violet         #DF69BA
+set $color.light.purple         #DF69BA
 
 # ----  Colors Dark
 set $color.dark.background_dim  #141617
@@ -121,7 +121,7 @@ set $color.dark.yellow          #D8A657
 set $color.dark.green           #A9B665
 set $color.dark.cyan            #89B482
 set $color.dark.blue            #7DAEA3
-set $color.dark.violet          #D3869B
+set $color.dark.purple          #D3869B
 
 #                       Border around the title bar
 #                       |                  Background of the title bar
@@ -132,10 +132,10 @@ set $color.dark.violet          #D3869B
 #                       |                  |                  |                  |                   Border around the window itself
 #                       |                  |                  |                  |                   |
 # class                 border             background         text               indicator           child_border
-client.focused          $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.blue
-client.focused_inactive $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.blue80
-client.unfocused        $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.foregroundB0
-client.urgent           $color.transparent $color.transparent $color.transparent $color.light.violet $color.light.red
+client.focused          $color.transparent $color.transparent $color.transparent $color.light.purple $color.light.blue
+client.focused_inactive $color.transparent $color.transparent $color.transparent $color.light.purple $color.light.blue80
+client.unfocused        $color.transparent $color.transparent $color.transparent $color.light.purple $color.light.foregroundB0
+client.urgent           $color.transparent $color.transparent $color.transparent $color.light.purple $color.light.red
 
 # ----  Borders
 
