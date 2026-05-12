@@ -1,4 +1,6 @@
 {
+  "show-keybinds": true,
+  "no-version-info": true,
   "buttons": [
     {
       "label": "lock",
