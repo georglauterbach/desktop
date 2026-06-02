@@ -13,20 +13,17 @@ if [[ ${EUID} -ne 0 ]]; then
 fi
 
 readonly ADDITIONAL_PACKAGES=(
-  # base system
+  # Ubuntu base system
   ubuntu-desktop-minimal # base package for a GUI
-  highlight              # used by GTK for sytaxt highlighting
-  systemd-oomd           # monitor and take action before OOM hits
   # miscellaneous
   dex                    # desktop-file application launcher
   flatpak                # Flatpak
-  gcc                    # compilers (mostly for C)
   git                    # version control system
-  rtkit                  # real-time scheduling service
+  rtkit                  # real-time scheduling service (mostly used for audio)
   wl-clipboard           # Wayland clipboard
   xdg-desktop-portal     # portal frontend service
-  xdg-desktop-portal-wlr #   -- wlroots
-  xdg-desktop-portal-gtk #   -- GTK+/GNOME
+  xdg-desktop-portal-wlr # -- wlroots
+  xdg-desktop-portal-gtk # -- GTK+/GNOME
   xdg-utils              # common XDG utilities
   # fonts
   fonts-font-awesome     # Font Awesome
@@ -37,12 +34,15 @@ readonly ADDITIONAL_PACKAGES=(
   wdisplays              # arrange displays on Wayland
   # sound
   pipewire               # API for dealing with multimedia pipelines
+  pipewire-pulse         # Pulse Audio compatibility layer for pipewire
   wireplumber            # session & policy manager for pipewire
   # desktop apps
   gnome-calculator       # calculator
-  gnome-characters       # character visualizor
+  gnome-characters       # character visualizer
   gnome-disk-utility     # disk management
+  gnome-font-viewer      # character viewer
   gnome-keyring          # keyring daemon
+  highlight              # used by GTK for sytaxt highlighting
   kitty                  # terminal emulator for yazi
   papers                 # documents viewer
   ptyxis                 # (fallback) terminal emulator

@@ -15,6 +15,7 @@ readonly EXTRA_PROGRAMS=(
   com.bitwarden.desktop
   com.github.tchx84.Flatseal
   com.valvesoftware.Steam
+  org.freedesktop.Platform.VulkanLayer.MangoHud
   eu.betterbird.Betterbird
   org.cryptomator.Cryptomator
   org.libreoffice.LibreOffice
