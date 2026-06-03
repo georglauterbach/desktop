@@ -31,6 +31,7 @@ readonly ADDITIONAL_PACKAGES=(
   # graphics
   gamemode               # run games in performance-mode
   mesa-vulkan-drivers    # Vulkan (graphics API) drivers by MESA
+  vulkan-tools           # utilities for Vulkan
   wdisplays              # arrange displays on Wayland
   # sound
   pipewire               # API for dealing with multimedia pipelines
