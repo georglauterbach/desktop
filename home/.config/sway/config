@@ -13,7 +13,8 @@
 # ----  User-Defined Prologue  ------------------
 # -----------------------------------------------
 
-#include "${HOME}/.config/sway/user/early.conf"
+# configure I/O devices
+#include "${HOME}/.config/sway/user/00-io.conf"
 
 # -----------------------------------------------
 # ----  Initialization  -------------------------
@@ -378,4 +379,4 @@ bindsym --locked XF86MonBrightnessDown exec lightctl set '-5%'
 # ----  User-Defined Epilogue  ------------------
 # -----------------------------------------------
 
-#include "${HOME}/.config/sway/user/late.conf"
+#include "${HOME}/.config/sway/user/99-custom.conf"
