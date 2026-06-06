@@ -8,22 +8,24 @@ function log() {
 }
 
 if [[ ${EUID} -eq 0 ]]; then
-  log 'ERROR  This script needs to run WITHOUT superuser privileges' >&2
+  log 'ERROR  This script MUST NOT run with superuser privileges' >&2
   exit 1
 fi
 
-if ! command -v docker &>/dev/null; then
+if ! command -v podman &>/dev/null; then
   log "ERROR  The command 'docker' could not be found" >&2
   exit 1
 fi
 
+cd "$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/..")"
+readonly IMAGE_TAG=localhost/desktop-builder:latest
+
 log 'Starting build'
+podman build --tag "${IMAGE_TAG}" --file Containerfile .
 
-RUNTIME_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/..")
-
-cd "${RUNTIME_DIR}"
-docker build --tag desktop-builder --file Dockerfile .
-#docker run --rm --volume ./out:/out desktop-builder \
-#  /bin/bash -c "cp --recursive /usr/local/* /out/"
+log 'Copying files'
+mkdir -p out
+podman run --rm --volume ./out:/out "${IMAGE_TAG}" \
+  /bin/bash -c "cp --recursive /usr/local/* /out/"
 
 log Finished

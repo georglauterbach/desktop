@@ -8,6 +8,11 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
+if [[ ${EUID} -eq 0 ]]; then
+  log 'ERROR  This script MUST NOT run with superuser privileges' >&2
+  exit 1
+fi
+
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 readonly EXTRA_PROGRAMS=(

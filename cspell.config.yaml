@@ -15,21 +15,15 @@ words:
 
 ignoreWords:
   # names
-  - Everforest
-  - Evergruv
   - georglauterbach
-  - Gruvbox
-  - FiraCode
+  - firacode
   - patorjk
-  - Yaru
 
-  # Nix
-  - nix
-  - nixd
-  - nixfmt
-  - nixgl
-  - nixos
-  - nixpkgs
+  # theme
+  - everforest
+  - evergruv
+  - gruvbox
+  - yaru
 
   # Sway
   - swaybg
@@ -57,7 +51,6 @@ ignoreWords:
   - wl-screenrec
   - wleave
   - wlsunset
-  - zathura
 
   # commands
   - gsettings
@@ -70,6 +63,6 @@ ignoreWords:
 
   # miscellaneous
   - bindsym
+  - containerfile
   - coolors
   - SIGUSR
-  - stdenv

@@ -3,6 +3,7 @@
 
 | Property        | Description                                                                                |
 | :-------------- | :----------------------------------------------------------------------------------------- |
+| Distribution    | I assume Ubuntu 26.04, but other versions might also work                                  |
 | Programs        | See the ["Programs" section below](#programs)                                              |
 | (Icon) Theme    | See the ["Theme" section below](#theme)                                                    |
 | Configuration   | Files contained in [`home/`](./home/) go into `${HOME}`                                    |
@@ -16,18 +17,17 @@
 
 Essential programs are built from source in a container to have as much control over them as possible; other programs are [installed via `apt`](programs/scripts/20-install_packages.sh). Perform the following steps for a system installation:
 
-1. [Install Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script): `curl -fsSL https://get.docker.com | sudo bash`
-2. [Run Docker's post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/): `sudo groupadd docker ; sudo usermod -aG docker "${USER}"` and reboot
-3. [Install `lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or build it \[[documentation](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation)\]\[[repository](https://github.com/lief-project/LIEF)\]):
-    ```bash
-    sudo curl -sSfL -o /usr/local/bin/lief-patchelf \
-      https://github.com/georglauterbach/desktop/releases/download/system-theme/lief-patchelf
-    sudo chmod +x /usr/local/bin/lief-patchelf
+1. Install [Podman](https://podman.io/): `sudo apt-get --yes install podman`
+2. Install [`lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or [build](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation) it from [here](https://github.com/lief-project/LIEF)):
+    ```console
+    $ curl -sSfL -o "${HOME}/.local/bin/lief-patchelf" \
+        https://github.com/georglauterbach/desktop/releases/download/system-theme/lief-patchelf
+    $ chmod +x "${HOME}/.local/bin/lief-patchelf"
     ```
-4. The run the scripts in [`programs/scripts/`](./programs/scripts/) one after another
-5. Configure SwayFX by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
-6. Configure [shikane](https://gitlab.com/w0lff/shikane) by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
-7. Copy [wleave's icons](https://github.com/AMNatty/wleave/tree/development/icons) to `/usr/local/share/wleave/icons/`
+3. Run the scripts in [`programs/scripts/`](./programs/scripts/) one after another in the [`programs/`](./programs/) directory
+4. Configure SwayFX by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
+5. Configure [shikane](https://gitlab.com/w0lff/shikane) by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
+6. Copy [wleave's icons](https://github.com/AMNatty/wleave/tree/development/icons) to `/usr/local/share/wleave/icons/`
 
 ### Packages Built From Source
 

@@ -8,12 +8,12 @@ function log() {
 }
 
 if [[ ${EUID} -ne 0 ]]; then
-  log 'This script needs to run WITH superuser privileges' >&2
+  log 'ERROR  This script MUST run with superuser privileges' >&2
   exit 1
 fi
 
-RUNTIME_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/..")
-OUT_DIR=${RUNTIME_DIR}/out
+OUT_DIR="$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/..")/out"
+readonly OUT_DIR
 
 while read -r FILE; do
   LINK_NAME=/usr/local/${FILE#"${OUT_DIR}/"}

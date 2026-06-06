@@ -8,11 +8,12 @@ function log() {
 }
 
 if [[ ${EUID} -eq 0 ]]; then
-  log 'This script needs to run WITHOUT superuser privileges' >&2
+  log 'ERROR  This script MUST NOT run with superuser privileges' >&2
   exit 1
 fi
 
 RUNTIME_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")/../..")
+readonly RUNTIME_DIR
 
 cp "${@:-'--no-clobber'}" --recursive     \
   "${RUNTIME_DIR}config/"{.config,.local} \
