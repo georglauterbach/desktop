@@ -13,7 +13,7 @@ if [[ ${EUID} -eq 0 ]]; then
 fi
 
 if ! command -v podman &>/dev/null; then
-  log "ERROR  The command 'docker' could not be found" >&2
+  log "ERROR  The command 'podman' could not be found" >&2
   exit 1
 fi
 
