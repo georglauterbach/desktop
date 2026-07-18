@@ -12,14 +12,6 @@ function log_error() {
   echo -e " \e[1;31mERROR\e[0;1m ${*}\033[0m" 2>&2
 }
 
-function declare_variable() {
-  local -n VAR_NAME=${1:?TODO}
-  local VAR_VALUE=${2:?TODO}
-
-  # shellcheck disable=SC2034,SC2163
-  [[ -v ${1} ]] || { readonly VAR_NAME=${VAR_VALUE} ; export "${1}" ; }
-}
-
 function require_command() {
   local COMMAND=${1:?TODO}
   if ! command -v "${COMMAND}" &>/dev/null; then
@@ -50,12 +42,13 @@ fi
 BASE_DIR=$(realpath -eL "${SCRIPT_DIR}/..")
 readonly SCRIPT_DIR BASE_DIR
 
-declare_variable IMAGE_TAG localhost/desktop-builder:latest
-declare_variable APT_DIR   "${BASE_DIR}/.apt"
-declare_variable CACHE_DIR "${BASE_DIR}/.cache"
-declare_variable OUT_DIR   "${BASE_DIR}/.out"
-declare_variable SRC_DIR   "${BASE_DIR}/.src"
+declare -rx IMAGE_TAG=localhost/desktop-builder:latest
+declare -rx APT_DIR="${BASE_DIR}/.apt"
+declare -rx CACHE_DIR="${BASE_DIR}/.cache"
+declare -rx OUT_DIR="${BASE_DIR}/.out"
+declare -rx SRC_DIR="${BASE_DIR}/.src"
 
 cd "${BASE_DIR}" || exit 1
 
+# shellcheck disable=SC2154
 trap '__RET=${?} ; if [[ ${__RET} -eq 0 ]]; then log_info Finished; else log_error "Finished (${__RET})"; fi' EXIT

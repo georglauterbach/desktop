@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-set -eE -u -o pipefail
+set -u -o pipefail
 shopt -s inherit_errexit
 
 SCRIPT_DIR=$(realpath -eL "$(dirname "${BASH_SOURCE[0]}")")

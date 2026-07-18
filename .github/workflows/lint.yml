@@ -28,6 +28,6 @@ jobs:
           persist-credentials: false
 
       - name: Run Linter
-        uses: georglauterbach/linter@v0.4.0
+        uses: georglauterbach/linter@v0.4.1
         with:
           editorconfig_checker_config: .github/linter/editorconfig_checker.json
