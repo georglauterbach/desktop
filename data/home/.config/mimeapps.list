@@ -1,4 +1,5 @@
 [Default Applications]
+inode/directory=org.gnome.Nautilus.desktop;
 application/pdf=org.gnome.Papers.desktop;
 application/xhtml+xml=app.zen_browser.zen.desktop;
 application/x-extension-html=app.zen_browser.zen.desktop;
