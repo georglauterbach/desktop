@@ -17,6 +17,11 @@ if [[ -z ${HOME_DIR} ]]; then
   exit 1
 fi
 
+if [[ ! -d ${HOME_DIR} ]]; then
+  log_error "The provided path '${HOME_DIR}' does not denote a valid / existing directory"
+  exit 1
+fi
+
 if [[ ${#} -gt 1 ]]; then
   log_error 'This script MUST NOT be run with more than one argument' >&2
   exit 1
