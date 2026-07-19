@@ -16,8 +16,7 @@ function systemd_start_user_service() {
 
 function set_wallpaper() {
   for _ in {1..20}; do awww query &>/dev/null && break; sleep 0.1; done
-  awww img "${HOME}/.config/sway/theme/wallpaper.svg" \
-    --transition-type simple --transition-fps 60 --transition-duration 1
+  awww img "${HOME}/.config/sway/theme/wallpaper" --transition-type fade --transition-duration 0.4
 }
 
 # Some variables need to be exported to systemd and/or dbus activation
