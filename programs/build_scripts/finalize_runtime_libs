@@ -3,7 +3,7 @@
 set -e -u
 
 copy_shared_objects_from_file() {
-  OBJECT=${1:?TODO}
+  OBJECT=${1:?A path to copy shared objects from is required}
   [ -f "${OBJECT}" ] || return 0
   file "${OBJECT}" | grep --quiet 'dynamically linked' || return 0
   strip --strip-all "${OBJECT}"

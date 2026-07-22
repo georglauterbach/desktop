@@ -49,8 +49,8 @@ The following packages are built from source:
 14. Screen Brightness: [lightctl](https://github.com/blurrycat/lightctl)
 15. Screen Recordings: [wl-screenrec](https://github.com/russelltg/wl-screenrec)
 16. Portal Checker: [door-knocker](https://codeberg.org/tytan652/door-knocker)
-17. Custom XDG Desktop Portal (incl. WLR portal): [xdg-desktop-portal](TODO) & [xdg-desktop-portal-wlr]()
-17. GTK3 Settings Editor: [nwg-look](https://github.com/nwg-piotr/nwg-look)
+17. Custom XDG Desktop Portal (incl. WLR portal): [xdg-desktop-portal](https://github.com/flatpak/xdg-desktop-portal) & [xdg-desktop-portal-wlr](https://github.com/emersion/xdg-desktop-portal-wlr)
+18. GTK3 Settings Editor: [nwg-look](https://github.com/nwg-piotr/nwg-look)
 
 ## Theme
 

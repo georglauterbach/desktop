@@ -13,7 +13,7 @@ function log_error() {
 }
 
 function require_command() {
-  local COMMAND=${1:?TODO}
+  local COMMAND=${1:?The name of the command to check is required}
   if ! command -v "${COMMAND}" &>/dev/null; then
     log_error "The command '${COMMAND}' could not be found" >&2
     exit 1
