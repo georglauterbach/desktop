@@ -14,6 +14,8 @@ function log_warn() {
 
 # shellcheck disable=SC2329
 function set_theme_shell() {
+  [[ -r /tmp/.hermes_shells_to_update ]] || return 0
+
   # We ignore SC2094 because we fully read the file first,
   # and then we overwrite it afterward.
   # shellcheck disable=SC2094
