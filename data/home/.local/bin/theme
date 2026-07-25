@@ -125,19 +125,6 @@ function set_theme_alacritty() {
   fi
 }
 
-function set_theme_btop() {
-  local CONFIG_FILE=${HOME}/.config/btop/btop.conf
-
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! sed --in-place --regexp-extended \
-      "s/^(color_theme =).*/\1 \"evergruv-${THEME_VARIANT}\"/" "${CONFIG_FILE}"; then
-      log_warn 'Could not update color theme of btop'
-      return 1
-    fi
-    log_info 'Updated btop'
-  fi
-}
-
 function set_theme_kitty() {
   local CONFIG_FILE=${HOME}/.config/kitty/style-${THEME_VARIANT}.conf
 
@@ -213,7 +200,7 @@ function set_theme_waybar() {
       log_warn 'Could not update color theme of Waybar'
       return 1
     fi
-    log_info 'Updated Wleave'
+    log_info 'Updated Waybar'
   fi
 }
 
@@ -226,20 +213,6 @@ function set_theme_wleave() {
       return 1
     fi
     log_info 'Updated Wleave'
-  fi
-}
-
-function set_theme_zellij() {
-  local CONFIG_FILE=${HOME}/.config/zellij/config.kdl
-
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! sed --in-place --regexp-extended \
-      "s/(theme )\".*\"/\1\"evergruv-${THEME_VARIANT}\"/" \
-      "${CONFIG_FILE}"; then
-      log_warn 'Could not update color theme of Zellij'
-      return 1
-    fi
-    log_info 'Updated Zellij'
   fi
 }
 
@@ -274,14 +247,12 @@ function main() {
   #set_theme_shell &
   set_theme_system &
   set_theme_alacritty &
-  set_theme_btop &
   set_theme_kitty &
   set_theme_rofi &
   set_theme_swaylock &
   set_theme_swaync &
   set_theme_waybar &
   set_theme_wleave &
-  set_theme_zellij &
 
   wait -f
   exit "${EXIT_CODE}"
