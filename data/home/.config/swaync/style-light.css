@@ -43,12 +43,21 @@
 }
 
 .notification {
-  background: transparent;
+  background: alpha(@background, 0.7);
   border-radius: 5px;
-  box-shadow: none;
-  margin: 12px;
+  box-shadow: inset 0 0 0 2px @blue;
+  margin: 20px;
   outline: none;
   padding: 0px;
+}
+
+.floating-notifications .notification {
+  margin: 6px 20px;
+}
+
+.control-center .notification {
+  margin: 8px;
+  box-shadow: inset 0 0 0 2px @foreground;
 }
 
 .notification-content {
@@ -61,11 +70,11 @@
 /* upper message */
 .notification-default-action,
 .notification-action {
-  border: 1px solid @green;
-  border-top: 3px solid @green;
-  border-left: 3px solid @green;
-  border-right: 3px solid @green;
-  background: @background;
+  border: 1px solid alpha(@foreground, 0.35);
+  border-top: 1px solid alpha(@foreground, 0.35);
+  border-left: 1px solid alpha(@foreground, 0.35);
+  border-right: 1px solid alpha(@foreground, 0.35);
+  background: transparent;
 }
 
 .notification-default-action {
@@ -74,7 +83,7 @@
 
 .notification-default-action:hover,
 .notification-action:hover {
-  background: @background-dim;
+  background: alpha(@background-dim, 0.5);
 }
 
 /* -- do not round corners when lower content is available */
@@ -85,12 +94,12 @@
 
 /* -- provide the correct border when only upper content is available */
 .notification-default-action:only-child {
-  border-bottom: 3px solid @green;
+  border-bottom: 1px solid alpha(@foreground, 0.35);
 }
 
 /* lower actions */
 .notification-action {
-  border-bottom: 3px solid @green;
+  border-bottom: 1px solid alpha(@foreground, 0.35);
   border-radius: 0px;
   border-right: none;
   border-top: none;
@@ -103,13 +112,13 @@
 
 /* -- set the correct inner border when multiple actions are available */
 .notification-action:not(:first-child) {
-  border-left: 1px solid @green;
+  border-left: 1px solid alpha(@foreground, 0.35);
 }
 
 /* -- round the right bottom corner when multiple actions are available */
 .notification-action:last-child {
   border-bottom-right-radius: 5px;
-  border-right: 3px solid @green;
+  border-right: 1px solid alpha(@foreground, 0.35);
 }
 
 .notification-action > button {
@@ -179,6 +188,7 @@ progressbar trough progress {
 /* widgets */
 .widget-title {
   font-size: 1.5rem;
+  margin: 20px 20px 0;
 }
 
 .top-action-title {
@@ -188,7 +198,7 @@ progressbar trough progress {
 
 .control-center-clear-all {
   background: transparent;
-  border: 2px solid @green;
+  border: 1px solid alpha(@foreground, 0.45);
   border-radius: 5px;
   color: @foreground;
   font-size: 1rem;
@@ -198,26 +208,28 @@ progressbar trough progress {
 
 .control-center-clear-all:hover {
   background: @background-dim;
+  border-color: @blue;
 }
 
 .widget-dnd {
   font-size: 1rem;
-  margin: 20px 0px;
+  margin: 20px 20px;
 }
 
 .control-center-dnd {
   border-radius: 15px;
   background: transparent;
-  border: 2px solid @green;
+  border: 1px solid alpha(@foreground, 0.45);
   box-shadow: none;
 }
 
 .control-center-dnd:checked {
-  background: @green;
+  background: @blue;
+  border-color: @blue;
 }
 
 .control-center-dnd slider {
-  background: @green;
+  background: alpha(@foreground, 0.55);
   border-radius: 10px;
 }
 
@@ -227,14 +239,17 @@ progressbar trough progress {
 
 .control-center {
   border: none;
-  background: none;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 2px @blue;
+  background: alpha(@background, 0.7);
   color: @foreground;
-  margin: 12px;
-  padding: 12px;
+  margin: 0;
+  padding: 0;
 }
 
 .control-center-list {
   background: transparent;
+  margin: 0 20px 20px;
 }
 
 .floating-notifications {
@@ -242,20 +257,20 @@ progressbar trough progress {
 }
 
 .notification-group {
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: 5px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   outline: none;
   transition: opacity 200ms ease-in-out;
 }
 
 .notification-group:focus {
-  border: 2px solid @green;
+  border: 1px solid @blue;
   border-radius: 5px;
 }
 
 .notification-group:hover {
-  border: 2px solid @green;
+  border: 1px solid alpha(@blue, 0.6);
   border-radius: 5px;
 }
 
@@ -263,14 +278,57 @@ progressbar trough progress {
   font-size: 1rem;
   font-weight: 500;
   color: @foreground;
+  margin-left: 16px;
 }
 
 .notification-group .notification-group-headers .notification-group-icon {
-  margin-left: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.notification-group:not(.collapsed) .notification-group-headers {
+  margin: 12px 8px 8px 16px;
+  padding: 0;
+}
+
+/* hide close/collapse when a group is expanded */
+.notification-group:not(.collapsed) .notification-group-buttons,
+.notification-group:not(.collapsed) .notification-group-collapse-button,
+.notification-group:not(.collapsed) .notification-group-close-all-button {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  opacity: 0;
+}
+
+/* quieter notification chrome inside the panel */
+.control-center .notification-default-action,
+.control-center .notification-action {
+  border: 1px solid alpha(@foreground, 0.35);
+  border-top: 1px solid alpha(@foreground, 0.35);
+  border-left: 1px solid alpha(@foreground, 0.35);
+  border-right: 1px solid alpha(@foreground, 0.35);
+}
+
+.control-center .notification-default-action:only-child {
+  border-bottom: 1px solid alpha(@foreground, 0.35);
+}
+
+.control-center .notification-action {
+  border-bottom: 1px solid alpha(@foreground, 0.35);
+}
+
+.control-center .notification-action:not(:first-child) {
+  border-left: 1px solid alpha(@foreground, 0.35);
+}
+
+.control-center .notification-action:last-child {
+  border-right: 1px solid alpha(@foreground, 0.35);
 }
 
 /* -- window behind control center and on all other monitors */
 .blank-window {
-  background: alpha(@background, 0.75);
-  padding: 80px;
+  background: transparent;
 }
