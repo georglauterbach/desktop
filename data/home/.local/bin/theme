@@ -13,24 +13,23 @@ function log_warn() {
 }
 
 # shellcheck disable=SC2329
-function set_theme_shell_prompt() {
-  local POTENTIALS=()
-  while read -r PARENT_PID; do
-    while read -r POTENTIAL_PID; do
-      POTENTIALS+=("${POTENTIAL_PID}")
-    done < <(pgrep --parent "${PARENT_PID}")
-  done < <(pgrep x-terminal-emul ; pgrep code ;)
-
-  while read -r BASH_PID; do
-    for POTENTIAL_PID in "${POTENTIALS[@]}"; do
-      if [[ ${POTENTIAL_PID} == "${BASH_PID}" ]]; then
-        kill -s SIGUSR2 "${POTENTIAL_PID}"
-        break
+function set_theme_shell() {
+  # We ignore SC2094 because we fully read the file first,
+  # and then we overwrite it afterward.
+  # shellcheck disable=SC2094
+  {
+    flock -s 3
+    while read -r PID; do
+      if ps --pid "${PID}" &>/dev/null; then
+        kill -s SIGUSR2 "${PID}"
+        echo "${PID}" >>/tmp/.hermes_shells_to_update_tmp
       fi
-    done
-  done < <(pgrep bash)
+    done <&3
 
-  log_info 'Updated shell prompt'
+    mv /tmp/.hermes_shells_to_update_tmp /tmp/.hermes_shells_to_update
+  } 3</tmp/.hermes_shells_to_update
+
+  log_info 'Updated shell'
 }
 
 function set_theme_system() {
@@ -272,7 +271,7 @@ function main() {
   readonly THEME_VARIANT THEME_NAME FORCE
   log_info "Updating system theme to \033[1m${THEME_VARIANT}\033[0m"
 
-  set_theme_shell_prompt &
+  #set_theme_shell &
   set_theme_system &
   set_theme_alacritty &
   set_theme_btop &
