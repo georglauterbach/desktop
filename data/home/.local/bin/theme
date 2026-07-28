@@ -195,7 +195,6 @@ function set_theme_x11() {
       "s|^(Net/ThemeName).*|\1 \"${GTK_THEME_NAME}\"|" \
       "${HOME}/.config/xsettingsd/xsettingsd.conf"
   fi
-  return 2
 }
 
 function run_update_async() {
