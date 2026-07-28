@@ -16,4 +16,4 @@ configuration {
     display-filebrowser: "󰉋 ";
 }
 
-@theme "gruvbox-material-dark"
+@theme "themes/evergruv_dark"

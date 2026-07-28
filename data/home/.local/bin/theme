@@ -1,7 +1,15 @@
 #! /usr/bin/env bash
 
-set +e -E -u -o pipefail
+# shellcheck disable=SC2329
+
+set -eE -u -o pipefail
 shopt -s inherit_errexit
+
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+
+function log_debug() {
+  echo -e "\033[1;36mDEBUG\033[0m ${1:?Log info message required}"
+}
 
 function log_info() {
   echo -e "\033[1;34mINFO\033[0m  ${1:?Log info message required}"
@@ -9,217 +17,200 @@ function log_info() {
 
 function log_warn() {
   echo -e "\033[1;33mWARN\033[0m  ${1:?Log warning message required}" >&2
-  EXIT_CODE=1
 }
 
-# shellcheck disable=SC2329
+function set_theme_alacritty() {
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/alacritty
+  local CONFIG_FILE=themes/evergruv_${THEME_VARIANT}.toml
+
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
+  fi
+
+  cd "${CONFIG_DIR}"
+  ln --symbolic --force "${CONFIG_FILE}" theme-active.toml || return 1
+}
+
+function set_theme_flatpak() {
+  if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
+    sed --in-place --regexp-extended              \
+      -e "s|~|${HOME}|g"                          \
+      -e "s|(GTK_THEME=).*|\1${GTK_THEME_NAME}|"  \
+      -e "s|(ICON_THEME=).*|\1${GTK_THEME_NAME}|" \
+      "${HOME}"/.local/share/flatpak/overrides/global
+  fi
+}
+
+function set_theme_gtk() {
+  mkdir --parents "${HOME}"/.{local/share/{themes,icons},icons,themes,config/gtk-{3,4}.0}
+
+  local I
+  for I in {3..4}; do
+    if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then
+      sed --in-place --regexp-extended \
+        -e "s|^(gtk-theme-name=).*|\1${GTK_THEME_NAME}|" \
+        -e "s|^(gtk-icon-theme-name=).*|\1${GTK_THEME_NAME}|" \
+        "${HOME}/.config/gtk-${I}.0/settings.ini" \
+        || { log_warn "Failed to update GTK ${I} theme settings" ; return 1 ; }
+    fi
+  done
+
+  gsettings set org.gnome.desktop.interface gtk-theme "${GTK_THEME_NAME}" \
+    || { log_warn 'Could not set GTK theme' ; return 1 ; }
+  gsettings set org.gnome.desktop.interface icon-theme "${GTK_THEME_NAME}" \
+    || { log_warn 'Could not set GTK icon theme' ; return 1 ; }
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_VARIANT}" \
+    || { log_warn 'Could not set GTK color scheme preference' ; return 1 ; }
+
+  if "${FORCE}"; then
+    local THEME_DIR=${HOME}/.local/share/themes/${GTK_THEME_NAME}
+    local THEME_DIR_OLD=${HOME}/.themes/${GTK_THEME_NAME}
+    readonly THEME_DIR THEME_DIR_OLD
+
+    if [[ -d ${THEME_DIR} ]]; then
+      rm --recursive --force "${THEME_DIR_OLD}" \
+        || { log_warn "Could not delete old theme directory '${THEME_DIR_OLD}'" ; return 1 ; }
+      cp --recursive "${THEME_DIR}" "${THEME_DIR_OLD}" \
+        || { log_warn "Could not copy '${THEME_DIR}' to '${THEME_DIR_OLD}'" ; return 1 ; }
+    fi
+
+    rm --force --recursive "${HOME}/.cache/"gtk-{3,4}.0 \
+      || { log_warn "Could not delete GTK cache" ; return 1 ; }
+    gtk-update-icon-cache --force 2>/dev/null || :
+  fi
+
+  gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
+  gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
+  gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
+
+  rm --force "${HOME}/.config/gtk-4.0/"{colors.css,gtk.css}
+}
+
+function set_theme_rofi() {
+  # cSpell: ignore rasi
+  local CONFIG_FILE=${XDG_CONFIG_HOME}/rofi/config.rasi
+
+  [[ -s ${CONFIG_FILE} ]] || return 2
+  sed --in-place --regexp-extended \
+    "s|(theme )\".*\"|\1\"themes/evergruv_${THEME_VARIANT}\"|" \
+    "${CONFIG_FILE}"
+}
+
 function set_theme_shell() {
-  [[ -r /tmp/.hermes_shells_to_update ]] || return 0
+  [[ -r /tmp/.hermes_shells_to_update ]] || return 2
 
   # We ignore SC2094 because we fully read the file first,
   # and then we overwrite it afterward.
   # shellcheck disable=SC2094
   {
-    flock -s 3
+    flock -s 3 || return 1
     while read -r PID; do
       if ps --pid "${PID}" &>/dev/null; then
-        kill -s SIGUSR2 "${PID}"
+        kill -s SIGUSR2 "${PID}" || return 1
         echo "${PID}" >>/tmp/.hermes_shells_to_update_tmp
       fi
     done <&3
 
-    mv /tmp/.hermes_shells_to_update_tmp /tmp/.hermes_shells_to_update
+    if [[ -s /tmp/.hermes_shells_to_update_tmp ]]; then
+      mv /tmp/.hermes_shells_to_update_tmp /tmp/.hermes_shells_to_update
+    fi
   } 3</tmp/.hermes_shells_to_update
-
-  log_info 'Updated shell'
 }
 
-function set_theme_system() {
-  local WALLPAPER=${HOME}/.config/sway/theme/${THEME_VARIANT}/wallpaper.svg
-  if [[ -e ${WALLPAPER} ]]; then
-    local WALLPAPER_LINK="${HOME}/.config/sway/theme/wallpaper"
-    ln --symbolic --force "${WALLPAPER}" "${WALLPAPER_LINK}"
-    awww img "${WALLPAPER_LINK}" --transition-type fade --transition-duration 0.4
-    log_info 'Updated wallpaper'
-  else
-    log_warn "Wallpaper file '${WALLPAPER}' does not exist"
-  fi
-
-  local THEME_DIR_XDG=${HOME}/.local/share/themes/${THEME_NAME}
-  local THEME_DIR_OLD=${HOME}/.themes/${THEME_NAME}
-  readonly THEME_DIR_XDG THEME_DIR_OLD
-
-  mkdir --parents "${HOME}"/.{local/share/{themes,icons},icons,themes,config/gtk-{3,4}.0}
-
-  gsettings set org.gnome.desktop.interface gtk-theme    "${THEME_NAME}"
-  gsettings set org.gnome.desktop.interface icon-theme   "${THEME_NAME}"
-  gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_VARIANT}"
-
+function set_theme_sway() {
   # shellcheck disable=SC2016
-  swaymsg client.focused \
-    '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue"
+  swaymsg client.focused '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue" || return 1
   # shellcheck disable=SC2016
-  swaymsg client.focused_inactive \
-    '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue80"
+  swaymsg client.focused_inactive '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue80" || return 1
   # shellcheck disable=SC2016
-  swaymsg client.unfocused \
-    '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.foregroundB0"
+  swaymsg client.unfocused '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
   # shellcheck disable=SC2016
-  swaymsg client.urgent \
-    '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.red"
-
-  rm -f "${HOME}/.config/gtk-4.0/"{colors.css,gtk.css}
-
-  local I; for I in {3..4}; do
-    if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then
-      sed --in-place --regexp-extended \
-        -e "s|^(gtk-theme-name=).*|\1${THEME_NAME}|" \
-        -e "s|^(gtk-icon-theme-name=).*|\1${THEME_NAME}|" \
-        "${HOME}/.config/gtk-${I}.0/settings.ini"
-    fi
-  done
-
-  if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
-    sed --in-place --regexp-extended          \
-      -e "s|~|${HOME}|g"                      \
-      -e "s|(GTK_THEME=).*|\1${THEME_NAME}|"  \
-      -e "s|(ICON_THEME=).*|\1${THEME_NAME}|" \
-      "${HOME}"/.local/share/flatpak/overrides/global
-  fi
-
-  # cSpell: disable xsettingsd
-  if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
-    sed --in-place --regexp-extended \
-      "s|^(Net/ThemeName).*|\1 \"${THEME_NAME}\"|" \
-      "${HOME}/.config/xsettingsd/xsettingsd.conf"
-  fi
-
-  if "${FORCE}"; then
-    if [[ -d ${THEME_DIR_XDG} ]]; then
-      rm --recursive --force "${THEME_DIR_OLD}"
-      cp --recursive "${THEME_DIR_XDG}" "${THEME_DIR_OLD}"
-    fi
-
-    gsettings set org.gnome.desktop.interface font-name           'Ubuntu Sans 12'
-    gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
-    gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
-
-    rm --force --recursive "${HOME}/.cache/"gtk-{3,4}.0
-    gtk-update-icon-cache --force 2>/dev/null || :
-  fi
-}
-
-function set_theme_alacritty() {
-  local CONFIG_FILE=${HOME}/.config/alacritty/style-${THEME_VARIANT}.toml
-
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! ln --symbolic --force \
-      "${CONFIG_FILE}" \
-      "${HOME}/.config/alacritty/style-active.toml"; then
-      log_warn 'Could not update color theme of Alacritty'
-    fi
-    log_info 'Updated Alacritty'
-    return 1
-  fi
-}
-
-function set_theme_kitty() {
-  local CONFIG_FILE=${HOME}/.config/kitty/style-${THEME_VARIANT}.conf
-
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! ln --symbolic --force \
-      "${CONFIG_FILE}" \
-      "${HOME}/.config/kitty/kitty.conf"; then
-      log_warn 'Could not update color theme of Kitty'
-      return 1
-    fi
-    log_info 'Updated Kitty'
-  fi
-}
-
-function set_theme_rofi() {
-  # cSpell: disable-next-line
-  local CONFIG_FILE=${HOME}/.config/rofi/config.rasi
-
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! sed --in-place --regexp-extended \
-      "s/(theme )\".*\"/\1\"style-${THEME_VARIANT}\"/" \
-      "${CONFIG_FILE}"; then
-      log_warn 'Could not update color theme of Rofi'
-      return 1
-    fi
-    log_info 'Updated Rofi'
-  fi
+  swaymsg client.urgent '$color.transparent' '$color.transparent' '$color.transparent' \
+    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.red" || return 1
 }
 
 function set_theme_swaylock() {
-  local CONFIG_FILE=${HOME}/.config/swaylock/style-${THEME_VARIANT}
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/swaylock
+  local CONFIG_FILE=themes/evergruv_${THEME_VARIANT}
 
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaylock/config"; then
-      log_warn 'Could not update color theme of Swaylock'
-    fi
-    log_info 'Updated Swaylock'
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
   fi
+
+  cd "${CONFIG_DIR}"
+  ln --symbolic --force "${CONFIG_FILE}" config
 }
 
 function set_theme_swaync() {
-  local CONFIG_FILE=${HOME}/.config/swaync/style-${THEME_VARIANT}.css
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/swaync
+  local CONFIG_FILE=themes/evergruv_${THEME_VARIANT}.css
 
-  if [[ ! -f ${CONFIG_FILE} ]]; then
-    log_warn 'Could not find configuratino file for SwayNC'
-    return 1
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
   fi
 
-  if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/swaync/style.css"; then
-    log_warn 'Could not update color theme of SwayNC in configuration file'
-    return 1
-  fi
+  cd "${CONFIG_DIR}"
+  ln --symbolic --force "${CONFIG_FILE}" style.css || return 1
 
   if ! pgrep -a '^ld-linux-x86-64' | grep -q swaync; then
-    log_warn 'SwayNC is not running, not restarting it'
-    return 1
+    log_debug 'SwayNC is not running, not restarting it'
+    return 2
   fi
 
-
-  if ! timeout 2 swaync-client --skip-wait --reload-css >/dev/null; then
-    log_warn 'Could not update SwayNC'
-    return 1
-  fi
-
-  log_info 'Updated SwayNC'
+  timeout 2 swaync-client --skip-wait --reload-css >/dev/null
 }
 
-function set_theme_waybar() {
-  local CONFIG_FILE=${HOME}/.config/waybar/style-${THEME_VARIANT}.css
+function set_theme_wallpaper() {
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/sway/theme
+  local CONFIG_FILE=${THEME_VARIANT}/wallpaper.svg
 
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/waybar/style.css"; then
-      log_warn 'Could not update color theme of Waybar'
-      return 1
-    fi
-    log_info 'Updated Waybar'
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
   fi
+
+  cd "${CONFIG_DIR}"
+  ln --symbolic --force "${CONFIG_FILE}" wallpaper || return 1
+  awww img wallpaper --transition-type fade --transition-duration 0.4
 }
 
 function set_theme_wleave() {
-  local CONFIG_FILE=${HOME}/.config/wleave/style-${THEME_VARIANT}.css
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/wleave
+  local CONFIG_FILE=themes/evergruv_${THEME_VARIANT}.css
 
-  if [[ -f ${CONFIG_FILE} ]]; then
-    if ! ln --symbolic --force "${CONFIG_FILE}" "${HOME}/.config/wleave/style.css"; then
-      log_warn 'Could not update color theme of Wleave'
-      return 1
-    fi
-    log_info 'Updated Wleave'
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
   fi
+
+  cd "${CONFIG_DIR}"
+  ln --symbolic --force "${CONFIG_FILE}" style.css
+}
+
+function set_theme_x11() {
+  # cSpell: disable xsettingsd
+  if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
+    sed --in-place --regexp-extended \
+      "s|^(Net/ThemeName).*|\1 \"${GTK_THEME_NAME}\"|" \
+      "${HOME}/.config/xsettingsd/xsettingsd.conf"
+  fi
+  return 2
+}
+
+function run_update_async() {
+  local UPDATE_COMPONENT=${1:?Update message required}
+  local UPDATE_FUNCTION=${2:?Update function name required}
+  shift 2
+
+  ${UPDATE_FUNCTION} "${@}" &
+  JOB_NAME_MAPPING[${!}]=${UPDATE_COMPONENT}
 }
 
 function main() {
-  local THEME_VARIANT=light THEME_NAME=Yaru FORCE=false EXIT_CODE=0
+  local THEME_VARIANT=light GTK_THEME_NAME=Yaru FORCE=false EXIT_CODE=0
+  local JOB_ID JOB_RESULT JOB_NAME
+  declare -A JOB_NAME_MAPPING=()
 
   while [[ ${#} -gt 0 ]]; do
     case "${1:-}" in
@@ -227,7 +218,7 @@ function main() {
 
       ( d | dark )
         THEME_VARIANT=dark
-        THEME_NAME+=-${THEME_VARIANT}
+        GTK_THEME_NAME+=-${THEME_VARIANT}
         ;;
 
       ( -f | --force )
@@ -243,20 +234,47 @@ function main() {
     shift 1
   done
 
-  readonly THEME_VARIANT THEME_NAME FORCE
-  log_info "Updating system theme to \033[1m${THEME_VARIANT}\033[0m"
+  readonly THEME_VARIANT GTK_THEME_NAME FORCE
+  log_info "Updating theme to \033[1mEvergruv ${THEME_VARIANT^}\033[0m"
 
-  #set_theme_shell &
-  set_theme_system &
-  set_theme_alacritty &
-  set_theme_kitty &
-  set_theme_rofi &
-  set_theme_swaylock &
-  set_theme_swaync &
-  set_theme_waybar &
-  set_theme_wleave &
+  run_update_async shell                  set_theme_shell
+  run_update_async Alacritty              set_theme_alacritty
+  run_update_async Flatpak                set_theme_flatpak
+  run_update_async GTK                    set_theme_gtk
+  run_update_async Rofi                   set_theme_rofi
+  run_update_async Sway                   set_theme_sway
+  run_update_async Swaylock               set_theme_swaylock
+  run_update_async SwayNotificationCenter set_theme_swaync
+  run_update_async wallpaper              set_theme_wallpaper
+  run_update_async Wleave                 set_theme_wleave
+  run_update_async X11                    set_theme_x11
 
-  wait -f
+  while [[ -n $(jobs -p || :) ]]; do
+    JOB_RESULT=0
+    wait -n -p JOB_ID || JOB_RESULT=${?}
+    JOB_NAME=${JOB_NAME_MAPPING[${JOB_ID}]}
+
+    case "${JOB_RESULT:-0}" in
+      ( 0 )
+        log_info "Updated ${JOB_NAME}"
+        ;;
+
+      ( 1 )
+        log_warn "Update of ${JOB_NAME} failed"
+        EXIT_CODE=1
+        ;;
+
+      ( 2 )
+        log_debug "No update of ${JOB_NAME} performed"
+        ;;
+
+      ( * )
+        log_warn "Unknown error occurred during update of ${JOB_NAME}"
+        EXIT_CODE=1
+        ;;
+    esac
+  done
+
   exit "${EXIT_CODE}"
 }
 

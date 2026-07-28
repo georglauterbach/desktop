@@ -9,16 +9,16 @@
 /* ----  Colors  ----------------------------- */
 /* ------------------------------------------- */
 
-@define-color background-dim #EBEBE4;
-@define-color background #F5F5F2;
-@define-color foreground #5C6A72;
-@define-color red #F85552;
-@define-color orange #F57D26;
-@define-color yellow #D69A00;
-@define-color green #8DA101;
-@define-color cyan #35A77C;
-@define-color blue #3A94C5;
-@define-color purple #DF69BA;
+@define-color background-dim #141617;
+@define-color background #1D2021;
+@define-color foreground #DDC7A1;
+@define-color red #EA6962;
+@define-color orange #E78A4E;
+@define-color yellow #D8A657;
+@define-color green #A9B665;
+@define-color cyan #7BB674;
+@define-color blue #7DAEA3;
+@define-color purple #D3869B;
 
 /* ------------------------------------------- */
 /* ----  General  ---------------------------- */
@@ -52,7 +52,7 @@
 }
 
 .floating-notifications .notification {
-  margin: 6px 20px;
+  margin: 12px;
 }
 
 .control-center .notification {
