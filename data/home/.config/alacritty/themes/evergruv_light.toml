@@ -24,8 +24,8 @@ yellow  = "#D69A00"
 blue    = "#3A94C5"
 magenta = "#DF69BA"
 cyan    = "#35A77C"
-white   = "#FCFCFA"
+white   = "#EBEBE4"
 
 [colors.cursor]
-cursor  = "#8DA101"
+cursor  = "#3A94C5"
 text    = "#F5F5F2"
