@@ -1,31 +1,93 @@
 ---
 version: '0.2'
 
-ignorePaths:
-  - '*/src'
-  - '*/out'
+import: [ cspell.user.config.yaml ]
 
+ignorePaths: []
+
+dictionaryDefinitions: []
 dictionaries:
   - en_US
   - softwareTerms
   - bash
 
 words:
+  - allowlist
+  - backpressure
+  - cooldown
+  - debuggee
+  - foldable
+  - foldables
+  - keepalive
   - lockscreen
+  - recognised
+  - unrecognised
+  - unrequested
+  - unsanitized
+  - worktree
+  - worktrees
 
 ignoreWords:
   # names
+  - georg
+  - lauterbach
   - georglauterbach
-  - firacode
-  - patorjk
 
-  # theme
+  # Rust
+  - clippy
+  - lldb
+  - rustc
+  - rustdoc
+  - rustup
+
+  # Shell
+  - pipefail
+  - shopt
+  - errexit
+
+  # Python
+  - pyproject
+  - pytest
+  - ruff
+  - SCRIPTDIR
+
+  # Acronyms
+  - PKCS11
+
+  # Miscellaneous
+  - acpi
+  - agentic
+  - awww
+  - bindsym
+  - btop
+  - buildx
+  - bwrap
+  - containerfile
+  - coolors
+  - gamemode
   - everforest
   - evergruv
-  - gruvbox
-  - yaru
-
-  # Sway
+  - flyline
+  - gitui
+  - gsettings
+  - herdr
+  - justfile
+  - libbash
+  - libflyline
+  - lightctl
+  - patchelf
+  - pipewire
+  - powerprofilesctl
+  - ptyxis
+  - reflog
+  - rofi
+  - rtkit
+  - satty
+  - scdoc
+  - shellcheck
+  - shfmt
+  - shikane
+  - shikanectl
   - swayfx
   - swayidle
   - swayimg
@@ -33,52 +95,13 @@ ignoreWords:
   - swaymsg
   - swaync
   - swaynotificationcenter
-  - xwayland
-
-  # packages
-  - awww
-  - btop
-  - bwrap
-  - gamemode
-  - ianny
-  - lightctl
-  - patchelf
-  - pipewire
-  - ptyxis
-  - rofi
-  - rtkit
-  - satty
-  - shikane
-  - swayidle
-  - swaync
   - waybar
   - wdisplays
   - wireplumber
-  - wl-screenrec
-  - wl_screenrec
   - wleave
   - wlsunset
-  - yazi
-
-  # commands
-  - __powerprofile
-  - gsettings
-  - lightctl
-  - powerprofilesctl
-  - rustup
-  - scdoc
-  - shikanectl
-  - swaymsg
   - wpctl
-
-  # acronyms
-  - PKCS11
-
-  # miscellaneous
-  - acpi
-  - bindsym
-  - containerfile
-  - coolors
-  - SIGUSR
-  - titlebar
-  - userns
+  - xwayland
+  - yaru
+  - yazi
+  - zizmor

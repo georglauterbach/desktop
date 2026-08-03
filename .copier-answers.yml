@@ -1,0 +1,15 @@
+_commit: 0.3.1
+_src_path: gh:georglauterbach/template.git
+dev_container_enabled: false
+git_ecosystem: github
+git_ecosystem_username: georglauterbach
+lang_container_enabled: false
+lang_python_enabled: false
+lang_rust_enabled: false
+lang_shell_enabled: true
+lang_shell_type: mixed
+project_changelog_enabled: false
+project_copyright_holder: Georg Lauterbach
+project_description: This project contains the configuration of my personal desktop.
+project_license: GPL-3.0-or-later
+project_name: desktop

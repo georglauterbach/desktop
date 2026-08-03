@@ -1,6 +1,6 @@
 # desktop - Agent Guide
 
-This project delivers programs and configuration for my graphical user interface (desktop).
+This project contains the configuration of my personal desktop.
 
 ## Associated Projects
 

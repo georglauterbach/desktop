@@ -10,7 +10,7 @@ on: # yamllint disable-line rule:truthy
     branches: [ '**' ]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -28,6 +28,6 @@ jobs:
           persist-credentials: false
 
       - name: Run Linter
-        uses: georglauterbach/linter@v0.4.3
+        uses: georglauterbach/linter@v0.4.4
         with:
           editorconfig_checker_config: .github/linter/editorconfig_checker.json
