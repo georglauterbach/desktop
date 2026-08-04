@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
 
-# cSpell: ignore SWAYSOCK
-
 set +eE -u -o pipefail
 shopt -s inherit_errexit
 

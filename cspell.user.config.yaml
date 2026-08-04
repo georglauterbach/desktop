@@ -2,4 +2,5 @@
 ignorePaths:
   - programs/.*
 
-ignoreWords: []
+ignoreWords:
+  - SWAYSOCK
