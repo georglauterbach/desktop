@@ -32,7 +32,15 @@ systemctl --user start sway-session.target
 
 set_wallpaper &
 
-readonly SERVICES=(xdg-desktop-portal{,-wlr,-gtk} awww-daemon shikane swaync waybar) # ianny
+readonly SERVICES=(
+  xdg-desktop-portal{,-wlr,-gtk}
+  awww-daemon
+  shikane
+  swaync
+  waybar
+  ssh-agent
+  # ianny
+)
 for SERVICE in "${SERVICES[@]}"; do
   systemd_start_user_service "${SERVICE}"
 done

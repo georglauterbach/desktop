@@ -22,10 +22,13 @@ systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP}"
 unset DISPLAY WAYLAND_DISPLAY
 systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY
 
-echo 'INFO  Starting gnome-keyring-daemon'
+if [[ -v XDG_RUNTIME_DIR ]]; then
+  export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}/ssh-agent.socket
+else
+  echo "WARN  Environment variable 'XDG_RUNTIME_DIR' not set" >&2
+fi
 
-eval "$(gnome-keyring-daemon --components=ssh,secrets,pkcs11 --start)"
-export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK
+fi
 
 echo 'INFO  Executing Sway now'
 exec sway
