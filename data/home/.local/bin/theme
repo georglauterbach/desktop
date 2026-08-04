@@ -165,7 +165,7 @@ function set_theme_swaync() {
 
 function set_theme_wallpaper() {
   local CONFIG_DIR=${XDG_CONFIG_HOME}/sway/theme
-  local CONFIG_FILE=${THEME_VARIANT}/wallpaper.svg
+  local CONFIG_FILE=${THEME_VARIANT}/wallpaper
 
   if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
     return 2
