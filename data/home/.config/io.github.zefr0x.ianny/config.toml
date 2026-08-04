@@ -1,10 +1,10 @@
 # ref: https://github.com/zefr0x/ianny?tab=readme-ov-file#config
-# 
+#
 # All numeric values are in seconds
 
 [timer]
 # Enabling this will only consider user input alone for idle
-# state, e.g. you will not have breaks when watching videos 
+# state, e.g. you will not have breaks when watching videos
 # or playing music without any user input
 ignore_idle_inhibitors = false
 
