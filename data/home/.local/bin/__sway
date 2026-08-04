@@ -28,6 +28,13 @@ else
   echo "WARN  Environment variable 'XDG_RUNTIME_DIR' not set" >&2
 fi
 
+# PAM already started an unlocked --login daemon. --start finishes its init
+# (secrets) on that same process so a later D-Bus activation cannot replace
+# it with a locked Secret Service. Unlock stays PAM's job. We skip SSH here
+# because we run a dedicated systemd user service ssh agent.
+if command -v gnome-keyring-daemon &>/dev/null; then
+  # shellcheck source=/dev/null
+  gnome-keyring-daemon --start --components=secrets,pkcs11 2>/dev/null || :
 fi
 
 echo 'INFO  Executing Sway now'
