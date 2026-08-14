@@ -335,7 +335,6 @@ RUN apt_install                \
         libgirepository1.0-dev \
         libgtk-3-dev           \
         libgtkmm-3.0-dev       \
-        libinput-dev           \
         libjsoncpp-dev         \
         libmpdclient-dev       \
         libnl-3-dev            \
