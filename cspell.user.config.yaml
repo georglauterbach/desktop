@@ -3,4 +3,8 @@ ignorePaths:
   - programs/.*
 
 ignoreWords:
+  - ianny
+  - patorjk
+  - screenrec
   - SWAYSOCK
+  - vtdn

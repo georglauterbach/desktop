@@ -34,7 +34,7 @@ Essential programs are built from source in a container to have as much control 
 The following packages are built from source:
 
 1. Wayland compositor: [SwayFX](https://github.com/WillPower3309/swayfx) with Xwayland support
-2. Terminal: [Alacritty](https://github.com/alacritty/alacritty)
+2. Terminal: [Alacritty](https://github.com/alacritty/alacritty) (see [vtdn.dev](https://vtdn.dev/) for terminal capabilities)
 3. Bar: [Waybar](https://github.com/Alexays/Waybar)
 4. Launcher: [rofi](https://github.com/davatorium/rofi)
 5. Notifications: [SwayNotificationCenter](https://github.com/ErikReider/SwayNotificationCenter)
