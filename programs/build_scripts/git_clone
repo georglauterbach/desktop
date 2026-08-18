@@ -2,9 +2,22 @@
 
 set -e -u
 
+CLONE_COMMAND="git clone --depth=1"
+
 GIT_URI=${1:?URI for cloning is required}
-GIT_REV=${2:?git revision is required}
-shift 2
+if [ "${2:?git revision is required}" = __ref ]; then
+  GIT_REV=${3:?git revision is required}
+  if [ "$(printf '%s' "${GIT_REV}" | wc --chars)" -lt 35 ]; then
+    __log "Git revision '${GIT_REV}' does not seem to a be **long** revision"
+    exit 1
+  fi
+  CLONE_COMMAND="${CLONE_COMMAND} --revision ${GIT_REV}"
+  shift 3
+else
+  GIT_REV=${2:?git revision is required}
+  CLONE_COMMAND="${CLONE_COMMAND} --branch ${GIT_REV}"
+  shift 2
+fi
 
 DIR_NAME=$(printf '%s' "${GIT_URI}" | sed -E 's|.*/(.*)\.git$|\1|')
 
@@ -21,4 +34,4 @@ if [ -d "${DIR_NAME}" ]; then
 fi
 
 __log "Cloning ${DIR_NAME} @ ${GIT_REV}"
-git clone --quiet --depth 1 --branch "${GIT_REV}" "${GIT_URI}"
+${CLONE_COMMAND} "${GIT_URI}"
