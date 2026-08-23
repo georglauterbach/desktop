@@ -157,8 +157,9 @@ for_window [class="floating_window"] floating enable
 
 # ---- Mouse Cursor
 
-seat * hide_cursor 10000
-seat * hide_cursor when-typing enable
+# These settings mess with mouse+keyboard interactions in games
+#seat * hide_cursor 10000
+#seat * hide_cursor when-typing enable
 
 # ----  Typography
 
