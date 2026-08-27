@@ -318,7 +318,7 @@ bindsym $spr+$ctl+$sft+Up            move workspace to output    up
 bindsym $spr+$ctl+$sft+Down          move workspace to output    down
 
 # move workspace to next monitor
-bindsym $spr+m exec swaymsg move workspace to "$(swaymsg -t get_outputs | jq '[.[] | select(.active == true)] | .[(map(.focused) | index(true) + 1) % length].name')"
+bindsym $spr+m exec swaymsg move workspace to "$(swaymsg --raw --type get_outputs | jq --raw-output '[.[] | select(.active)] | .[(map(.focused) | index(true) + 1) % length].name')"
 
 # ----  Resizing
 
