@@ -17,4 +17,4 @@ RestartSec=3
 Documentation=https://github.com/zefr0x/ianny
 
 [Install]
-Wantedby=default.target
+WantedBy=default.target

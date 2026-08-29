@@ -19,4 +19,4 @@ RestartSec=1
 Documentation=https://github.com/ErikReider/SwayNotificationCenter
 
 [Install]
-Wantedby=default.target
+WantedBy=default.target

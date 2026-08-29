@@ -18,4 +18,4 @@ RestartSec=1
 Documentation=https://codeberg.org/LGFae/awww
 
 [Install]
-Wantedby=default.target
+WantedBy=default.target

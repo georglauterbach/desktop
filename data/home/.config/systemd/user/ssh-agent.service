@@ -18,4 +18,4 @@ RestartSec=1
 Documentation=man:ssh-agent(1)
 
 [Install]
-Wantedby=default.target
+WantedBy=default.target
