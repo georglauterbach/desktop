@@ -106,7 +106,7 @@
     "format": " {usage:3}%"
   },
   "custom/gpu": {
-    "exec-if": "which gpu-usage-waybar",
+    "exec-if": "command -v gpu-usage-waybar",
     "exec": "gpu-usage-waybar --interval 5000",
     "return-type": "json",
     "format": "󰍹 {:>9}",
