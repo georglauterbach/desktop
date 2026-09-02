@@ -73,7 +73,6 @@ bindings = [
   { action = "Copy",             key = "C",      mods = "Control|Shift" },
   { action = "IncreaseFontSize", key = "Equals", mods = "Control" },
   { action = "DecreaseFontSize", key = "Minus",  mods = "Control" },
-  { chars = "\u001b\u007f",      key = "Back",   mods = "Control" },
   { chars = "\u001b[13;2u",      key = "Return", mods = "Shift" }
 ]
 
