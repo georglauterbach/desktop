@@ -1,6 +1,7 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
-set -e -u
+set -eE -u -o pipefail
+shopt -s inherit_errexit
 
 __log "Installing ${*}"
 apt-get install --quiet=2 -o=Dpkg::Use-Pty=0 --yes --no-install-recommends "${@}"

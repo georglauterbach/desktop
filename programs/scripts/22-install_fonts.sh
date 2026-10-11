@@ -10,7 +10,7 @@ source "${SCRIPT_DIR}/00-env.sh"
 
 require_run_as_root
 
-readonly NERD_FONT_VERSION='v3.4.0'
+readonly NERD_FONT_VERSION='v3.5.1'
 
 function download_extract_place() {
   local FONT_NAME=${1:?Font name required}

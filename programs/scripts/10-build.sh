@@ -11,7 +11,11 @@ source "${SCRIPT_DIR}/00-env.sh"
 require_run_as_user
 require_command podman
 
-mkdir -p "${APT_DIR}"/{cache,lists} "${CACHE_DIR}" "${OUT_DIR}" "${SRC_DIR}"
+if [[ ${1:-} == '--force' ]]; then
+  rm -rf "${APT_DIR}"/{cache,lists} "${CACHE_DIR}" "${SRC_DIR}"
+fi
+
+mkdir -p "${APT_DIR}"/{cache,lists} "${CACHE_DIR}" "${SRC_DIR}"
 
 log_info Building
 podman build --tag "${IMAGE_TAG}" --file Containerfile \
@@ -20,7 +24,3 @@ podman build --tag "${IMAGE_TAG}" --file Containerfile \
   --volume "${CACHE_DIR}:/root/.cache"                 \
   --volume "${SRC_DIR}:/src"                           \
   .
-
-log_info 'Copying files'
-podman run --rm --volume "${OUT_DIR}:/out" "${IMAGE_TAG}" \
-  /bin/bash -c "cp --recursive /usr/local/* /out/"

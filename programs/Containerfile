@@ -1,11 +1,10 @@
-# We accept the following hadolint issues because
-# this is a build container.
+# We accept the following hadolint issues because this is a build container.
 #
 # hadolint global ignore=DL3002,DL3008,DL3009,DL3013,DL3059,DL4006
 
 # cspell: disable
 
-FROM docker.io/ubuntu:26.04
+FROM docker.io/ubuntu:26.10
 USER root
 
 # -----------------------------------------------
@@ -15,24 +14,29 @@ USER root
 WORKDIR /src
 
 ENV __INSTALLATION_PREFIX=/usr/local
-ENV __TOOLCHAIN_VERSION_GO=1.26.4
-ENV __TOOLCHAIN_VERSION_MESON=1.11.2
-ENV __TOOLCHAIN_VERSION_RUST=1.97.0
+ENV __TOOLCHAIN_VERSION_GO=1.27.2
+ENV __TOOLCHAIN_VERSION_MESON=1.12.1
+ENV __TOOLCHAIN_VERSION_RUST=1.99.0
+ENV __TOOLCHAIN_VERSION_MOLD=3.0.0
 
 ENV CARGO_HOME=/root/.cache/rust/${__TOOLCHAIN_VERSION_RUST}/cargo/home
 ENV RUSTUP_HOME=/root/.cache/rust/${__TOOLCHAIN_VERSION_RUST}/rustup/home
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu
-ENV PATH=${CARGO_HOME}/bin:/root/.local/bin:/usr/local/go/bin:$PATH
+ENV PATH=${CARGO_HOME}/bin:/root/.local/bin:/usr/go/bin:$PATH
+
+RUN ln --symbolic --force --no-dereference "$(command -v bash)" "$(command -v sh)"
 
 # -----------------------------------------------
 # ----  Installation of General Packages  -------
 # -----------------------------------------------
 
-RUN apt-get update \
-    && apt-get dist-upgrade --quiet --yes \
-    && apt-get install --quiet --yes --no-install-recommends \
+COPY commands/__apt_get commands/__apt_install commands/__log /root/.local/bin/
+
+RUN __apt_get update \
+    && __apt_get dist-upgrade \
+    && __apt_install \
         bash-completion \
         ca-certificates \
         curl \
@@ -50,14 +54,15 @@ RUN apt-get update \
         gcc \
         gettext \
         git \
+        gnupg2 \
         nasm \
         ninja-build \
         pkg-config \
         scdoc \
         \
-        lua5.4 \
-        liblua5.4-0 \
-        liblua5.4-dev \
+        lua5.5 \
+        liblua5.5-0 \
+        liblua5.5-dev \
         \
         python3 \
         python3-docutils \
@@ -78,39 +83,48 @@ RUN apt-get update \
         \
         systemd \
         systemd-dev \
-        libsystemd-dev
+        libsystemd-dev \
+    && __apt_get autoremove --purge
 
 # -----------------------------------------------
 # ----  Copy Build Scripts (Except Custom)  -----
 # -----------------------------------------------
 
-COPY \
-    build_scripts/apt_install \
-    build_scripts/build       \
-    build_scripts/git_clone   \
-    build_scripts/__log       \
-    /root/.local/bin/
+COPY commands/__build commands/__git_clone /root/.local/bin/
 
 # -----------------------------------------------
 # ----  Toolchain Setup  ------------------------
 # -----------------------------------------------
 
-RUN __log "Setting up UV (Python)"                                                                     \
-    && curl -sSfL https://astral.sh/uv/install.sh | sh                                                 \
-    && uv tool install "meson==${__TOOLCHAIN_VERSION_MESON}"                                           \
+RUN __log "Setting up UV (Python)"                                                   \
+    && curl -sSfL https://astral.sh/uv/install.sh | sh                               \
+    && uv tool install "meson==${__TOOLCHAIN_VERSION_MESON}"                         \
     \
-    && __log "Setting up Rust"                                                                         \
-    && { [ -d "${CARGO_HOME}" ] || curl -sSfL https://sh.rustup.rs                                     \
-        | sh -s -- -y --default-toolchain "${__TOOLCHAIN_VERSION_RUST}" ; }                            \
+    && __log "Setting up Rust"                                                       \
+    && { [ -d "${CARGO_HOME}" ] || curl -sSfL https://sh.rustup.rs                   \
+        | sh -s -- -y --default-toolchain "${__TOOLCHAIN_VERSION_RUST}" ; }          \
+    && rustup toolchain install "${__TOOLCHAIN_VERSION_RUST}"                        \
     \
-    && __log "Setting up Go"                                                                           \
-    && mkdir -p "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}"                                            \
-    && { [ -e "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" ] ||                               \
-        curl -sSfL -o "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz"                            \
-            "https://go.dev/dl/go${__TOOLCHAIN_VERSION_GO}.linux-amd64.tar.gz" ; }                     \
-    && tar xf "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" -C /usr/local                      \
+    && __log "Setting up Go"                                                         \
+    && mkdir -p "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}"                          \
+    && { [ -e "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" ] ||             \
+        curl -sSfL -o "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz"          \
+            "https://go.dev/dl/go${__TOOLCHAIN_VERSION_GO}.linux-amd64.tar.gz" ; }   \
+    && tar xf "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" -C /usr          \
     \
-    && __log "Setting up git"                                                                          \
+    && __log "Setting up mold"                                                       \
+    && mkdir -p "/root/.cache/mold"                                                  \
+    && MOLD_TARBALL="mold-${__TOOLCHAIN_VERSION_MOLD}-x86_64-linux.tar.gz"           \
+    && { [ -e "/root/.cache/mold/${MOLD_TARBALL}" ] ||                               \
+        curl -sSfL -o "/root/.cache/mold/${MOLD_TARBALL}"                            \
+            "https://github.com/rui314/mold/releases/download/v${__TOOLCHAIN_VERSION_MOLD}/${MOLD_TARBALL}" ; } \
+    && tar xf "/root/.cache/mold/${MOLD_TARBALL}" -C /usr/ --strip-components=1      \
+    && ln -snf "$(command -v mold)" "$(command -v ld)"                               \
+    && mkdir -p /.cargo                                                              \
+    && echo "[target.'cfg(target_os = \"linux\")']"            >>/.cargo/config.toml \
+    && echo "rustflags = [\"-C\", \"link-arg=-fuse-ld=mold\"]" >>/.cargo/config.toml \
+    \
+    && __log "Setting up git"                                                        \
     && git config --global advice.detachedHead false
 
 # -----------------------------------------------
@@ -119,93 +133,93 @@ RUN __log "Setting up UV (Python)"                                              
 
 # ? Wayland
 
-RUN git_clone https://gitlab.freedesktop.org/wayland/wayland.git 1.26.0 \
-    && git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git 1.49
+RUN __git_clone https://gitlab.freedesktop.org/wayland/wayland.git 1.26.0 \
+    && __git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git 1.49
 
-RUN build wayland meson_ninja              \
-        -D libraries=true                  \
-        -D scanner=true                    \
-        -D tests=false                     \
-        -D documentation=false             \
-        -D dtd_validation=false            \
-    && build wayland-protocols meson_ninja \
+RUN __build wayland meson_ninja              \
+        -D libraries=true                    \
+        -D scanner=true                      \
+        -D tests=false                       \
+        -D documentation=false               \
+        -D dtd_validation=false              \
+    && __build wayland-protocols meson_ninja \
         -D tests=false
 
 # ? Generic Dependencies
 
-RUN git_clone https://gitlab.freedesktop.org/libinput/libinput.git 1.31.3 \
-    && git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
+RUN __git_clone https://gitlab.freedesktop.org/libinput/libinput.git 1.32.0 \
+    && __git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
 
-RUN apt_install libevdev-dev libmtdev-dev
+RUN __apt_install libevdev-dev libmtdev-dev
 
-RUN build libinput meson_ninja  \
-        -D libwacom=false       \
-        -D mtdev=false          \
-        -D debug-gui=false      \
-        -D tests=false          \
-        -D documentation=false  \
-    && build pixman meson_ninja \
-        -D tests=disabled       \
+RUN __build libinput meson_ninja  \
+        -D libwacom=false         \
+        -D mtdev=false            \
+        -D debug-gui=false        \
+        -D tests=false            \
+        -D documentation=false    \
+    && __build pixman meson_ninja \
+        -D tests=disabled         \
         -D demos=disabled
 
 # ? X11
 
-RUN git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2025.1 \
-    && git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-24.1.13
+RUN __git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2026.1 \
+    && __git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-26.0.99.903
 
-RUN apt_install           \
-        libx11-dev        \
-        libxshmfence-dev  \
-        x11-xkb-utils     \
-        xutils-dev        \
-        libgbm-dev        \
-        libegl-dev        \
-        libgl-dev         \
-        libpixman-1-dev   \
-        libxkbfile-dev    \
-        libxkbfile-dev    \
-        libxfont-dev      \
-        libxcvt-dev       \
-        libepoxy-dev      \
-        mesa-common-dev   \
-        libtirpc-dev      \
-        libxcb-dri3-dev   \
-        libxcb-xinput-dev \
-        libxcb-sync-dev   \
-        libxcb-damage0-dev
+RUN __apt_install          \
+        libaudit-dev       \
+        libbsd-dev         \
+        libepoxy-dev       \
+        libdecor-0-dev     \
+        libei-dev          \
+        libegl-dev         \
+        libgl-dev          \
+        libgbm-dev         \
+        liboeffis-dev      \
+        libx11-dev         \
+        libxcb-damage0-dev \
+        libxcb-dri3-dev    \
+        libxcb-sync-dev    \
+        libxcb-xinput-dev  \
+        libxcvt-dev        \
+        libxfont-dev       \
+        libxkbfile-dev     \
+        libxshmfence-dev   \
+        mesa-common-dev    \
+        x11-xkb-utils      \
+        xfonts-utils       \
+        xutils-dev
 
-RUN build xorgproto meson_ninja  \
-    && build xserver meson_ninja \
-        -D docs=false            \
-        -D glamor=true           \
-        -D dri3=true             \
-        -D drm=true              \
+RUN __build xorgproto meson_ninja  \
+    && __build xserver meson_ninja \
+        -D docs=false              \
+        -D glamor=true             \
+        -D dri3=true               \
+        -D drm=true                \
         -D glx=true
 
 # ? SwayFX
 
-RUN git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.20.2
-RUN apt_install                 \
+RUN __git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.20.2
+RUN __apt_install               \
         libxkbcommon-dev        \
+        libgles-dev             \
         libvulkan-dev           \
         glslang-dev             \
         glslang-tools           \
-        liblcms2-dev            \
         libseat-dev             \
         hwdata                  \
         libdisplay-info-dev     \
-        libgles-dev             \
         libliftoff-dev          \
         libxcb-present-dev      \
-        libxcb-composite0-dev   \
         libxcb-render-util0-dev \
-        libxcb-shm0-dev         \
-        libxcb-xfixes0-dev      \
-        libxcb-xinput-dev       \
+        libxcb-composite0-dev   \
         libxcb-ewmh-dev         \
         libxcb-icccm4-dev       \
-        libxcb-res0-dev
-RUN build wlroots meson_ninja        \
+        libxcb-res0-dev         \
+        libxcb-errors-dev
+RUN __build wlroots meson_ninja      \
         -D xwayland=enabled          \
         -D examples=false            \
         -D renderers=gles2,vulkan    \
@@ -214,19 +228,17 @@ RUN build wlroots meson_ninja        \
         -D color-management=enabled  \
         -D libliftoff=enabled
 
-RUN git_clone https://github.com/wlrfx/scenefx.git main
-RUN build scenefx meson_ninja \
-        -D examples=false     \
+RUN __git_clone https://github.com/wlrfx/scenefx.git __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
+RUN __build scenefx meson_ninja \
+        -D examples=false       \
         -D color-management=enabled
 
-RUN apt_install                    \
-        libjson-c-dev              \
-        libcairo-dev               \
-        libgdk-pixbuf-2.0-dev      \
-        libgdk-pixbuf-xlib-2.0-dev \
-        libpango1.0-dev
-RUN git_clone https://github.com/WillPower3309/swayfx.git master
-RUN build swayfx meson_ninja          \
+RUN __git_clone https://github.com/WillPower3309/swayfx.git \
+    __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
+RUN __apt_install libjson-c-dev
+# TODO remove once https://github.com/wlrfx/swayfx/issues/603 is resolved
+RUN sed -i -E 's/^(char \*error = NULL;)$/static \1/g' swayfx/sway/criteria.c
+RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
         -D zsh-completions=false      \
         -D bash-completions=true      \
@@ -240,191 +252,218 @@ RUN build swayfx meson_ninja          \
 
 # ? xdg-desktop-portal(s)
 
-RUN git_clone https://gitlab.gnome.org/GNOME/libdex.git main
-RUN apt_install               \
-        gobject-introspection \
-        liburing-dev          \
-        valac
-RUN build libdex meson_ninja    \
-        -Dstack-protector=true  \
-        -Dvapi=true             \
-        -Dintrospection=enabled \
-        -Dliburing=enabled      \
-        -Deventfd=enabled       \
-        -Dgdbus=enabled
+RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git __ref 6561725344d18b954c1c3a703c92d856edeed103
+RUN __apt_install liburing-dev
+RUN __build libdex meson_ninja    \
+        -D stack-protector=true   \
+        -D vapi=false             \
+        -D introspection=disabled \
+        -D liburing=enabled       \
+        -D eventfd=enabled        \
+        -D gdbus=enabled
 
-RUN git_clone https://github.com/flatpak/xdg-desktop-portal.git main
-RUN apt_install                          \
-        libdbus-1-dev                    \
+RUN __git_clone https://github.com/flatpak/xdg-desktop-portal.git main
+RUN __apt_install                        \
+        libflatpak-dev                   \
+        libjson-glib-dev                 \
         libfuse3-dev                     \
-        libgeoclue-2-dev                 \
         libgstreamer1.0-dev              \
         libgstreamer-plugins-base1.0-dev \
-        libjson-glib-dev                 \
+        libgeoclue-2-dev                 \
         libpipewire-0.3-dev              \
-        libumockdev-dev                  \
+        libdbus-1-dev                    \
         libwireplumber-0.5-dev
-RUN build xdg-desktop-portal meson_ninja     \
-        -Dgeoclue=enabled                    \
-        -Dgudev=enabled                      \
-        -Dsystemd=enabled                    \
-        -Ddocumentation=disabled             \
-        -Dtests=disabled                     \
-        -Dman-pages=enabled                  \
-        -Dsandboxed-image-validation=enabled \
-        -Dsandboxed-sound-validation=enabled
+RUN __build xdg-desktop-portal meson_ninja    \
+        -D flatpak-interfaces=enabled         \
+        -D geoclue=enabled                    \
+        -D gudev=enabled                      \
+        -D systemd=enabled                    \
+        -D documentation=disabled             \
+        -D tests=disabled                     \
+        -D man-pages=enabled                  \
+        -D sandboxed-image-validation=enabled \
+        -D sandboxed-sound-validation=enabled
 
-RUN git_clone https://github.com/emersion/xdg-desktop-portal-wlr.git \
+RUN __git_clone https://github.com/emersion/xdg-desktop-portal-wlr.git \
     __ref c0255d7b047b7263629ab5a314661045ff7f65e3
-RUN apt_install libinih-dev
-RUN build xdg-desktop-portal-wlr meson_ninja \
+RUN __apt_install libinih-dev
+RUN __build xdg-desktop-portal-wlr meson_ninja \
         -Dsd-bus-provider=libsystemd         \
         -Dsystemd=enabled                    \
         -Dman-pages=enabled
 
 # ? Associates
 
+# * 0. Dependencies & cloning
+
+RUN __apt_install        \
+        libjpeg-dev      \
+        libjxl-dev       \
+        libadwaita-1-dev \
+        libgtk-4-dev     \
+        libgtk4-layer-shell-dev
+
+RUN __git_clone https://github.com/davatorium/rofi.git next                              \
+    && __git_clone https://gitlab.freedesktop.org/emersion/grim.git master               \
+    && __git_clone https://github.com/emersion/slurp.git master                          \
+    && __git_clone https://github.com/swaywm/swaybg.git master                           \
+    && __git_clone https://github.com/swaywm/swayidle.git master                         \
+    && __git_clone https://github.com/swaywm/swaylock.git master                         \
+    && __git_clone https://github.com/kennylevinsen/wlsunset.git master                  \
+    && __git_clone https://github.com/ErikReider/SwayNotificationCenter.git main         \
+    && __git_clone https://codeberg.org/tytan652/door-knocker.git main                   \
+    \
+    && __git_clone https://github.com/alacritty/alacritty.git v0.17.0                    \
+    && __git_clone https://github.com/JakeStanger/ironbar.git master                     \
+    && __git_clone https://codeberg.org/LGFae/awww.git main                              \
+    && __git_clone https://github.com/zefr0x/ianny.git main                              \
+    && __git_clone https://github.com/blurrycat/lightctl.git main                        \
+    && __git_clone https://github.com/Satty-org/Satty.git main                           \
+    && __git_clone https://gitlab.com/w0lff/shikane.git master                           \
+    && __git_clone https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit.git master \
+    && __git_clone https://github.com/russelltg/wl-screenrec.git main                    \
+    && __git_clone https://github.com/AMNatty/wleave.git main
+
 # * 1. Default builds
 
-RUN git_clone https://codeberg.org/tytan652/door-knocker.git main              \
-    && git_clone https://gitlab.freedesktop.org/emersion/grim.git v1.5.0       \
-    && git_clone https://github.com/davatorium/rofi.git next                   \
-    && git_clone https://github.com/emersion/slurp.git v1.5.0                  \
-    && git_clone https://github.com/ErikReider/SwayAudioIdleInhibit.git main   \
-    && git_clone https://github.com/swaywm/swaybg.git v1.2.2                   \
-    && git_clone https://github.com/swaywm/swayidle.git master                 \
-    && git_clone https://github.com/swaywm/swaylock.git v1.8.6                 \
-    && git_clone https://github.com/ErikReider/SwayNotificationCenter.git main \
-    && git_clone https://github.com/Alexays/Waybar.git master                  \
-    && git_clone https://github.com/kennylevinsen/wlsunset.git master
+RUN __apt_install pandoc doxygen
+RUN __build rofi meson_ninja \
+        -D drun=true         \
+        -D window=true       \
+        -D check=disabled    \
+        -D imdkit=false      \
+        -D xcb=disabled      \
+        -D wayland=enabled
 
-RUN apt_install blueprint-compiler desktop-file-utils libgtk-4-dev libadwaita-1-dev
-RUN build door-knocker meson_ninja
+RUN __apt_install libjpeg-dev
+RUN __build grim meson_ninja \
+        -D jpeg=enabled      \
+        -D man-pages=enabled \
+        -D bash-completions=true
 
-RUN build grim meson_ninja
+RUN __build slurp meson_ninja
 
-RUN build rofi meson_ninja -D xcb=disabled -D wayland=enabled
+RUN __build swaybg meson_ninja \
+        -D gdk-pixbuf=enabled  \
+        -D man-pages=enabled
 
-RUN build slurp meson_ninja
-
-RUN apt_install libpulse-dev
-RUN build SwayAudioIdleInhibit meson_ninja -D logind-provider=systemd
-
-RUN build swaybg meson_ninja
-
-RUN build swayidle meson_ninja
-
-RUN build swaylock meson_ninja -D pam=enabled
-
-RUN apt_install                \
-        valac                  \
-        sassc                  \
-        libgtk-3-dev           \
-        libhandy-1-dev         \
-        libgranite-7-dev       \
-        libgtk-layer-shell-dev \
-        libgtk4-layer-shell-dev
-RUN build SwayNotificationCenter meson_ninja \
-        -D systemd-service=false             \
-        -D zsh-completions=false             \
+RUN __build swayidle meson_ninja   \
+        -D man-pages=enabled       \
+        -D logind=enabled          \
+        -D logind-provider=systemd \
+        -D zsh-completions=false   \
+        -D bash-completions=true   \
         -D fish-completions=false
 
-RUN apt_install                \
-        libdbusmenu-gtk3-dev   \
-        libfmt-dev             \
-        libgirepository1.0-dev \
-        libgtk-3-dev           \
-        libgtkmm-3.0-dev       \
-        libjsoncpp-dev         \
-        libmpdclient-dev       \
-        libnl-3-dev            \
-        libnl-genl-3-dev       \
-        libpulse-dev           \
-        libsigc++-2.0-dev      \
-        libspdlog-dev          \
-        scdoc                  \
-        upower                 \
-        libxkbregistry-dev     \
-        libjack-dev            \
-        libsndio-dev           \
-        libupower-glib-dev
-RUN build Waybar meson_ninja    \
-        -D libinput=enabled     \
-        -D libnl=enabled        \
-        -D libudev=enabled      \
-        -D libevdev=enabled     \
-        -D pipewire=enabled     \
-        -D systemd=disabled     \
-        -D dbusmenu-gtk=enabled \
-        -D man-pages=enabled    \
-        -D rfkill=enabled       \
-        -D tests=disabled       \
-        -D jack=enabled         \
-        -D wireplumber=enabled  \
-        -D cava=disabled        \
-        -D login-proxy=true
+RUN __apt_install libcrypt-dev
+RUN __build swaylock meson_ninja \
+        -D pam=enabled           \
+        -D gdk-pixbuf=enabled    \
+        -D man-pages=enabled     \
+        -D zsh-completions=false \
+        -D bash-completions=true \
+        -D fish-completions=false
 
-RUN build wlsunset meson_ninja
+RUN __build wlsunset meson_ninja
 
-# * 2. Custom builds
+RUN __apt_install valac sassc blueprint-compiler libgranite-7-dev libpulse-dev
+RUN __build SwayNotificationCenter meson_ninja \
+        -D systemd-service=false               \
+        -D scripting=false                     \
+        -D pulse-audio=true                    \
+        -D man-pages=true                      \
+        -D systemd-service=false               \
+        -D zsh-completions=false               \
+        -D fish-completions=false
 
-RUN git_clone https://github.com/alacritty/alacritty.git v0.17.0                       \
-    && git_clone https://codeberg.org/LGFae/awww.git main                              \
-    && git_clone https://github.com/zefr0x/ianny.git v2.1.3                            \
-    && git_clone https://github.com/blurrycat/lightctl.git main                        \
-    && git_clone https://github.com/Satty-org/Satty.git v0.21.1                        \
-    && git_clone https://gitlab.com/w0lff/shikane.git master                           \
-    && git_clone https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit.git master \
-    && git_clone https://github.com/russelltg/wl-screenrec.git main                    \
-    && git_clone https://github.com/AMNatty/wleave.git development                     \
-    && git_clone https://github.com/nwg-piotr/nwg-look.git main
+RUN __apt_install desktop-file-utils
+RUN __build door-knocker meson_ninja
 
-COPY build_scripts/custom_build /root/.local/bin/cb
+# * 3. Custom builds
 
-RUN cb alacritty build_alacritty
+RUN cd alacritty                                                                     \
+    && cargo build --release --no-default-features --features=wayland                \
+    && install -s -Dm755 target/release/alacritty -t "${__INSTALLATION_PREFIX}/bin/" \
+    && scdoc < extra/man/alacritty.1.scd                                             \
+      | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man1/alacritty.1.gz"            \
+    && scdoc < extra/man/alacritty-msg.1.scd                                         \
+      | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man1/alacritty-msg.1.gz"        \
+    && scdoc < extra/man/alacritty.5.scd                                             \
+      | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty.5.gz"            \
+    && scdoc < extra/man/alacritty-bindings.5.scd                                    \
+      | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
 
-RUN apt_install liblz4-dev
-RUN cb awww build_awww
+RUN __apt_install libluajit-5.1-dev
+RUN cd ironbar               \
+    && cargo build --release \
+    && install -s -Dm755 target/release/ironbar -t "${__INSTALLATION_PREFIX}/bin/"
 
-RUN cb ianny build_ianny
-RUN cb lightctl build_lightctl
+RUN cd awww \
+    && cargo build --release \
+    && install -s -Dm755 target/release/awww        -t "${__INSTALLATION_PREFIX}/bin/"   \
+    && install -s -Dm755 target/release/awww-daemon -t "${__INSTALLATION_PREFIX}/bin/"   \
+    && install    -Dm644 completions/awww.bash                                           \
+        -t "${__INSTALLATION_PREFIX}/share/bash-completion/completions/"                 \
+    && sh ./doc/gen.sh                                                                   \
+    && for MAN_PAGE_FILE in doc/generated/*; do                                          \
+        install -Dm644 "${MAN_PAGE_FILE}" -t "${__INSTALLATION_PREFIX}/share/man/man1/"; \
+    done
 
-RUN apt_install libgraphene-1.0-dev
-RUN cb Satty build_satty
+RUN cd ianny \
+    && cargo build --release \
+    && install -s -Dm755 target/release/ianny -t "${__INSTALLATION_PREFIX}/bin/"
 
-RUN cb shikane build_shikane
+RUN cd lightctl \
+    && cargo build --release \
+    && install -s -Dm755 target/release/lightctl -t "${__INSTALLATION_PREFIX}/bin/"
 
-RUN cb wayland-pipewire-idle-inhibit build_wayland_pipewire_idle_inhibit
+RUN cd Satty                                                                                            \
+    && cargo build --release                                                                            \
+    && install -s -Dm755 target/release/satty -t "${__INSTALLATION_PREFIX}/bin/"                        \
+    && install -Dm644 assets/satty.svg -t "${__INSTALLATION_PREFIX}/share/icons/hicolor/scalable/apps/" \
+    && install -Dm644 satty.desktop    -t "${__INSTALLATION_PREFIX}/share/applications/"
 
-RUN apt_install libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
-RUN cb wl-screenrec build_wl_screenrec
+RUN cd shikane                                                                        \
+    && cargo build --release                                                          \
+    && install -s -Dm755 target/release/shikane    -t "${__INSTALLATION_PREFIX}/bin/" \
+    && install -s -Dm755 target/release/shikanectl -t "${__INSTALLATION_PREFIX}/bin/"
 
-RUN cb wleave build_wleave
+RUN cd wayland-pipewire-idle-inhibit \
+    && cargo build --release         \
+    && install -s -Dm755 target/release/wayland-pipewire-idle-inhibit -t "${__INSTALLATION_PREFIX}/bin/"
 
-RUN cb nwg-look build_nwg_look
+RUN __apt_install libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
+RUN cd wl-screenrec          \
+    && cargo build --release \
+    && install -s -Dm755 target/release/wl-screenrec -t "${__INSTALLATION_PREFIX}/bin/"
+
+RUN cd wleave                \
+    && cargo build --release \
+    && install -s -Dm755 target/release/wleave -t "${__INSTALLATION_PREFIX}/bin/"
 
 # -----------------------------------------------
 # ----  Final Adjustments  ----------------------
 # -----------------------------------------------
 
-COPY build_scripts/finalize_runtime_libs /root/.local/bin/finalize_runtime_libs
-RUN finalize_runtime_libs
-
-# ! Take care when adjusting these paths;
-# ! especially libc + ld-linux MUST remain in sync
-# ! and MUST be the correct files from the correct place.
-WORKDIR /usr/local/lib/x86_64-linux-gnu
-RUN cp -r /lib/x86_64-linux-gnu/pulseaudio/ .                         \
-    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so \
-    && cp                                                             \
-        /usr/lib/x86_64-linux-gnu/libc.so.6                           \
-        /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2                \
-        /usr/lib/x86_64-linux-gnu/libdl.so.2                          \
-        /usr/lib/x86_64-linux-gnu/libpthread.so.0                     \
-        /usr/lib/x86_64-linux-gnu/libdisplay-info.so.3                \
-        .                                                             \
-    && apt_install glycin-loaders                                     \
-    && cp -r /usr/libexec/glycin-loaders /usr/local/libexec/          \
-    && cp -r /usr/share/glycin-loaders   /usr/local/share/            \
-    && sed -i -E 's|/usr/(libexec/glycin-loaders)|/usr/local/\1|g'    \
+RUN __apt_install glycin-loaders                                   \
+    && cp -r /usr/libexec/glycin-loaders /usr/local/libexec/       \
+    && cp -r /usr/share/glycin-loaders   /usr/local/share/         \
+    && sed -i -E 's|/usr/(libexec/glycin-loaders)|/usr/local/\1|g' \
         /usr/local/share/glycin-loaders/*/conf.d/*.conf
+
+RUN cd /usr/local/lib/x86_64-linux-gnu           \
+    && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
+    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so
+
+COPY commands/__finalize_runtime_libs /root/.local/bin/
+RUN __finalize_runtime_libs
+
+# ! CAUTION: 'libc' + 'ld-linux' MUST remain in sync
+#   and MUST be the correct files from the correct place.
+RUN cp \
+  /usr/lib/x86_64-linux-gnu/libc.so.6            \
+  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 \
+  /usr/lib/x86_64-linux-gnu/libdl.so.2           \
+  /usr/lib/x86_64-linux-gnu/libpthread.so.0      \
+  /usr/lib/x86_64-linux-gnu/libdisplay-info.so.3 \
+  /usr/local/lib/x86_64-linux-gnu

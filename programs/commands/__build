@@ -1,8 +1,9 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
-set -e -u
+set -eE -u -o pipefail
+shopt -s inherit_errexit
 
-meson_ninja() {
+function meson_ninja() {
   # cSpell: ignore buildtype warnlevel
   meson setup build     \
     --reconfigure       \
@@ -11,7 +12,7 @@ meson_ninja() {
     --optimization=3    \
     --strip             \
     --warnlevel=0       \
-    --prefix="${__INSTALLATION_PREFIX}" "${@}"
+    --prefix="${__INSTALLATION_PREFIX:?}" "${@}"
 
   ninja -C build install
 }

@@ -1,37 +1,40 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
-set -e -u
+set -eE -u -o pipefail
+shopt -s inherit_errexit
 
-CLONE_COMMAND="git clone --depth=1"
+CLONE_COMMAND=(git clone --depth=1)
 
 GIT_URI=${1:?URI for cloning is required}
-if [ "${2:?git revision is required}" = __ref ]; then
+
+if [[ ${2:?git revision is required} == __ref ]]; then
   GIT_REV=${3:?git revision is required}
-  if [ "$(printf '%s' "${GIT_REV}" | wc --chars)" -lt 35 ]; then
+  if [[ "$(printf '%s' "${GIT_REV}" | wc --chars)" -lt 35 ]]; then
     __log "Git revision '${GIT_REV}' does not seem to a be **long** revision"
     exit 1
   fi
-  CLONE_COMMAND="${CLONE_COMMAND} --revision ${GIT_REV}"
+  CLONE_COMMAND+=(--revision "${GIT_REV}")
   shift 3
 else
   GIT_REV=${2:?git revision is required}
-  CLONE_COMMAND="${CLONE_COMMAND} --branch ${GIT_REV}"
+  CLONE_COMMAND+=(--branch "${GIT_REV}")
   shift 2
 fi
 
 DIR_NAME=$(printf '%s' "${GIT_URI}" | sed -E 's|.*/(.*)\.git$|\1|')
 
-if [ -d "${DIR_NAME}" ]; then
+if [[ -d ${DIR_NAME} ]]; then
   cd "${DIR_NAME}"
   if git checkout "${GIT_REV}" >/dev/null 2>&1; then
-    __log "Project '${DIR_NAME}' exists in correct version '${GIT_REV}'"
+    __log "Project '${DIR_NAME}' exists with correct ref - pulling"
+    git pull
     exit 0
   else
     __log "Project '${DIR_NAME}' exists in wrong version '${GIT_REV}' - removing and cloning again"
     cd ..
-    rm -rf "${DIR_NAME}"
+    rm --recursive --force "${DIR_NAME}"
   fi
 fi
 
 __log "Cloning ${DIR_NAME} @ ${GIT_REV}"
-${CLONE_COMMAND} "${GIT_URI}"
+"${CLONE_COMMAND[@]}" "${GIT_URI}"

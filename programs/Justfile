@@ -1,0 +1,52 @@
+[private]
+@_default:
+    just --list --unsorted
+
+# Build the container image (and hence the programs and their files)
+@build *arguments:
+    {{justfile_directory()}}/scripts/10-build.sh {{arguments}}
+
+# Run the container to copy the programs and their files onto your host
+@run *arguments:
+    {{justfile_directory()}}/scripts/11-run.sh {{arguments}}
+
+# Patch the programs and their files with patchelf
+@patch:
+    {{justfile_directory()}}/scripts/12-patch.sh
+
+# Install additional packages with 'apt'
+@install-packages:
+    {{justfile_directory()}}/scripts/20-install_packages.sh
+
+# Install additional packages with 'flatpak'
+@install-flatpaks *arguments:
+    {{justfile_directory()}}/scripts/21-install_flatpaks.sh {{arguments}}
+
+# Install additional fonts
+@install-fonts:
+    {{justfile_directory()}}/scripts/22-install_fonts.sh
+
+# Link the previously built files onto the host under /usr/local/
+@link-build:
+    {{justfile_directory()}}/scripts/30-link_build.sh
+
+# Copy the configuration from this repository into the host under ~
+@cp-configuration *arguments:
+    {{justfile_directory()}}/scripts/40-cp_configuration.sh {{arguments}}
+
+# Set up Sway as a wayland compositor under /usr/share/wayland-sessions
+@setup-sway:
+    {{justfile_directory()}}/scripts/50-setup_sway.sh
+
+# Set up Alacritty as the default x-terminal-emulator
+@setup-alacritty:
+    {{justfile_directory()}}/scripts/51-setup_alacritty.sh
+
+# Disable the gnome-keyring-daemon systemd user service
+@setup-gkd:
+    {{justfile_directory()}}/scripts/52-setup_gkd.sh
+
+
+# Remove (almost all) installed files from the host
+@cleaup:
+    {{justfile_directory()}}/scripts/99-cleanup.sh

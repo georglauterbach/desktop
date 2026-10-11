@@ -13,6 +13,9 @@ require_run_as_root
 readonly ADDITIONAL_PACKAGES=(
   # Ubuntu base system
   ubuntu-desktop-minimal # base package for a GUI
+  papers                 # documents viewer
+  ptyxis                 # (fallback) terminal emulator
+  resources              # resource usage monitor
   # miscellaneous
   dex                    # desktop-file application launcher
   flatpak                # Flatpak
@@ -41,9 +44,6 @@ readonly ADDITIONAL_PACKAGES=(
   gnome-keyring          # keyring daemon
   highlight              # used by GTK for syntax highlighting
   kitty                  # terminal emulator for yazi
-  papers                 # documents viewer
-  ptyxis                 # (fallback) terminal emulator
-  resources              # resource usage monitor
 )
 
 log_info 'Installing packages'

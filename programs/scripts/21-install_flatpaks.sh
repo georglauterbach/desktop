@@ -10,23 +10,23 @@ source "${SCRIPT_DIR}/00-env.sh"
 
 require_run_as_user
 
-# cSpell: disable
 log_info 'Adding Flathub remote if it does not exist already'
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+# cSpell: disable
 readonly FLATPAKS=(
   app.zen_browser.zen
-  #be.alexandervanhee.gradia
-  com.bitwarden.desktop
   com.github.tchx84.Flatseal
-  com.valvesoftware.Steam
-  org.freedesktop.Platform.VulkanLayer.MangoHud
-  eu.betterbird.Betterbird
-  org.cryptomator.Cryptomator
-  org.libreoffice.LibreOffice
+  #com.bitwarden.desktop
+  #com.valvesoftware.Steam
+  #org.freedesktop.Platform.VulkanLayer.MangoHud
+  #eu.betterbird.Betterbird
+  #org.cryptomator.Cryptomator
+  #org.libreoffice.LibreOffice
+  #be.alexandervanhee.gradia
   #com.github.IsmaelMartinez.teams_for_linux
 )
+# cSpell: enable
 
 log 'Installing Flatpaks'
-flatpak install --noninteractive --or-update flathub "${FLATPAKS[@]}"
-# cSpell: enable
+flatpak install --noninteractive --or-update flathub "${FLATPAKS[@]}" "${@}"
