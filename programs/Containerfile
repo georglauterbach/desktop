@@ -1,6 +1,6 @@
 # We accept the following hadolint issues because this is a build container.
 #
-# hadolint global ignore=DL3002,DL3008,DL3009,DL3013,DL3059,DL4006
+# hadolint global ignore=DL3002,DL3003,DL3008,DL3009,DL3013,DL3059,DL4006
 
 # cspell: disable
 
