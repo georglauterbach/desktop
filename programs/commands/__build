@@ -8,6 +8,7 @@ function meson_ninja() {
   meson setup build     \
     --reconfigure       \
     --backend=ninja     \
+    --clearcache        \
     --buildtype=release \
     --optimization=3    \
     --strip             \

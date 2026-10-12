@@ -37,7 +37,8 @@ readonly SERVICES=(
   awww-daemon
   shikane
   swaync
-  waybar
+  ironbar
+  wayland-pipewire-idle-inhibit
   ssh-agent
   # ianny
 )

@@ -2,20 +2,20 @@
 #      https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
 
 [Unit]
-Description=Waybar | Highly Customizable Wayland Bar
+Description=Ironbar | Customizable Wayland GTK4 Bar
 Wants=xdg-desktop-portal.service swaync.service
 After=xdg-desktop-portal.service swaync.service
+Documentation=https://github.com/JakeStanger/ironbar
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/waybar --log-level warning
-ExecReload=kill -SIGUSR2 $MAINPID
+Environment=IRONBAR_LOG=warn IRONBAR_FILE_LOG=off
+ExecStart=/usr/local/bin/ironbar
+ExecReload=/usr/local/bin/ironbar reload
 StandardOutput=journal
 
 Restart=on-failure
 RestartSec=1
-
-Documentation=https://github.com/Alexays/Waybar
 
 [Install]
 WantedBy=default.target

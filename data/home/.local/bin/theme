@@ -155,7 +155,7 @@ function set_theme_swaync() {
   cd "${CONFIG_DIR}"
   ln --symbolic --force "${CONFIG_FILE}" style.css || return 1
 
-  if ! pgrep -a '^ld-linux-x86-64' | grep -q swaync; then
+  if ! pgrep -x swaync >/dev/null; then
     log_debug 'SwayNC is not running, not restarting it'
     return 2
   fi

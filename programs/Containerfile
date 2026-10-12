@@ -253,11 +253,11 @@ RUN __build swayfx meson_ninja        \
 # ? xdg-desktop-portal(s)
 
 RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git __ref 6561725344d18b954c1c3a703c92d856edeed103
-RUN __apt_install liburing-dev
+RUN __apt_install liburing-dev libgirepository1.0-dev
 RUN __build libdex meson_ninja    \
         -D stack-protector=true   \
         -D vapi=false             \
-        -D introspection=disabled \
+        -D introspection=enabled  \
         -D liburing=enabled       \
         -D eventfd=enabled        \
         -D gdbus=enabled
@@ -296,12 +296,27 @@ RUN __build xdg-desktop-portal-wlr meson_ninja \
 
 # * 0. Dependencies & cloning
 
-RUN __apt_install        \
-        libjpeg-dev      \
-        libjxl-dev       \
-        libadwaita-1-dev \
-        libgtk-4-dev     \
-        libgtk4-layer-shell-dev
+RUN __apt_install libjpeg-dev libjxl-dev libadwaita-1-dev libgtk-4-dev valac
+
+RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git main
+# ! The Wayland shim of `gtk4-layer-shell` finds the real `libwayland-client`
+#   functions with `dlsym(RTLD_NEXT, ...)`. When another library interposes
+#   `dlsym` (e.g. `libAppProtection.so` via `/etc/ld.so.preload`), `RTLD_NEXT`
+#   resolves relative to that library and returns the shim itself, so the first
+#   Wayland request recurses forever and every layer-shell app hangs on startup.
+#   A lookup via a handle to `libwayland-client` (a direct dependency, hence
+#   `RTLD_NOLOAD` always succeeds) is immune; `grep` fails if upstream changes.
+RUN sed -i \
+        's|dlsym(RTLD_NEXT, #name)|dlsym(dlopen("libwayland-client.so.0", RTLD_LAZY \| RTLD_NOLOAD), #name)|' \
+        gtk4-layer-shell/src/libwayland-shim.c \
+    && grep -q 'dlsym(dlopen("libwayland-client.so.0"' gtk4-layer-shell/src/libwayland-shim.c
+RUN __build gtk4-layer-shell meson_ninja \
+    -D examples=false                    \
+    -D docs=false                        \
+    -D tests=false                       \
+    -D smoke-tests=false                 \
+    -D introspection=true                \
+    -D vapi=true
 
 RUN __git_clone https://github.com/davatorium/rofi.git next                              \
     && __git_clone https://gitlab.freedesktop.org/emersion/grim.git master               \
@@ -366,7 +381,7 @@ RUN __build swaylock meson_ninja \
 
 RUN __build wlsunset meson_ninja
 
-RUN __apt_install valac sassc blueprint-compiler libgranite-7-dev libpulse-dev
+RUN __apt_install sassc blueprint-compiler libgranite-7-dev libpulse-dev
 RUN __build SwayNotificationCenter meson_ninja \
         -D systemd-service=false               \
         -D scripting=false                     \
@@ -394,6 +409,12 @@ RUN cd alacritty                                                                
       | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
 
 RUN __apt_install libluajit-5.1-dev
+# ! GTK only binds the system color scheme to its own CSS providers; without
+#   this binding, `@media (prefers-color-scheme: ...)` in the user's stylesheet
+#   always matches `light`. Requires GTK 4.20+; `grep` fails if upstream changes.
+RUN sed -i '/let provider = CssProvider::new();/a\    gtk::prelude::ObjectExt::bind_property(&gtk::Settings::default().expect("to exist"), "gtk-interface-color-scheme", &provider, "prefers-color-scheme").sync_create().build();' \
+        ironbar/src/style.rs                                                                                                                                                                 \
+    && grep -q '"gtk-interface-color-scheme", &provider' ironbar/src/style.rs
 RUN cd ironbar               \
     && cargo build --release \
     && install -s -Dm755 target/release/ironbar -t "${__INSTALLATION_PREFIX}/bin/"

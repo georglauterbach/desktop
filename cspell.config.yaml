@@ -58,6 +58,7 @@ ignoreWords:
   - acpi
   - agentic
   - awww
+  - bindmode
   - bindsym
   - btop
   - buildx
@@ -71,6 +72,7 @@ ignoreWords:
   - gitui
   - gsettings
   - herdr
+  - ironbar
   - justfile
   - libbash
   - libflyline
@@ -95,7 +97,6 @@ ignoreWords:
   - swaymsg
   - swaync
   - swaynotificationcenter
-  - waybar
   - wdisplays
   - wireplumber
   - wleave
