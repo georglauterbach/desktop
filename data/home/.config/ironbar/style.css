@@ -1,0 +1,217 @@
+/* ------------------------------------------- */
+/* ----  Ironbar Styling  -------------------- */
+/* ------------------------------------------- */
+
+/* ref: https://github.com/JakeStanger/ironbar/wiki/styling-guide
+ *      https://docs.gtk.org/gtk4/css-properties.html
+ *
+ * The palette follows the system color scheme (portal setting
+ * `org.freedesktop.appearance color-scheme`); this requires GTK 4.20+. */
+
+:root {
+  --surface: #1D2021;
+  --module: #504945;
+  --mode: #504945;
+  --text: #DDC7A1;
+  --text-on-accent: #1D2021;
+  --workspace-focused-text: #504945;
+  --workspace-urgent-text: #1D2021;
+  --urgent: #EA6962;
+  --cpu: #E78A4E;
+  --memory: #D8A657;
+  --network: #A9B655;
+  --battery: #89B482;
+  --volume: #7DAEA3;
+  --clock: #D3869B;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --surface: #F5F5F2;
+    --module: #EBEBE4;
+    --mode: #F5F5F2;
+    --text: #5C6A72;
+    --workspace-focused-text: #F5F5F2;
+    --workspace-urgent-text: #5C6A72;
+    --urgent: #F85552;
+    --cpu: #F57D26;
+    --memory: #D69A00;
+    --network: #8DA101;
+    --battery: #35A77C;
+    --volume: #3A94C5;
+    --clock: #DF69BA;
+  }
+}
+
+* {
+  font-family: "JetbrainsMono Nerd Font";
+  font-size: 12px;
+  font-weight: 700;
+
+  border: none;
+  border-radius: 10px;
+  box-shadow: none;
+  text-shadow: none;
+  background-image: none;
+  min-height: 0;
+  min-width: 0;
+
+  margin: 0px;
+  padding: 0px;
+
+  transition: none;
+}
+
+/* ------------------------------------------- */
+/* ----  Bar  -------------------------------- */
+/* ------------------------------------------- */
+
+.background,
+#bar {
+  background-color: transparent;
+  border-radius: 0px;
+}
+
+#bar {
+  padding: 2px 6px;
+}
+
+#bar .container {
+  border-spacing: 10px;
+}
+
+#bar .widget {
+  padding: 0px 10px;
+  background-color: transparent;
+  color: var(--text-on-accent);
+}
+
+/* ------------------------------------------- */
+/* ----  Tooltips & Popups  ------------------ */
+/* ------------------------------------------- */
+
+tooltip {
+  background-color: var(--surface);
+}
+
+tooltip label {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.popup {
+  padding: 10px;
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+.popup label {
+  color: var(--text);
+}
+
+.popup-clock .calendar label.today {
+  color: var(--urgent);
+}
+
+/* ------------------------------------------- */
+/* ----  Start Modules  ---------------------- */
+/* ------------------------------------------- */
+
+/* GTK has no `:empty`; padding on the items keeps an empty tray invisible. */
+#bar .tray {
+  background-color: var(--module);
+}
+
+#bar .tray > :first-child {
+  margin-left: 5px;
+}
+
+#bar .tray > :last-child {
+  margin-right: 5px;
+}
+
+#bar .inhibit,
+#bar .notifications {
+  background-color: var(--module);
+  color: var(--text);
+}
+
+/* The count is an overlay on the icon; the padding reserves its space. */
+#bar .notifications {
+  padding: 0px;
+}
+
+#bar .notifications .button {
+  padding: 0px 25px 0px 10px;
+  color: var(--text);
+}
+
+#bar .notifications .count {
+  margin-right: 10px;
+}
+
+/* `.widget` is required: workspace buttons have a `.focused` class, too. */
+#bar .widget.focused,
+#bar .widget.focused label {
+  color: var(--text);
+}
+
+#bar .bindmode {
+  background-color: var(--mode);
+  color: var(--text);
+}
+
+/* ------------------------------------------- */
+/* ----  Center Modules  --------------------- */
+/* ------------------------------------------- */
+
+#bar .workspaces {
+  padding: 0px;
+}
+
+#bar .workspaces .item {
+  padding: 0px 10px;
+  margin: 0px 5px;
+  background-color: var(--module);
+  color: var(--text);
+}
+
+#bar .workspaces .item.focused {
+  background-color: var(--text);
+  color: var(--workspace-focused-text);
+}
+
+#bar .workspaces .item.urgent {
+  background-color: var(--urgent);
+  color: var(--workspace-urgent-text);
+}
+
+/* ------------------------------------------- */
+/* ----  End Modules  ------------------------ */
+/* ------------------------------------------- */
+
+#bar #cpu {
+  background-color: var(--cpu);
+}
+
+#bar #memory {
+  background-color: var(--memory);
+}
+
+#bar #network {
+  background-color: var(--network);
+  min-width: 15em;
+}
+
+#bar .battery {
+  background-color: var(--battery);
+}
+
+#bar .volume {
+  background-color: var(--volume);
+}
+
+#bar .clock {
+  background-color: var(--clock);
+}

@@ -1,0 +1,83 @@
+--- a/src/clients/sysinfo.rs
++++ b/src/clients/sysinfo.rs
+@@ -5,6 +5,7 @@
+ use std::fmt::Debug;
+ use std::str::FromStr;
+ use std::sync::{Arc, Mutex};
++use std::time::{Duration, Instant};
+ use sysinfo::{Components, Disks, LoadAvg, Networks, RefreshKind, System};
+ use thiserror::Error;
+ 
+@@ -142,6 +143,22 @@
+     }
+ }
+ 
++/// Every module instance (one per config entry and bar) refreshes this shared
++/// client on its own timer. CPU usage and disk/network rates are deltas since
++/// the previous refresh, so refreshes closer together than this are skipped;
++/// modules showing the same kind of data must use the same interval for it.
++const MIN_DELTA_REFRESH_INTERVAL: Duration = Duration::from_secs(1);
++
++/// Returns whether a delta-based refresh is due and, if so, records it.
++fn delta_refresh_due(last_refresh: &Mutex<Instant>) -> bool {
++    let mut last_refresh = lock!(last_refresh);
++    let due = last_refresh.elapsed() >= MIN_DELTA_REFRESH_INTERVAL;
++    if due {
++        *last_refresh = Instant::now();
++    }
++    due
++}
++
+ #[derive(Debug)]
+ pub struct Client {
+     system: Mutex<System>,
+@@ -149,6 +166,9 @@
+     components: Mutex<Components>,
+     networks: Mutex<Networks>,
+     load_average: Mutex<LoadAvg>,
++    cpu_refreshed: Mutex<Instant>,
++    disks_refreshed: Mutex<Instant>,
++    networks_refreshed: Mutex<Instant>,
+ }
+ 
+ impl Client {
+@@ -167,11 +187,16 @@
+             components: Mutex::new(components),
+             networks: Mutex::new(networks),
+             load_average: Mutex::new(load_average),
++            cpu_refreshed: Mutex::new(Instant::now()),
++            disks_refreshed: Mutex::new(Instant::now()),
++            networks_refreshed: Mutex::new(Instant::now()),
+         }
+     }
+ 
+     pub fn refresh_cpu(&self) {
+-        lock!(self.system).refresh_cpu_all();
++        if delta_refresh_due(&self.cpu_refreshed) {
++            lock!(self.system).refresh_cpu_all();
++        }
+     }
+ 
+     pub fn refresh_memory(&self) {
+@@ -179,7 +204,9 @@
+     }
+ 
+     pub fn refresh_network(&self) {
+-        lock!(self.networks).refresh(true);
++        if delta_refresh_due(&self.networks_refreshed) {
++            lock!(self.networks).refresh(true);
++        }
+     }
+ 
+     pub fn refresh_temps(&self) {
+@@ -187,7 +214,9 @@
+     }
+ 
+     pub fn refresh_disks(&self) {
+-        lock!(self.disks).refresh(true);
++        if delta_refresh_due(&self.disks_refreshed) {
++            lock!(self.disks).refresh(true);
++        }
+     }
+ 
+     pub fn refresh_load_average(&self) {

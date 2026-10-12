@@ -413,8 +413,12 @@ RUN __apt_install libluajit-5.1-dev
 #   this binding, `@media (prefers-color-scheme: ...)` in the user's stylesheet
 #   always matches `light`. Requires GTK 4.20+; `grep` fails if upstream changes.
 RUN sed -i '/let provider = CssProvider::new();/a\    gtk::prelude::ObjectExt::bind_property(&gtk::Settings::default().expect("to exist"), "gtk-interface-color-scheme", &provider, "prefers-color-scheme").sync_create().build();' \
-        ironbar/src/style.rs                                                                                                                                                                 \
+        ironbar/src/style.rs \
     && grep -q '"gtk-interface-color-scheme", &provider' ironbar/src/style.rs
+# ! Without this, several `sys_info` modules (or bars) reset each other's CPU
+#   and network deltas, so rates read close to zero.
+COPY patches/ironbar_sysinfo_refresh.patch /tmp/
+RUN git -C ironbar apply /tmp/ironbar_sysinfo_refresh.patch
 RUN cd ironbar               \
     && cargo build --release \
     && install -s -Dm755 target/release/ironbar -t "${__INSTALLATION_PREFIX}/bin/"

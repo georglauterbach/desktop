@@ -1,0 +1,161 @@
+// ----------------------------------------------
+// ----  Ironbar Configuration  -----------------
+// ----  https://github.com/JakeStanger/ironbar  -
+// ----------------------------------------------
+//
+// cSpell: ignore prefsrc waybar
+//
+// ref: https://github.com/JakeStanger/ironbar/wiki
+//      https://www.nerdfonts.com/cheat-sheet
+//      `ironbar --print-schema`
+
+let {
+  // -------------------------------------------
+  // ----  Start Modules  ----------------------
+  // -------------------------------------------
+
+  $tray = { type = "tray" icon_size = 13 }
+
+  $inhibit = {
+    type = "inhibit"
+    durations = [ "03:00:00" ]
+    format_on = " "
+    format_off = " "
+    tooltip = "idle inhibitor"
+  }
+
+  $notifications = {
+    type = "notifications"
+    show_count = true
+    icons.closed_none = " "
+    icons.closed_some = " "
+    icons.closed_dnd = " "
+    icons.open_none = " "
+    icons.open_some = " "
+    icons.open_dnd = " "
+    on_click_right = "swaync-client --toggle-dnd --skip-wait"
+  }
+
+  $focused = {
+    type = "focused"
+    show_icon = false
+    truncate.mode = "end"
+    truncate.max_length = 90
+  }
+
+  $bindmode = { type = "bindmode" }
+
+  // -------------------------------------------
+  // ----  Center Modules  ---------------------
+  // -------------------------------------------
+
+  // Waybar dropped the `N:` prefix of the names in `sway/config`; Ironbar
+  // focuses by number, so the prefix must stay and is mapped away here.
+  $workspaces = {
+    type = "workspaces"
+    name_map.'1:01 ' = "01 "
+    name_map.'2:02 󰨞' = "02 󰨞"
+    name_map.'3:03 ' = "03 "
+    name_map.'4:04 󰇮' = "04 󰇮"
+    name_map.'5:05 ' = "05 "
+    name_map.'6:06 ' = "06 "
+    name_map.'7:07 ' = "07 "
+    name_map.'8:08 ' = "08 "
+    name_map.'9:09 ' = "09 "
+    name_map.'10:10 󰊻' = "10 󰊻"
+    name_map.'11:11 ' = "11 "
+    name_map.'12:12 ' = "12 "
+    name_map.'13:13 ' = "13 "
+    name_map.'14:14 ' = "14 "
+    name_map.'15:15 ' = "15 "
+    name_map.'16:16 ' = "16 "
+    name_map.'17:17 ' = "17 "
+    name_map.'18:18 ' = "18 "
+    name_map.'19:19 ' = "19 "
+  }
+
+  // -------------------------------------------
+  // ----  End Modules  ------------------------
+  // -------------------------------------------
+
+  // `gpu-usage-waybar` prints Waybar-specific JSON; it needs a plain-text
+  // output before it can be used with a `script` module.
+  // $gpu = { type = "script" cmd = "watch:gpu-usage-waybar --interval 5000" }
+
+  $cpu = {
+    type = "sys_info"
+    name = "cpu"
+    format = [ " {cpu_percent: <3}%" ]
+    interval.cpu = 5
+  }
+
+  $memory = {
+    type = "sys_info"
+    name = "memory"
+    format = [ " {memory_used#Gi: <4.1}/{memory_total#Gi: <4.1}GiB" ]
+    interval.memory = 10
+  }
+
+  // ponytail: fixed kB/s; Ironbar cannot auto-scale units like Waybar;
+  // `max` approximates the default-route adapter (a sum counts tunnels twice)
+  $network = {
+    type = "sys_info"
+    name = "network"
+    format = [ "󰌘 {net_down@max#k: <5.1}kB/s  |{net_up@max#k: <5.1}kB/s " ]
+    interval.networks = 5
+    tooltip = "{{5000:ip -json -4 route get 1.1.1.1 | jq -r '.[0] | \"󰩟 \" + .prefsrc + \"@\" + .dev + \" via \" + (.gateway // \"-\")'}}"
+  }
+
+  $volume_sink = {
+    type = "volume"
+    name = "volume-sink"
+    show_sources = false
+    format = "{icon} {percentage}%"
+    mute_format = "󰝟 HUSH"
+    icons.volume = ""
+    use_default_profiles = false
+    profiles.low = { when = 33.33 icons.volume = "" }
+    profiles.medium = { when = 66.66 icons.volume = "" }
+    scroll_step = 5
+    max_volume = 100
+    on_click_middle = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  }
+
+  $volume_source = {
+    type = "volume"
+    name = "volume-source"
+    show_sinks = false
+    format = "{icon} {percentage}%"
+    mute_format = "{icon} MUTE"
+    icons.mic_volume = "󰍬"
+    icons.mic_muted = "󰍭"
+    scroll_step = 5
+    on_click_middle = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+  }
+
+  // $battery = {
+  //   type = "battery"
+  //   show_if = "test -d /sys/class/power_supply/BAT0"
+  //   format = "{percentage}%"
+  // }
+
+  $clock = {
+    type = "clock"
+    format = "󱑂 %H:%M"
+    locale = "de_DE"
+    show_week_numbers = true
+  }
+} in {
+  // -------------------------------------------
+  // ----  General  ----------------------------
+  // -------------------------------------------
+
+  position = "top"
+  layer = "top"
+  anchor_to_edges = true
+  height = 24
+
+  start = [ $tray $inhibit $notifications $focused $bindmode ]
+  center = [ $workspaces ]
+  end = [ $cpu $memory $network $volume_sink $volume_source $clock ]
+}
