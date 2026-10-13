@@ -97,7 +97,10 @@ function set_theme_rofi() {
 }
 
 function set_theme_shell() {
-  [[ -r /tmp/.hermes_shells_to_update ]] || return 2
+  bash -l -i -c \
+    "[[ \$(type -t hermes_switch_theme) != function ]] || hermes_switch_theme ${THEME_VARIANT}"
+
+  [[ -r /tmp/.hermes_shells_to_update ]] || return
 
   # We ignore SC2094 because we fully read the file first,
   # and then we overwrite it afterward.
