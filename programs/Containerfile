@@ -228,6 +228,7 @@ RUN __build wlroots meson_ninja      \
         -D color-management=enabled  \
         -D libliftoff=enabled
 
+RUN git -C scenefx reset --hard || :
 RUN __git_clone https://github.com/wlrfx/scenefx.git __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
 RUN git -C scenefx reset --hard
 # ! Without this, the draw-region optimization skips pixels of the rounded
@@ -238,11 +239,8 @@ RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
 
-RUN __git_clone https://github.com/WillPower3309/swayfx.git \
-    __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
+RUN __git_clone https://github.com/WillPower3309/swayfx.git __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
 RUN __apt_install libjson-c-dev
-# TODO remove once https://github.com/wlrfx/swayfx/issues/603 is resolved
-RUN sed -i -E 's/^(char \*error = NULL;)$/static \1/g' swayfx/sway/criteria.c
 RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
         -D zsh-completions=false      \
