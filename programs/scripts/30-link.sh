@@ -20,9 +20,10 @@ while read -r FILE; do
     # loaders must exist as real files under `/usr/local`.
     cp --force --dereference "${FILE}" "${LINK_NAME}"
   else
-    ln --symbolic --force "${FILE}" "${LINK_NAME}"
+    ln --symbolic --no-dereference --force \
+      "${FILE}" "${LINK_NAME}"
   fi
-done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user},libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,icons,libinput,man,metainfo,rofi,wayland*,xdg-desktop-portal}} -type f)
+done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3}},libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,icons,libinput,man,metainfo,rofi,wayland*,xdg-desktop-portal}} -type f)
 
 log_info 'Removing superfluous files'
 rm -f /usr/local/share/wayland-sessions/sway.desktop

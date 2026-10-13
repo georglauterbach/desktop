@@ -271,6 +271,7 @@ RUN __apt_install                        \
         libgstreamer-plugins-base1.0-dev \
         libgeoclue-2-dev                 \
         libpipewire-0.3-dev              \
+        libpipewire-0.3-modules          \
         libdbus-1-dev                    \
         libwireplumber-0.5-dev
 RUN __build xdg-desktop-portal meson_ninja    \
@@ -409,6 +410,7 @@ RUN cd alacritty                                                                
       | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
 
 RUN __apt_install libluajit-5.1-dev
+RUN git -C ironbar reset --hard
 # ! GTK only binds the system color scheme to its own CSS providers; without
 #   this binding, `@media (prefers-color-scheme: ...)` in the user's stylesheet
 #   always matches `light`. Requires GTK 4.20+; `grep` fails if upstream changes.
@@ -470,14 +472,14 @@ RUN cd wleave                \
 # ----  Final Adjustments  ----------------------
 # -----------------------------------------------
 
-RUN __apt_install glycin-loaders                                   \
-    && cp -r /usr/libexec/glycin-loaders /usr/local/libexec/       \
-    && cp -r /usr/share/glycin-loaders   /usr/local/share/         \
+RUN __apt_install glycin-loaders                                             \
+    && cp -r /usr/libexec/glycin-loaders "${__INSTALLATION_PREFIX}/libexec/" \
+    && cp -r /usr/share/glycin-loaders   "${__INSTALLATION_PREFIX}/share/"   \
     && sed -i -E 's|/usr/(libexec/glycin-loaders)|/usr/local/\1|g' \
-        /usr/local/share/glycin-loaders/*/conf.d/*.conf
+        "${__INSTALLATION_PREFIX}"/share/glycin-loaders/*/conf.d/*.conf
 
-RUN cd /usr/local/lib/x86_64-linux-gnu           \
-    && cp -r /lib/x86_64-linux-gnu/pulseaudio/ . \
+RUN cd "${__INSTALLATION_PREFIX}/lib/x86_64-linux-gnu" \
+    && cp -r /lib/x86_64-linux-gnu/pulseaudio/ .       \
     && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so
 
 COPY commands/__finalize_runtime_libs /root/.local/bin/
@@ -485,10 +487,12 @@ RUN __finalize_runtime_libs
 
 # ! CAUTION: 'libc' + 'ld-linux' MUST remain in sync
 #   and MUST be the correct files from the correct place.
-RUN cp \
+RUN cp --recursive \
   /usr/lib/x86_64-linux-gnu/libc.so.6            \
   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 \
   /usr/lib/x86_64-linux-gnu/libdl.so.2           \
   /usr/lib/x86_64-linux-gnu/libpthread.so.0      \
   /usr/lib/x86_64-linux-gnu/libdisplay-info.so.3 \
-  /usr/local/lib/x86_64-linux-gnu
+  /usr/lib/x86_64-linux-gnu/spa-0.2              \
+  /usr/lib/x86_64-linux-gnu/pipewire-0.3         \
+  "${__INSTALLATION_PREFIX}/lib/x86_64-linux-gnu"

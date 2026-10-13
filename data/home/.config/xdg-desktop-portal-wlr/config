@@ -1,4 +1,7 @@
 [screencast]
+exec_before=swaync-client --inhibitor-add "xdg-desktop-portal-wlr"
+exec_after=swaync-client --inhibitor-remove "xdg-desktop-portal-wlr"
+
 chooser_type = dmenu
 chooser_cmd = /usr/local/bin/rofi -dmenu -p "Select a source to share:"
 max_fps = 30

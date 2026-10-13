@@ -1,15 +1,15 @@
 #! /usr/bin/env bash
 
 function log_info() {
-  echo -e " \e[1;34m INFO\e[0;1m ${*}\e[0m"
+  echo -e "$(date --iso-8601=s) \e[1;34m INFO\e[0;1m ${*}\e[0m"
 }
 
 function log_warn() {
-  echo -e " \e[1;33m WARN\e[0;1m ${*}\e[0m" 2>&2
+  echo -e "$(date --iso-8601=s) \e[1;33m WARN\e[0;1m ${*}\e[0m" 2>&2
 }
 
 function log_error() {
-  echo -e " \e[1;31mERROR\e[0;1m ${*}\033[0m" 2>&2
+  echo -e "$(date --iso-8601=s) \e[1;31mERROR\e[0;1m ${*}\033[0m" 2>&2
 }
 
 function require_command() {

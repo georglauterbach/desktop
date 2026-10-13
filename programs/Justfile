@@ -27,8 +27,8 @@
     sudo {{justfile_directory()}}/scripts/22-install_fonts.sh
 
 # Link the previously built files onto the host under /usr/local/
-@link-build:
-    sudo {{justfile_directory()}}/scripts/30-link_build.sh
+@link:
+    sudo {{justfile_directory()}}/scripts/30-link.sh
 
 # Copy the configuration from this repository into the host under ~
 @cp-configuration *arguments:
