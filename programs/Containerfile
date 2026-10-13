@@ -229,6 +229,11 @@ RUN __build wlroots meson_ninja      \
         -D libliftoff=enabled
 
 RUN __git_clone https://github.com/wlrfx/scenefx.git __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
+RUN git -C scenefx reset --hard
+# ! Without this, the draw-region optimization skips pixels of the rounded
+#   top-left border corners, so they look cut off compared to the others.
+COPY patches/scenefx_clip_region_rounding.patch /tmp/
+RUN git -C scenefx apply /tmp/scenefx_clip_region_rounding.patch
 RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled

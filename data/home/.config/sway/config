@@ -117,21 +117,21 @@ set $color.dark.purple          #D3869B
 #                       |                  |                  |                  |                         The border around the window itself.
 #                       |                  |                  |                  |                         |
 # class                 border             background         text               indicator                 child_border
-client.focused          $color.transparent $color.transparent $color.transparent $color.light.blue         $color.light.blue
-client.focused_inactive $color.transparent $color.transparent $color.transparent $color.light.blue80       $color.light.blue80
+client.focused          $color.transparent $color.transparent $color.transparent $color.light.foreground   $color.light.foreground
+client.focused_inactive $color.transparent $color.transparent $color.transparent $color.light.foregroundB0 $color.light.foregroundB0
 client.unfocused        $color.transparent $color.transparent $color.transparent $color.light.foregroundB0 $color.light.foregroundB0
 client.urgent           $color.transparent $color.transparent $color.transparent $color.light.red          $color.light.red
 
 # ----  Borders
 
 smart_borders           on
-default_border          pixel 2
-default_floating_border pixel 2
+default_border          pixel 1
+default_floating_border pixel 1
 hide_edge_borders       none
 
 # ensure all windows - even floating ones - have a border
-for_window [class=".*"]  border pixel 2
-for_window [app_id=".*"] border pixel 2
+for_window [class=".*"]  border pixel 1
+for_window [app_id=".*"] border pixel 1
 
 # ----  Gaps
 
