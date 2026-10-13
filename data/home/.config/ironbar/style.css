@@ -17,6 +17,7 @@
   --workspace-focused-text: #504945;
   --workspace-urgent-text: #1D2021;
   --urgent: #EA6962;
+  --warning: #E78A4E;
   --cpu: #E78A4E;
   --memory: #D8A657;
   --network: #A9B655;
@@ -34,6 +35,7 @@
     --workspace-focused-text: #F5F5F2;
     --workspace-urgent-text: #5C6A72;
     --urgent: #F85552;
+    --warning: #F57D26;
     --cpu: #F57D26;
     --memory: #D69A00;
     --network: #8DA101;
@@ -90,18 +92,33 @@
 /* ----  Tooltips & Popups  ------------------ */
 /* ------------------------------------------- */
 
+tooltip,
+.popup,
+popover.menu contents {
+  border: 1px solid alpha(var(--text), 0.35);
+}
+
+/* GTK sizes the popup surface including this margin (but not `box-shadow`),
+ * and the compositor keeps the whole surface on screen; matches `#bar`. */
+tooltip,
+popover {
+  margin: 0px 6px;
+}
+
 tooltip {
+  padding: 8px 12px;
   background-color: var(--surface);
 }
 
 tooltip label {
+  background-color: var(--surface);
   color: var(--text);
   font-size: 16px;
   font-weight: 300;
 }
 
 .popup {
-  padding: 10px;
+  padding: 16px;
   background-color: var(--surface);
   color: var(--text);
 }
@@ -110,8 +127,47 @@ tooltip label {
   color: var(--text);
 }
 
+/* The reset in `*` also collapses the boxes and controls inside popups;
+ * without minimum sizes, slider troughs and knobs are 0px and cannot be
+ * grabbed. */
+.popup box {
+  border-spacing: 10px;
+}
+
+.popup button {
+  padding: 6px 10px;
+}
+
+.popup scale {
+  padding: 8px;
+}
+
+.popup scale trough {
+  min-width: 6px;
+  min-height: 6px;
+}
+
+.popup scale slider {
+  min-width: 16px;
+  min-height: 16px;
+  margin: -5px;
+}
+
+.popup-clock .calendar grid label {
+  padding: 4px 8px;
+}
+
 .popup-clock .calendar label.today {
-  color: var(--urgent);
+  color: var(--mode);
+}
+
+/* Tray menus are GTK popovers, not Ironbar popups. */
+popover.menu contents {
+  padding: 6px;
+}
+
+popover.menu modelbutton {
+  padding: 6px 12px;
 }
 
 /* ------------------------------------------- */
@@ -121,6 +177,8 @@ tooltip label {
 /* GTK has no `:empty`; padding on the items keeps an empty tray invisible. */
 #bar .tray {
   background-color: var(--module);
+  border-spacing: 10px;
+  padding-top: 2px;
 }
 
 #bar .tray > :first-child {
@@ -149,6 +207,7 @@ tooltip label {
 
 #bar .notifications .count {
   margin-right: 10px;
+  margin-top: 2px;
 }
 
 /* `.widget` is required: workspace buttons have a `.focused` class, too. */
@@ -206,6 +265,14 @@ tooltip label {
 
 #bar .battery {
   background-color: var(--battery);
+}
+
+#bar .battery.profile-low {
+  background-color: var(--warning);
+}
+
+#bar .battery.profile-critical {
+  background-color: var(--urgent);
 }
 
 #bar .volume {

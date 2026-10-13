@@ -53,6 +53,7 @@ let {
   // focuses by number, so the prefix must stay and is mapped away here.
   $workspaces = {
     type = "workspaces"
+    sort = "index"
     name_map.'1:01 ' = "01 "
     name_map.'2:02 󰨞' = "02 󰨞"
     name_map.'3:03 ' = "03 "
@@ -106,6 +107,9 @@ let {
     tooltip = "{{5000:ip -json -4 route get 1.1.1.1 | jq -r '.[0] | \"󰩟 \" + .prefsrc + \"@\" + .dev + \" via \" + (.gateway // \"-\")'}}"
   }
 
+  // `{percentage}` cannot be padded, so the icons carry trailing spaces that
+  // keep the label three digits wide; mute formats are as wide as `100%`.
+  // Profile icons fall back to Ironbar's defaults, not to `icons` above.
   $volume_sink = {
     type = "volume"
     name = "volume-sink"
@@ -114,8 +118,10 @@ let {
     mute_format = "󰝟 HUSH"
     icons.volume = ""
     use_default_profiles = false
-    profiles.low = { when = 33.33 icons.volume = "" }
-    profiles.medium = { when = 66.66 icons.volume = "" }
+    profiles.single_digit = { when = 9 icons.volume = "  " }
+    profiles.low = { when = 33.33 icons.volume = " " }
+    profiles.medium = { when = 66.66 icons.volume = " " }
+    profiles.high = { when = 99 icons.volume = " " }
     scroll_step = 5
     max_volume = 100
     on_click_middle = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
@@ -129,15 +135,26 @@ let {
     mute_format = "{icon} MUTE"
     icons.mic_volume = "󰍬"
     icons.mic_muted = "󰍭"
+    use_default_profiles = false
+    profiles.single_digit = { when = 9 icons.mic_volume = "󰍬  " icons.mic_muted = "󰍭" }
+    profiles.double_digit = { when = 99 icons.mic_volume = "󰍬 " icons.mic_muted = "󰍭" }
     scroll_step = 5
     on_click_middle = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
   }
 
-  // $battery = {
-  //   type = "battery"
-  //   show_if = "test -d /sys/class/power_supply/BAT0"
-  //   format = "{percentage}%"
-  // }
+  // The first profile (by ascending `percent`) that matches wins; the
+  // discharging ones need `charging = false` so they don't hide `charging`.
+  $battery = {
+    type = "battery"
+    show_if = "test -d /sys/class/power_supply/BAT0"
+    show_icon = false
+    format = "󰁹 {percentage}%"
+    profiles.critical = { when = { percent = 10 charging = false } format = "󰂃 {percentage}%" }
+    profiles.low = { when = { percent = 25 charging = false } format = "󰁻 {percentage}%" }
+    profiles.medium = { when = { percent = 50 charging = false } format = "󰁾 {percentage}%" }
+    profiles.high = { when = { percent = 90 charging = false } format = "󰂁 {percentage}%" }
+    profiles.charging = { when = { percent = 100 charging = true } format = "󰂄 {percentage}%" }
+  }
 
   $clock = {
     type = "clock"
@@ -157,5 +174,5 @@ let {
 
   start = [ $tray $inhibit $notifications $focused $bindmode ]
   center = [ $workspaces ]
-  end = [ $cpu $memory $network $volume_sink $volume_source $clock ]
+  end = [ $cpu $memory $network $battery $volume_sink $volume_source $clock ]
 }
