@@ -228,8 +228,10 @@ RUN __build wlroots meson_ninja      \
         -D color-management=enabled  \
         -D libliftoff=enabled
 
+# TODO remove once https://github.com/wlrfx/scenefx/pull/228 is merged
 RUN git -C scenefx reset --hard || :
-RUN __git_clone https://github.com/wlrfx/scenefx.git __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
+RUN __git_clone https://github.com/wlrfx/scenefx.git \
+    __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
 RUN git -C scenefx reset --hard
 # ! Without this, the draw-region optimization skips pixels of the rounded
 #   top-left border corners, so they look cut off compared to the others.
@@ -239,7 +241,8 @@ RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
 
-RUN __git_clone https://github.com/WillPower3309/swayfx.git __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
+RUN __git_clone https://github.com/WillPower3309/swayfx.git \
+    __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
 RUN __apt_install libjson-c-dev
 RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
@@ -255,7 +258,8 @@ RUN __build swayfx meson_ninja        \
 
 # ? xdg-desktop-portal(s)
 
-RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git __ref 6561725344d18b954c1c3a703c92d856edeed103
+RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git \
+    __ref 6561725344d18b954c1c3a703c92d856edeed103
 RUN __apt_install liburing-dev libgirepository1.0-dev
 RUN __build libdex meson_ninja    \
         -D stack-protector=true   \
@@ -265,7 +269,8 @@ RUN __build libdex meson_ninja    \
         -D eventfd=enabled        \
         -D gdbus=enabled
 
-RUN __git_clone https://github.com/flatpak/xdg-desktop-portal.git main
+RUN __git_clone https://github.com/flatpak/xdg-desktop-portal.git \
+    __ref ee298d1817fed18c208c9ddb638a4aef7bcecc9b
 RUN __apt_install                        \
         libflatpak-dev                   \
         libjson-glib-dev                 \
@@ -412,14 +417,9 @@ RUN cd alacritty                                                                
     && scdoc < extra/man/alacritty-bindings.5.scd                                    \
       | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
 
+# TODO remove patches once all are upstream and pin the version with a long ref afterward
 RUN __apt_install libluajit-5.1-dev
 RUN git -C ironbar reset --hard
-# ! GTK only binds the system color scheme to its own CSS providers; without
-#   this binding, `@media (prefers-color-scheme: ...)` in the user's stylesheet
-#   always matches `light`. Requires GTK 4.20+; `grep` fails if upstream changes.
-RUN sed -i '/let provider = CssProvider::new();/a\    gtk::prelude::ObjectExt::bind_property(&gtk::Settings::default().expect("to exist"), "gtk-interface-color-scheme", &provider, "prefers-color-scheme").sync_create().build();' \
-        ironbar/src/style.rs \
-    && grep -q '"gtk-interface-color-scheme", &provider' ironbar/src/style.rs
 # ! Without this, several `sys_info` modules (or bars) reset each other's CPU
 #   and network deltas, so rates read close to zero.
 COPY patches/ironbar_sysinfo_refresh.patch /tmp/
