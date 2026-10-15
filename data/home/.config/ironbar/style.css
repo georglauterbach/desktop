@@ -158,6 +158,7 @@ tooltip label {
 }
 
 .popup-clock .calendar label.today {
+  background-color: var(--network);
   color: var(--mode);
 }
 

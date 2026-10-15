@@ -228,15 +228,8 @@ RUN __build wlroots meson_ninja      \
         -D color-management=enabled  \
         -D libliftoff=enabled
 
-# TODO remove once https://github.com/wlrfx/scenefx/pull/228 is merged
-RUN git -C scenefx reset --hard || :
 RUN __git_clone https://github.com/wlrfx/scenefx.git \
     __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
-RUN git -C scenefx reset --hard
-# ! Without this, the draw-region optimization skips pixels of the rounded
-#   top-left border corners, so they look cut off compared to the others.
-COPY patches/scenefx_clip_region_rounding.patch /tmp/
-RUN git -C scenefx apply /tmp/scenefx_clip_region_rounding.patch
 RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
@@ -320,12 +313,15 @@ RUN sed -i \
         gtk4-layer-shell/src/libwayland-shim.c \
     && grep -q 'dlsym(dlopen("libwayland-client.so.0"' gtk4-layer-shell/src/libwayland-shim.c
 RUN __build gtk4-layer-shell meson_ninja \
-    -D examples=false                    \
-    -D docs=false                        \
-    -D tests=false                       \
-    -D smoke-tests=false                 \
-    -D introspection=true                \
-    -D vapi=true
+        -D examples=false                \
+        -D docs=false                    \
+        -D tests=false                   \
+        -D smoke-tests=false             \
+        -D introspection=true            \
+        -D vapi=true
+
+# TODO remove once ironbar patches are upstreamed
+RUN git -C ironbar reset --hard || :
 
 RUN __git_clone https://github.com/davatorium/rofi.git next                              \
     && __git_clone https://gitlab.freedesktop.org/emersion/grim.git master               \
@@ -420,10 +416,8 @@ RUN cd alacritty                                                                
 # TODO remove patches once all are upstream and pin the version with a long ref afterward
 RUN __apt_install libluajit-5.1-dev
 RUN git -C ironbar reset --hard
-# ! Without this, several `sys_info` modules (or bars) reset each other's CPU
-#   and network deltas, so rates read close to zero.
-COPY patches/ironbar_sysinfo_refresh.patch /tmp/
-RUN git -C ironbar apply /tmp/ironbar_sysinfo_refresh.patch
+COPY patches/ironbar.patch /tmp/
+RUN git -C ironbar apply /tmp/ironbar.patch
 RUN cd ironbar               \
     && cargo build --release \
     && install -s -Dm755 target/release/ironbar -t "${__INSTALLATION_PREFIX}/bin/"
