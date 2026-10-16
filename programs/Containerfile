@@ -300,18 +300,8 @@ RUN __build xdg-desktop-portal-wlr meson_ninja \
 
 RUN __apt_install libjpeg-dev libjxl-dev libadwaita-1-dev libgtk-4-dev valac
 
-RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git main
-# ! The Wayland shim of `gtk4-layer-shell` finds the real `libwayland-client`
-#   functions with `dlsym(RTLD_NEXT, ...)`. When another library interposes
-#   `dlsym` (e.g. `libAppProtection.so` via `/etc/ld.so.preload`), `RTLD_NEXT`
-#   resolves relative to that library and returns the shim itself, so the first
-#   Wayland request recurses forever and every layer-shell app hangs on startup.
-#   A lookup via a handle to `libwayland-client` (a direct dependency, hence
-#   `RTLD_NOLOAD` always succeeds) is immune; `grep` fails if upstream changes.
-RUN sed -i \
-        's|dlsym(RTLD_NEXT, #name)|dlsym(dlopen("libwayland-client.so.0", RTLD_LAZY \| RTLD_NOLOAD), #name)|' \
-        gtk4-layer-shell/src/libwayland-shim.c \
-    && grep -q 'dlsym(dlopen("libwayland-client.so.0"' gtk4-layer-shell/src/libwayland-shim.c
+RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git \
+    __ref 69ad9a02a8c31ac2d3db6710f43b3d8434559e46
 RUN __build gtk4-layer-shell meson_ninja \
         -D examples=false                \
         -D docs=false                    \
