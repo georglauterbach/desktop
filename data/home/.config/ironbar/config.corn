@@ -174,5 +174,5 @@ let {
 
   start = [ $tray $inhibit $notifications $focused $bindmode ]
   center = [ $workspaces ]
-  end = [ $cpu $memory $network $battery $volume_sink $volume_source $clock ]
+  end = [ $cpu $memory $battery $volume_sink $volume_source $clock ]
 }
