@@ -15,7 +15,7 @@
 
     padding: 10px;
 
-    border: 3px;
+    border: 1px;
     border-radius: 10px;
     border-color: @color-yellow;
 }
