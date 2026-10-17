@@ -93,7 +93,7 @@ let {
   $memory = {
     type = "sys_info"
     name = "memory"
-    format = [ " {memory_used#Gi: <4.1}/{memory_total#Gi: <4.1}GiB" ]
+    format = [ " {memory_used#Gi: <4.1}Gi" ]
     interval.memory = 10
   }
 
