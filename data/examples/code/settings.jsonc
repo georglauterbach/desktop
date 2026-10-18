@@ -3,7 +3,6 @@
   //
   // cSpell:enable
   //
-  //
   // ? AI (in conjunction with https://stackoverflow.com/a/79534407)
   "chat.disableAIFeatures": true,
   "chat.agent.enabled": false,
@@ -13,12 +12,6 @@
   "breadcrumbs.filePath": "on",
   "breadcrumbs.symbolPath": "off",
   "breadcrumbs.icons": true,
-  // ? color & icon theme
-  "workbench.iconTheme": "gruvbox-material-icons",
-  "workbench.preferredDarkColorTheme": "Evergruv (Gruvbox Material) Dark",
-  "workbench.preferredLightColorTheme": "Evergruv (Everforest) Light",
-  "window.autoDetectColorScheme": true,
-  "window.autoDetectHighContrast": false,
   // ? diff editor
   "diffEditor.diffAlgorithm": "advanced",
   "diffEditor.ignoreTrimWhitespace": false,
@@ -121,16 +114,23 @@
   "terminal.integrated.enableKittyKeyboardProtocol": true,
   "terminal.integrated.textBlinking": true,
   // ? window
-  "window.zoomLevel": 1,
+  "window.autoDetectColorScheme": true,
+  "window.autoDetectHighContrast": false,
+  "window.commandCenter": false,
+  "window.customTitleBarVisibility": "never",
   "window.menuStyle": "custom",
   "window.menuBarVisibility": "hidden",
   "window.titleBarStyle": "native",
-  "window.customTitleBarVisibility": "never",
+  "window.zoomLevel": 1,
   // ? workbench
   // * workbench::bars
   "workbench.sideBar.location": "right",
   "workbench.activityBar.location": "top",
   "workbench.secondarySideBar.defaultVisibility": "hidden",
+  // * workbench::color & icon theme
+  "workbench.iconTheme": "gruvbox-material-icons",
+  "workbench.preferredDarkColorTheme": "Evergruv (Gruvbox Material) Dark",
+  "workbench.preferredLightColorTheme": "Evergruv (Everforest) Light",
   // * workbench::editor
   // * workbench::editor::limit
   "workbench.editor.limit.value": 5,
@@ -149,13 +149,11 @@
   "workbench.editor.wrapTabs": true,
   "workbench.editor.pinnedTabSizing": "compact",
   // * workbench::miscellaneous
+  "workbench.browser.showInTitleBar": false,
+  "workbench.navigationControl.enabled": false,
   "workbench.startupEditor": "none",
   // ? extensions
   "extensions.ignoreRecommendations": true,
-  // * extensions::asciidoctor.asciidoctor-vscode
-  "asciidoc.antora.showEnableAntoraPrompt": false,
-  "asciidoc.preview.scrollEditorWithPreview": false,
-  "asciidoc.preview.scrollPreviewWithEditor": false,
   // * extensions::aaron-bond.better-comments
   "better-comments.strict": true,
   "better-comments.preloadLines": 150,
@@ -335,9 +333,11 @@
       "other": true
     }
   },
+  "markdown.preview.scrollEditorWithPreview": false,
+  "markdown.preview.scrollPreviewWithEditor": false,
   // ? Cursor
   "workbench.layoutControl.enabled": false,
-  "workbench.agentsWindowButton.enabled": false
+  "workbench.agentsWindowButton.enabled": false,
   // ? dynamic
   //
   // ? comments
@@ -348,21 +348,26 @@
 
     === Miscellaneous
 
+
+    - AsciiDoc: asciidoctor.asciidoctor-vscode
+      "asciidoc.antora.showEnableAntoraPrompt": false,
+      "asciidoc.preview.scrollEditorWithPreview": false,
+      "asciidoc.preview.scrollPreviewWithEditor": false,
     - C/C++: llvm-vs-code-extensions.vscode-clangd
     - BATS (Bash Tests): jetmartin.bats
     - Docker: ms-azuretools.vscode-docker
     - Encode-Decode: mitchdenny.ecdc
     - Screenshots: adpyke.codesnap
-    "codesnap.boxShadow": "none",
-    "codesnap.roundedCorners": true,
-    "codesnap.containerPadding": "0em",
-    "codesnap.showWindowControls": false,
-    "codesnap.showWindowTitle": false,
-    "codesnap.showLineNumbers": true,
-    "codesnap.realLineNumbers": false,
-    "codesnap.transparentBackground": true,
-    "codesnap.target": "container",
-    "codesnap.shutterAction": "save",
+      "codesnap.boxShadow": "none",
+      "codesnap.roundedCorners": true,
+      "codesnap.containerPadding": "0em",
+      "codesnap.showWindowControls": false,
+      "codesnap.showWindowTitle": false,
+      "codesnap.showLineNumbers": true,
+      "codesnap.realLineNumbers": false,
+      "codesnap.transparentBackground": true,
+      "codesnap.target": "container",
+      "codesnap.shutterAction": "save",
     - Typst: myriad-dreamin.tinymist
     - YAML: redhat.vscode-yaml
 
