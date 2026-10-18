@@ -10,23 +10,34 @@ source "${SCRIPT_DIR}/00-env.sh"
 
 require_run_as_user
 
+if ! command -v flatpak &>/dev/null; then
+  log_info 'Installing flatpak'
+  sudo apt-get install --no-install-recommends flatpak
+fi
+
 log_info 'Adding Flathub remote if it does not exist already'
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # cSpell: disable
 readonly FLATPAKS=(
-  app.zen_browser.zen
   com.github.tchx84.Flatseal
+
+  app.zen_browser.zen
   #com.bitwarden.desktop
-  #com.valvesoftware.Steam
-  #org.freedesktop.Platform.VulkanLayer.MangoHud
   #eu.betterbird.Betterbird
+  #md.obsidian.Obsidian
   #org.cryptomator.Cryptomator
-  #org.libreoffice.LibreOffice
-  #be.alexandervanhee.gradia
+
+  #com.valvesoftware.Steam
+  #net.lutris.Lutris
+  #org.freedesktop.Platform.VulkanLayer.MangoHud
+
   #com.github.IsmaelMartinez.teams_for_linux
 )
 # cSpell: enable
 
-log 'Installing Flatpaks'
-flatpak install --noninteractive --or-update flathub "${FLATPAKS[@]}" "${@}"
+log_info 'Installing Flatpaks'
+flatpak --user install --noninteractive --or-update flathub "${FLATPAKS[@]}" "${@}"
+
+# ? Remove all flatpaks with
+#   flatpak uninstall --all --delete-data --user

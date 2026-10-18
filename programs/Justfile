@@ -15,8 +15,8 @@
     {{justfile_directory()}}/scripts/12-patch.sh
 
 # Install additional packages with 'apt'
-@install-packages:
-    sudo {{justfile_directory()}}/scripts/20-install_packages.sh
+@install-packages *arguments:
+    sudo {{justfile_directory()}}/scripts/20-install_packages.sh {{arguments}}
 
 # Install additional packages with 'flatpak'
 @install-flatpaks *arguments:

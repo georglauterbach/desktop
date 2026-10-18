@@ -10,41 +10,42 @@ source "${SCRIPT_DIR}/00-env.sh"
 
 require_run_as_root
 
-readonly ADDITIONAL_PACKAGES=(
-  # Ubuntu base system
-  ubuntu-desktop-minimal # base package for a GUI
-  papers                 # documents viewer
-  ptyxis                 # (fallback) terminal emulator
-  resources              # resource usage monitor
-  # miscellaneous
-  dex                    # desktop-file application launcher
-  flatpak                # Flatpak
-  git                    # version control system
-  rtkit                  # real-time scheduling service (mostly used for audio)
-  wl-clipboard           # Wayland clipboard
+# cSpell: disable
+PACKAGES=(
+  # ? XDG
   xdg-desktop-portal-gtk # XDG-based portal frontend for GTK/GNOME
   xdg-utils              # common XDG utilities
-  # fonts
+  # ? fonts
   fonts-font-awesome     # Font Awesome
   fonts-ubuntu           # default Ubuntu (Sans) font
-  # graphics
-  gamemode               # run games in performance-mode
+  # ? graphics
   mesa-vulkan-drivers    # Vulkan (graphics API) drivers by MESA
+  libvulkan1             # Vulkan loader
   vulkan-tools           # utilities for Vulkan
-  wdisplays              # arrange displays on Wayland
-  # sound
-  pipewire               # API for dealing with multimedia pipelines
-  pipewire-pulse         # Pulse Audio compatibility layer for pipewire
-  wireplumber            # session & policy manager for pipewire
-  # desktop apps
-  gnome-calculator       # calculator
-  gnome-characters       # character visualizer
-  gnome-disk-utility     # disk management
-  gnome-font-viewer      # character viewer
-  gnome-keyring          # keyring daemon
-  highlight              # used by GTK for syntax highlighting
-  kitty                  # terminal emulator for yazi
+  # ? miscellaneous
+  dex                    # desktop-file application launcher
+  git                    # version control system
+  rtkit                  # userland real-time scheduling
 )
+# cSpell: enable
+
+# wdisplays              # arrange displays on Wayland
+
+if [[ ${*} == *--ubuntu-desktop* ]]; then
+  PACKAGES+=(
+    ubuntu-desktop-minimal # Ubuntu desktop base package
+    gnome-calculator       # calculator
+    gnome-characters       # character visualizer
+    gnome-disk-utility     # disk management
+    gnome-font-viewer      # character viewer
+    gnome-keyring          # keyring daemon
+    highlight              # used by GTK for syntax highlighting
+    papers                 # documents viewer
+    ptyxis                 # (fallback) terminal emulator
+    resources              # resource usage monitor
+  )
+fi
+
 
 log_info 'Installing packages'
-apt-get install --yes --no-install-recommends "${ADDITIONAL_PACKAGES[@]}"
+apt-get install --yes --no-install-recommends "${PACKAGES[@]}"
