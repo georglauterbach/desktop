@@ -236,7 +236,7 @@ RUN __build scenefx meson_ninja \
         -D color-management=enabled
 
 RUN __git_clone https://github.com/WillPower3309/swayfx.git \
-    __ref 2caa04a5f42a5cec5e72e04aee819b7662405fb7
+    __ref 4d341dbb39952ae95f1d8be161359e9316cd6ab8
 RUN __apt_install libjson-c-dev
 RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
