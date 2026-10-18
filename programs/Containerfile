@@ -141,6 +141,7 @@ RUN __build wayland meson_ninja              \
         -D scanner=true                      \
         -D tests=false                       \
         -D documentation=false               \
+        -D docbook_validation=false          \
         -D dtd_validation=false              \
     && __build wayland-protocols meson_ninja \
         -D tests=false

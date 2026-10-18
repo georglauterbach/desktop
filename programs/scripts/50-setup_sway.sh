@@ -18,7 +18,7 @@ if [[ -z ${HOME_DIR} ]]; then
 fi
 
 if [[ ! -d ${HOME_DIR} ]]; then
-  log_error "The provided path '${HOME_DIR}' does not denote a valid / existing directory"
+  log_error "The provided path '${HOME_DIR}' does not denote a directory"
   exit 1
 fi
 

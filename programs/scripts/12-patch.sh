@@ -32,7 +32,7 @@ done < <(command find "${OUT_DIR}/lib/" -type f -name '*.so*')
 while read -r EXECUTABLE; do
   # glycin loaders are executed inside a `bwrap --unshare-all` sandbox that only
   # binds `/usr`; rewriting their interpreter/RPATH into `${OUT_DIR}` (outside the
-  # sandbox) makes them unrunnable, so they must keep the stock system values.
+  # sandbox) makes them un-runnable, so they must keep the stock system values.
   [[ ${EXECUTABLE} == *'/libexec/glycin-loaders/'* ]] && continue
 
   [[ $(file --mime-type --brief "${EXECUTABLE}") == *executable* ]] || continue
