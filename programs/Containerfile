@@ -230,7 +230,7 @@ RUN __build wlroots meson_ninja      \
         -D libliftoff=enabled
 
 RUN __git_clone https://github.com/wlrfx/scenefx.git \
-    __ref ac7a11ca03cdb66c284d988e6f587b401bd400e5
+    __ref b96cb6c923b8bf721ad11fa2136fe070d9adc2dd
 RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
