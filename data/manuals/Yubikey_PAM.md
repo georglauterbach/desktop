@@ -1,3 +1,7 @@
+---
+ubuntu: 24.04
+---
+
 # Yubikey
 
 ## PAM

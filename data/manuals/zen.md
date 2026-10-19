@@ -1,3 +1,7 @@
+---
+zen: 1.23.3b
+---
+
 # Zen Browser
 
 ## Disable Encrypted Client-Hello (ECH)

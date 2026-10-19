@@ -1,3 +1,7 @@
+---
+ubuntu: 26.04
+---
+
 # `bwrap` AppArmor `userns` Fix
 
 In case applications relying on `bwrap` run into issues with AppArmor, you can unconfine `bwrap` in so far as to running `userns`. Create or edit the file `/etc/apparmor.d/bwrap`:
