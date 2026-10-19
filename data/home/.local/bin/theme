@@ -123,16 +123,16 @@ function set_theme_shell() {
 function set_theme_sway() {
   # shellcheck disable=SC2016
   swaymsg client.focused '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue" || return 1
+    "\$color.${THEME_VARIANT}.foreground" "\$color.${THEME_VARIANT}.foreground" || return 1
   # shellcheck disable=SC2016
   swaymsg client.focused_inactive '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.blue80" || return 1
+    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
   # shellcheck disable=SC2016
   swaymsg client.unfocused '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
+    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
   # shellcheck disable=SC2016
   swaymsg client.urgent '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.purple" "\$color.${THEME_VARIANT}.red" || return 1
+    "\$color.${THEME_VARIANT}.red" "\$color.${THEME_VARIANT}.red" || return 1
 }
 
 function set_theme_swaylock() {

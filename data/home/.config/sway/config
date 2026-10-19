@@ -108,6 +108,9 @@ set $color.dark.cyan            #89B482
 set $color.dark.blue            #7DAEA3
 set $color.dark.purple          #D3869B
 
+# ! When updating the following color settings, make sure to also
+#   update [`theme`](data/home/.local/bin/theme).
+#
 #                       The border around the title bar.
 #                       |                  The background of the title bar.
 #                       |                  |                  The text color of the title bar.
