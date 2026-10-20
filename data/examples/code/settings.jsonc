@@ -104,8 +104,9 @@
   "terminal.integrated.shellIntegration.enabled": false,
   "terminal.integrated.sendKeybindingsToShell": false,
   "terminal.integrated.commandsToSkipShell": [
-    "workbench.view.explorer",
+    "workbench.action.findInFiles",
     "workbench.action.toggleSidebarVisibility",
+    "workbench.view.explorer",
     // * Cursor
     "composer.sendToAgend",
     "aichat.newchataction"
