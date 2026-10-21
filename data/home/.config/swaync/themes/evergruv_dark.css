@@ -43,21 +43,33 @@
 }
 
 .notification {
-  background: alpha(@background, 0.7);
+  background: @background;
   border-radius: 5px;
-  box-shadow: inset 0 0 0 2px @blue;
+  box-shadow: inset 0 0 0 1px @foreground;
   margin: 20px;
   outline: none;
   padding: 0px;
+  box-shadow: 3px 4px 10px alpha(black, 0.4);
 }
 
 .floating-notifications .notification {
-  margin: 12px;
+  margin: 0px 16px 16px 0px;
+}
+
+.floating-notifications animatedlistitem:first-child .notification {
+  margin-top: 24px;
+}
+
+.floating-notifications animatedlistitem:last-child .notification {
+  margin-bottom: 20px;
 }
 
 .control-center .notification {
-  margin: 8px;
-  box-shadow: inset 0 0 0 2px @foreground;
+  margin: 0px 12px 12px 8px;
+}
+
+.control-center .notification-group.collapsed .notification {
+  margin-top: 8px;
 }
 
 .notification-content {
@@ -83,7 +95,7 @@
 
 .notification-default-action:hover,
 .notification-action:hover {
-  background: alpha(@background-dim, 0.5);
+  background: @background-dim;
 }
 
 /* -- do not round corners when lower content is available */

@@ -188,6 +188,10 @@ font pango:$typography.font.default
 #    blur_ignore_transparent enable;
 #}
 
+#layer_effects "swaync-notification-window" {
+#    blur disable;
+#}
+
 # -----------------------------------------------
 # ----  Key Bindings  ---------------------------
 # -----------------------------------------------
