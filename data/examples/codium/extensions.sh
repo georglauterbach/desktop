@@ -54,11 +54,7 @@ function install_not_available_via_open_vsx() {
       | gunzip >"${download}"
     install_extension "${publisher}.${name}" "${download}"
   done <<'EOF'
-mads-hartmann    bash-ide-vscode   1.43.2
-ms-vscode        remote-explorer   0.6.2026100809
-ms-vscode-remote remote-containers 0.470.0
-ms-vscode-remote remote-ssh        0.129.2026100915
-ms-vscode-remote remote-ssh-edit   0.87.0
+mads-hartmann bash-ide-vscode 1.43.2
 EOF
 }
 
