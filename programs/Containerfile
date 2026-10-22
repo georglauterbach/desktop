@@ -311,9 +311,6 @@ RUN __build gtk4-layer-shell meson_ninja \
         -D introspection=true            \
         -D vapi=true
 
-# TODO remove once ironbar patches are upstreamed
-RUN git -C ironbar reset --hard || :
-
 RUN __git_clone https://github.com/davatorium/rofi.git next                              \
     && __git_clone https://gitlab.freedesktop.org/emersion/grim.git master               \
     && __git_clone https://github.com/emersion/slurp.git master                          \
@@ -325,7 +322,8 @@ RUN __git_clone https://github.com/davatorium/rofi.git next                     
     && __git_clone https://codeberg.org/tytan652/door-knocker.git main                   \
     \
     && __git_clone https://github.com/alacritty/alacritty.git v0.17.0                    \
-    && __git_clone https://github.com/JakeStanger/ironbar.git master                     \
+    && __git_clone https://github.com/JakeStanger/ironbar.git                            \
+        __ref 119f361f661aa362843a6dccf02d13236520a8d9                                   \
     && __git_clone https://codeberg.org/LGFae/awww.git main                              \
     && __git_clone https://github.com/zefr0x/ianny.git main                              \
     && __git_clone https://github.com/blurrycat/lightctl.git main                        \
@@ -404,11 +402,7 @@ RUN cd alacritty                                                                
     && scdoc < extra/man/alacritty-bindings.5.scd                                    \
       | gzip -c >"${__INSTALLATION_PREFIX}/share/man/man5/alacritty-bindings.5.gz"
 
-# TODO remove patches once all are upstream and pin the version with a long ref afterward
 RUN __apt_install libluajit-5.1-dev
-RUN git -C ironbar reset --hard
-COPY patches/ironbar.patch /tmp/
-RUN git -C ironbar apply /tmp/ironbar.patch
 RUN cd ironbar               \
     && cargo build --release \
     && install -s -Dm755 target/release/ironbar -t "${__INSTALLATION_PREFIX}/bin/"
