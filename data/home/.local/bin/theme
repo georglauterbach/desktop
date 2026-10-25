@@ -98,7 +98,7 @@ function set_theme_rofi() {
 
 function set_theme_shell() {
   bash -l -i -c \
-    "[[ \$(type -t hermes_switch_theme) != function ]] || hermes_switch_theme ${THEME_VARIANT}"
+    "[[ \$(type -t hermes::switch_theme) != function ]] || hermes::switch_theme ${THEME_VARIANT}"
 
   [[ -r /tmp/.hermes_shells_to_update ]] || return
 

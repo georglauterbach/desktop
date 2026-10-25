@@ -235,9 +235,13 @@ RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
 
+
+RUN git -C swayfx reset --hard || :
 RUN __git_clone https://github.com/WillPower3309/swayfx.git \
     __ref 4d341dbb39952ae95f1d8be161359e9316cd6ab8
 RUN __apt_install libjson-c-dev
+COPY patches/swayfx_workspace_animation_output_hotplug.patch /tmp/
+RUN git -C swayfx apply /tmp/swayfx_workspace_animation_output_hotplug.patch
 RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
         -D zsh-completions=false      \
@@ -311,27 +315,26 @@ RUN __build gtk4-layer-shell meson_ninja \
         -D introspection=true            \
         -D vapi=true
 
-RUN __git_clone https://github.com/davatorium/rofi.git next                              \
-    && __git_clone https://gitlab.freedesktop.org/emersion/grim.git master               \
-    && __git_clone https://github.com/emersion/slurp.git master                          \
-    && __git_clone https://github.com/swaywm/swaybg.git master                           \
-    && __git_clone https://github.com/swaywm/swayidle.git master                         \
-    && __git_clone https://github.com/swaywm/swaylock.git master                         \
-    && __git_clone https://github.com/kennylevinsen/wlsunset.git master                  \
-    && __git_clone https://github.com/ErikReider/SwayNotificationCenter.git main         \
-    && __git_clone https://codeberg.org/tytan652/door-knocker.git main                   \
-    \
-    && __git_clone https://github.com/alacritty/alacritty.git v0.17.0                    \
-    && __git_clone https://github.com/JakeStanger/ironbar.git                            \
-        __ref 119f361f661aa362843a6dccf02d13236520a8d9                                   \
-    && __git_clone https://codeberg.org/LGFae/awww.git main                              \
-    && __git_clone https://github.com/zefr0x/ianny.git main                              \
-    && __git_clone https://github.com/blurrycat/lightctl.git main                        \
-    && __git_clone https://github.com/Satty-org/Satty.git main                           \
-    && __git_clone https://gitlab.com/w0lff/shikane.git master                           \
-    && __git_clone https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit.git master \
-    && __git_clone https://github.com/russelltg/wl-screenrec.git main                    \
-    && __git_clone https://github.com/AMNatty/wleave.git main
+RUN __git_clone https://github.com/davatorium/rofi.git next
+RUN __git_clone https://gitlab.freedesktop.org/emersion/grim.git master
+RUN __git_clone https://github.com/emersion/slurp.git master
+RUN __git_clone https://github.com/swaywm/swaybg.git master
+RUN __git_clone https://github.com/swaywm/swayidle.git master
+RUN __git_clone https://github.com/swaywm/swaylock.git master
+RUN __git_clone https://github.com/kennylevinsen/wlsunset.git master
+RUN __git_clone https://github.com/ErikReider/SwayNotificationCenter.git main
+RUN __git_clone https://codeberg.org/tytan652/door-knocker.git main
+
+RUN __git_clone https://github.com/alacritty/alacritty.git v0.17.0
+RUN __git_clone https://github.com/JakeStanger/ironbar.git __ref 119f361f661aa362843a6dccf02d13236520a8d9
+RUN __git_clone https://codeberg.org/LGFae/awww.git main
+RUN __git_clone https://github.com/zefr0x/ianny.git main
+RUN __git_clone https://github.com/blurrycat/lightctl.git main
+RUN __git_clone https://github.com/Satty-org/Satty.git main
+RUN __git_clone https://gitlab.com/w0lff/shikane.git master
+RUN __git_clone https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit.git master
+RUN __git_clone https://github.com/russelltg/wl-screenrec.git main
+RUN __git_clone https://github.com/AMNatty/wleave.git main
 
 # * 1. Default builds
 

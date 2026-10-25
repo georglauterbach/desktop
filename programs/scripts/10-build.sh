@@ -18,9 +18,10 @@ fi
 mkdir -p "${APT_DIR}"/{cache,lists} "${CACHE_DIR}" "${SRC_DIR}"
 
 log_info Building
-podman build --tag "${IMAGE_TAG}" --file Containerfile \
-  --volume "${APT_DIR}/cache:/var/cache/apt"           \
-  --volume "${APT_DIR}/lists:/var/lib/apt/lists"       \
-  --volume "${CACHE_DIR}:/root/.cache"                 \
-  --volume "${SRC_DIR}:/src"                           \
+nice --adjustment=19 podman build                \
+  --tag "${IMAGE_TAG}" --file Containerfile      \
+  --volume "${APT_DIR}/cache:/var/cache/apt"     \
+  --volume "${APT_DIR}/lists:/var/lib/apt/lists" \
+  --volume "${CACHE_DIR}:/root/.cache"           \
+  --volume "${SRC_DIR}:/src"                     \
   .
