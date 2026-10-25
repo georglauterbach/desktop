@@ -1,20 +1,20 @@
 {
-	"disableNotifications": false,
-	"disableNotificationSoundIfNotAvailable": true,
-	"defaultNotificationUrgency": "normal",
-	"notificationMethod": "electron",
-	"disableGpu": false,
-	"electronCLIFlags": [
-		[
-			"enable-features",
-			"WebRTCPipeWireCapturer,AcceleratedVideoDecodeLinuxGL,AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoEncoder"
-		]
-	],
-	"logConfig": {
-		"transports": {
-			"console": {
-				"level": "warn"
-			}
-		}
-	}
+  "disableNotifications": false,
+  "disableNotificationSoundIfNotAvailable": true,
+  "defaultNotificationUrgency": "normal",
+  "notificationMethod": "electron",
+  "disableGpu": false,
+  "electronCLIFlags": [
+    [
+      "enable-features",
+      "WebRTCPipeWireCapturer,AcceleratedVideoDecodeLinuxGL,AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoEncoder"
+    ]
+  ],
+  "logConfig": {
+    "transports": {
+      "console": {
+        "level": "warn"
+      }
+    }
+  }
 }
