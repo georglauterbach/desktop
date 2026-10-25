@@ -24,8 +24,8 @@ Essential programs are built from source in a container to have as much control 
         https://github.com/georglauterbach/desktop/releases/download/system-theme/lief-patchelf
     $ chmod +x "${HOME}/.local/bin/lief-patchelf"
     ```
-3. Run the scripts in [`programs/scripts/`](./programs/scripts/) one after another in the [`programs/`](./programs/) directory
-4. Configure SwayFX by adjusting `${HOME}/.config/sway/config` (e.g., to enable user configurations)
+3. Run the scripts in [`programs/scripts/`](./programs/scripts/) one after another in the [`programs/`](./programs/) directory, either manually or with [`just`](https://github.com/casey/just)
+4. Configure SwayFX by adjusting `${HOME}/.config/sway/config` (e.g., enable user configuration includes)
 5. Configure [shikane](https://gitlab.com/w0lff/shikane) by running `shikanectl export default >"${HOME}/.config/shikane/config.toml" && systemctl --user restart shikane`
 6. Copy [wleave's icons](https://github.com/AMNatty/wleave/tree/development/icons) to `/usr/local/share/wleave/icons/`
 
