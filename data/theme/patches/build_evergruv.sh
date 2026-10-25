@@ -47,39 +47,38 @@ theme_build() {
   find build -type d -empty -delete
 }
 
-# Yaru installs its GTK4 stylesheet inside `gtk.gresource` and leaves a
-# `gtk.css` that only holds `@import url("resource:///...")`. GTK registers
-# that resource bundle solely for the duration of the initial theme load, but
-# re-parses the stylesheet whenever the system color scheme changes - the
-# import then fails and every GTK4 app silently loses the entire theme
-# (checked against GTK 4.24.1). Unpacking the bundle removes the import; the
-# asset URLs inside the stylesheets are already relative to it.
+# Yaru installs its GTK4 stylesheet inside `gtk.gresource` and leaves a `gtk.css`
+# that only holds `@import url("resource:///...")`. GTK registers that resource
+# bundle solely for the duration of the initial theme load, but re-parses the
+# stylesheet whenever the system color scheme changes - the import then fails
+# and every GTK4 app silently loses the entire theme (checked against GTK
+# 4.24.1). Unpacking the bundle removes the import; the asset URLs inside
+# the stylesheets are already relative to it.
 theme_patch() {
   for theme in Yaru Yaru-dark; do
     theme_dir="${BUILD_PREFIX}/share/themes/${theme}/gtk-4.0"
     resource="${theme_dir}/gtk.gresource"
+
+    if [ -f "${resource}" ]; then
+      gresource list "${resource}" | while IFS= read -r entry; do
+        target="${theme_dir}/${entry#"/com/ubuntu/themes/${theme}/4.0/"}"
+        mkdir -p "$(dirname "${target}")"
+        gresource extract "${resource}" "${entry}" | tee "${target}" >/dev/null
+      done
+
+      rm "${resource}"
+    fi
 
     # Ensure gtk-dark.css is always a symbolic link to gtk.css;
     # for the light theme, gtk.css is the _only_ actual light
     # theme, so switching to light would otherwise keep a dark
     # theme independent of order of execution of
     # `gsettings set org.gnome.desktop.interface gtk-theme` and
-    # `gsettings set org.gnome.desktop.interface color-scheme`
-    (
-      cd "${theme_dir}"
-      rm --force gtk-dark.css
-      ln -s gtk.css gtk-dark.css
-    )
-
-    [ -f "${resource}" ] || continue
-
-    gresource list "${resource}" | while IFS= read -r entry; do
-      target="${theme_dir}/${entry#"/com/ubuntu/themes/${theme}/4.0/"}"
-      mkdir -p "$(dirname "${target}")"
-      gresource extract "${resource}" "${entry}" | tee "${target}" >/dev/null
-    done
-
-    rm "${resource}"
+    # `gsettings set org.gnome.desktop.interface color-scheme`.
+    # It has to run after unpacking: `tee` follows the link, so
+    # extracting the bundle's own gtk-dark.css would write it
+    # straight into gtk.css.
+    ln --symbolic --force --no-target-directory gtk.css "${theme_dir}/gtk-dark.css"
 
     # The theme is only safe across color scheme switches once nothing resolves
     # through the resource bundle anymore.

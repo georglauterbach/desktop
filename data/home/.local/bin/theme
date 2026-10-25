@@ -27,8 +27,7 @@ function set_theme_alacritty() {
     return 2
   fi
 
-  cd "${CONFIG_DIR}"
-  ln --symbolic --force "${CONFIG_FILE}" theme-active.toml || return 1
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/theme-active.toml" || return 1
 }
 
 function set_theme_flatpak() {
@@ -42,16 +41,24 @@ function set_theme_flatpak() {
 }
 
 function set_theme_gtk() {
-  mkdir --parents "${HOME}"/.{local/share/{themes,icons},icons,themes,config/gtk-{3,4}.0}
+  mkdir --parents "${HOME}"/.{local/share/{themes,icons},config/gtk-{3,4}.0}
 
-  local I
-  for I in {3..4}; do
-    if [[ -s ${HOME}/.config/gtk-${I}.0/settings.ini ]]; then
+  # Flatpak redirects XDG_DATA_HOME to `~/.var/app/<id>/data`, so sandboxed GTK
+  # never searches `~/.local/share/themes`. It does search `$HOME/.themes`,
+  # because HOME stays untouched - hence the symlink rather than a second copy.
+  # `--no-target-directory` keeps a leftover real `~/.themes` from swallowing
+  # the link instead of being reported.
+  ln --symbolic --force --no-target-directory .local/share/themes "${HOME}/.themes" \
+    || { log_warn "Could not link '${HOME}/.themes' - remove it if it is a real directory" ; return 1 ; }
+
+  local gtk_version
+  for gtk_version in {3..4}; do
+    if [[ -s ${HOME}/.config/gtk-${gtk_version}.0/settings.ini ]]; then
       sed --in-place --regexp-extended \
         -e "s|^(gtk-theme-name=).*|\1${GTK_THEME_NAME}|" \
         -e "s|^(gtk-icon-theme-name=).*|\1${GTK_THEME_NAME}|" \
-        "${HOME}/.config/gtk-${I}.0/settings.ini" \
-        || { log_warn "Failed to update GTK ${I} theme settings" ; return 1 ; }
+        "${HOME}/.config/gtk-${gtk_version}.0/settings.ini" \
+        || { log_warn "Failed to update GTK ${gtk_version} theme settings" ; return 1 ; }
     fi
   done
 
@@ -63,17 +70,6 @@ function set_theme_gtk() {
     || { log_warn 'Could not set GTK color scheme preference' ; return 1 ; }
 
   if "${FORCE}"; then
-    local THEME_DIR=${HOME}/.local/share/themes/${GTK_THEME_NAME}
-    local THEME_DIR_OLD=${HOME}/.themes/${GTK_THEME_NAME}
-    readonly THEME_DIR THEME_DIR_OLD
-
-    if [[ -d ${THEME_DIR} ]]; then
-      rm --recursive --force "${THEME_DIR_OLD}" \
-        || { log_warn "Could not delete old theme directory '${THEME_DIR_OLD}'" ; return 1 ; }
-      cp --recursive "${THEME_DIR}" "${THEME_DIR_OLD}" \
-        || { log_warn "Could not copy '${THEME_DIR}' to '${THEME_DIR_OLD}'" ; return 1 ; }
-    fi
-
     rm --force --recursive "${HOME}/.cache/"gtk-{3,4}.0 \
       || { log_warn "Could not delete GTK cache" ; return 1 ; }
     gtk-update-icon-cache --force 2>/dev/null || :
@@ -122,17 +118,20 @@ function set_theme_shell() {
 
 function set_theme_sway() {
   # shellcheck disable=SC2016
-  swaymsg client.focused '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.foreground" "\$color.${THEME_VARIANT}.foreground" || return 1
-  # shellcheck disable=SC2016
-  swaymsg client.focused_inactive '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
-  # shellcheck disable=SC2016
-  swaymsg client.unfocused '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" || return 1
-  # shellcheck disable=SC2016
-  swaymsg client.urgent '$color.transparent' '$color.transparent' '$color.transparent' \
-    "\$color.${THEME_VARIANT}.red" "\$color.${THEME_VARIANT}.red" || return 1
+  declare -ar filler=('$color.transparent' '$color.transparent' '$color.transparent')
+
+  swaymsg client.focused "${filler[@]}" \
+    "\$color.${THEME_VARIANT}.foreground" "\$color.${THEME_VARIANT}.foreground" \
+    || return 1
+  swaymsg client.focused_inactive "${filler[@]}" \
+    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" \
+    || return 1
+  swaymsg client.unfocused "${filler[@]}" \
+    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" \
+    || return 1
+  swaymsg client.urgent "${filler[@]}" \
+    "\$color.${THEME_VARIANT}.red" "\$color.${THEME_VARIANT}.red" \
+    || return 1
 }
 
 function set_theme_swaylock() {
@@ -143,8 +142,7 @@ function set_theme_swaylock() {
     return 2
   fi
 
-  cd "${CONFIG_DIR}"
-  ln --symbolic --force "${CONFIG_FILE}" config
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/config"
 }
 
 function set_theme_swaync() {
@@ -155,8 +153,7 @@ function set_theme_swaync() {
     return 2
   fi
 
-  cd "${CONFIG_DIR}"
-  ln --symbolic --force "${CONFIG_FILE}" style.css || return 1
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/style.css" || return 1
 
   if ! pgrep -x swaync >/dev/null; then
     log_debug 'SwayNC is not running, not restarting it'
@@ -174,9 +171,8 @@ function set_theme_wallpaper() {
     return 2
   fi
 
-  cd "${CONFIG_DIR}"
-  ln --symbolic --force "${CONFIG_FILE}" wallpaper || return 1
-  awww img wallpaper --transition-type fade --transition-duration 0.4
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/wallpaper" || return 1
+  awww img "${CONFIG_DIR}/wallpaper" --transition-type fade --transition-duration 0.4
 }
 
 function set_theme_wleave() {
@@ -187,8 +183,7 @@ function set_theme_wleave() {
     return 2
   fi
 
-  cd "${CONFIG_DIR}"
-  ln --symbolic --force "${CONFIG_FILE}" style.css
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/style.css"
 }
 
 function set_theme_x11() {

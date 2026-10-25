@@ -2,6 +2,9 @@
 ignorePaths:
   - programs/.*
 
+words:
+  - sandboxed
+
 ignoreWords:
   - fira
   - flathub

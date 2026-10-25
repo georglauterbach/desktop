@@ -1,5 +1,5 @@
 [Context]
-filesystems=xdg-data/themes:ro;xdg-data/icons:ro;
+filesystems=xdg-data/themes:ro;~/.themes:ro;xdg-data/icons:ro;
 
 [Environment]
 GTK_THEME=Yaru-dark
