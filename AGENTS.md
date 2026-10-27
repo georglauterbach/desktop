@@ -15,7 +15,7 @@ This project contains the configuration of my personal desktop.
 | `.github/`      | GitHub-related content like CI/CD, issues, etc.      |
 | `data/home/`    | files that go one-to-one into `${HOME}`              |
 | `data/manuals/` | written manuals for all kinds of work on the desktop |
-| `data/theme/`   | contains patches to the Yaru GTK theme for Evergruv  |
+| `data/theme/`   | derives the Evergruv icon themes from Adwaita        |
 | `programs/`     | contains all code I build from source for my desktop |
 
 ## Custom-Built Programs

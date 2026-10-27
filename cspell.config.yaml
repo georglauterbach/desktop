@@ -18,6 +18,7 @@ words:
   - cooldown
   - debuggee
   - foldable
+  - headerbar
   - foldables
   - keepalive
   - lockscreen
@@ -104,6 +105,10 @@ ignoreWords:
   - wlsunset
   - wpctl
   - xwayland
-  - yaru
+  - adwaita
+  - sassc
+  - stylesheet
+  - vapi
+  - libadwaita
   - yazi
   - zizmor

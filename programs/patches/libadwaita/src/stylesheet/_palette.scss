@@ -1,0 +1,154 @@
+// Evergruv palette
+//   Light: Everforest (Hard)        https://github.com/sainnhe/everforest
+//   Dark:  Gruvbox Material (Hard)  https://github.com/sainnhe/gruvbox-material
+//
+// libadwaita has no $variant: one palette serves both color schemes, which
+// `_colors.scss` selects between with `@media (prefers-color-scheme: dark)`.
+// Evergruv gives one tone per hue per scheme, so those land on shades 2 (the
+// dark-scheme tone) and 4 (the light-scheme tone) and keep their exact values.
+// Shades 1, 3 and 5 have no Evergruv counterpart and are mixed towards the
+// scheme background colors, which keeps every ramp monotonic in luminance.
+// Brown is not an Evergruv hue either; it borrows the warm greys.
+
+$blue_1: #ADCAC3;
+$blue_2: #7DAEA3;
+$blue_3: #5CA1B4;
+$blue_4: #3A94C5;
+$blue_5: #327497;
+$green_1: #C7CF9D;
+$green_2: #A9B665;
+$green_3: #9BAC33;
+$green_4: #8DA101;
+$green_5: #6E7D0A;
+$yellow_1: #E4C695;
+$yellow_2: #D8A657;
+$yellow_3: #D7A02C;
+$yellow_4: #D69A00;
+$yellow_5: #A27809;
+$orange_1: #EDB590;
+$orange_2: #E78A4E;
+$orange_3: #EE843A;
+$orange_4: #F57D26;
+$orange_5: #B96325;
+$red_1: #EEA19C;
+$red_2: #EA6962;
+$red_3: #F15F5A;
+$red_4: #F85552;
+$red_5: #BB4644;
+$purple_1: #E1B2BE;
+$purple_2: #D3869B;
+$purple_3: #D978AA;
+$purple_4: #DF69BA;
+$purple_5: #A9558F;
+$brown_1: #E1D9C7;
+$brown_2: #D3C6AA;
+$brown_3: #BEB097;
+$brown_4: #A89984;
+$brown_5: #817768;
+$light_1: #F5F5F2;
+$light_2: #EBEBE4;
+$light_3: #D3C6AA;
+$light_4: #A6B0A0;
+$light_5: #939F91;
+$dark_1: #928374;
+$dark_2: #665C54;
+$dark_3: #3C3836;
+$dark_4: #1D2021;
+$dark_5: #141617;
+
+:root {
+  --blue-1: #{$blue_1};
+  --blue-2: #{$blue_2};
+  --blue-3: #{$blue_3};
+  --blue-4: #{$blue_4};
+  --blue-5: #{$blue_5};
+  --green-1: #{$green_1};
+  --green-2: #{$green_2};
+  --green-3: #{$green_3};
+  --green-4: #{$green_4};
+  --green-5: #{$green_5};
+  --yellow-1: #{$yellow_1};
+  --yellow-2: #{$yellow_2};
+  --yellow-3: #{$yellow_3};
+  --yellow-4: #{$yellow_4};
+  --yellow-5: #{$yellow_5};
+  --orange-1: #{$orange_1};
+  --orange-2: #{$orange_2};
+  --orange-3: #{$orange_3};
+  --orange-4: #{$orange_4};
+  --orange-5: #{$orange_5};
+  --red-1: #{$red_1};
+  --red-2: #{$red_2};
+  --red-3: #{$red_3};
+  --red-4: #{$red_4};
+  --red-5: #{$red_5};
+  --purple-1: #{$purple_1};
+  --purple-2: #{$purple_2};
+  --purple-3: #{$purple_3};
+  --purple-4: #{$purple_4};
+  --purple-5: #{$purple_5};
+  --brown-1: #{$brown_1};
+  --brown-2: #{$brown_2};
+  --brown-3: #{$brown_3};
+  --brown-4: #{$brown_4};
+  --brown-5: #{$brown_5};
+  --light-1: #{$light_1};
+  --light-2: #{$light_2};
+  --light-3: #{$light_3};
+  --light-4: #{$light_4};
+  --light-5: #{$light_5};
+  --dark-1: #{$dark_1};
+  --dark-2: #{$dark_2};
+  --dark-3: #{$dark_3};
+  --dark-4: #{$dark_4};
+  --dark-5: #{$dark_5};
+}
+
+// Sass thinks we're using the colors in the variables as strings and may shoot
+// warning, it's innocuous and can be defeated by using #{$var}.
+
+@define-color blue_1 #{$blue_1};
+@define-color blue_2 #{$blue_2};
+@define-color blue_3 #{$blue_3};
+@define-color blue_4 #{$blue_4};
+@define-color blue_5 #{$blue_5};
+@define-color green_1 #{$green_1};
+@define-color green_2 #{$green_2};
+@define-color green_3 #{$green_3};
+@define-color green_4 #{$green_4};
+@define-color green_5 #{$green_5};
+@define-color yellow_1 #{$yellow_1};
+@define-color yellow_2 #{$yellow_2};
+@define-color yellow_3 #{$yellow_3};
+@define-color yellow_4 #{$yellow_4};
+@define-color yellow_5 #{$yellow_5};
+@define-color orange_1 #{$orange_1};
+@define-color orange_2 #{$orange_2};
+@define-color orange_3 #{$orange_3};
+@define-color orange_4 #{$orange_4};
+@define-color orange_5 #{$orange_5};
+@define-color red_1 #{$red_1};
+@define-color red_2 #{$red_2};
+@define-color red_3 #{$red_3};
+@define-color red_4 #{$red_4};
+@define-color red_5 #{$red_5};
+@define-color purple_1 #{$purple_1};
+@define-color purple_2 #{$purple_2};
+@define-color purple_3 #{$purple_3};
+@define-color purple_4 #{$purple_4};
+@define-color purple_5 #{$purple_5};
+@define-color brown_1 #{$brown_1};
+@define-color brown_2 #{$brown_2};
+@define-color brown_3 #{$brown_3};
+@define-color brown_4 #{$brown_4};
+@define-color brown_5 #{$brown_5};
+@define-color light_1 #{$light_1};
+@define-color light_2 #{$light_2};
+@define-color light_3 #{$light_3};
+@define-color light_4 #{$light_4};
+@define-color light_5 #{$light_5};
+@define-color dark_1 #{$dark_1};
+@define-color dark_2 #{$dark_2};
+@define-color dark_3 #{$dark_3};
+@define-color dark_4 #{$dark_4};
+@define-color dark_5 #{$dark_5};

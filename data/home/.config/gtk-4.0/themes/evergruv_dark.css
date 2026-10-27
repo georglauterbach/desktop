@@ -1,0 +1,35 @@
+/* Recolors libadwaita to Evergruv Dark.
+ *
+ * libadwaita apps ignore `gtk-theme-name` and draw from the stylesheet compiled
+ * into the library, so a theme directory never reaches them. They do expose the
+ * palette as named colors though, and GTK loads this file at
+ * GTK_STYLE_PROVIDER_PRIORITY_USER (800), which outranks the theme tier (200)
+ * libadwaita installs into. A patched libadwaita makes this file redundant.
+ *
+ * `theme` selects the variant by symlinking `gtk.css` here; the host GTK is
+ * 4.14, which has no `@media (prefers-color-scheme)` to do it in one file. */
+
+/* surfaces: `view` takes the dimmer tone so it reads as recessed */
+@define-color window_bg_color            #1D2021;
+@define-color window_fg_color            #DDC7A1;
+@define-color view_bg_color              #141617;
+@define-color view_fg_color              #DDC7A1;
+@define-color headerbar_bg_color         #1D2021;
+@define-color headerbar_fg_color         #DDC7A1;
+@define-color sidebar_bg_color           #1D2021;
+@define-color sidebar_fg_color           #DDC7A1;
+@define-color secondary_sidebar_bg_color #141617;
+@define-color popover_bg_color           #1D2021;
+@define-color popover_fg_color           #DDC7A1;
+@define-color dialog_bg_color            #1D2021;
+@define-color dialog_fg_color            #DDC7A1;
+
+@define-color accent_bg_color            #D8A657;
+@define-color accent_fg_color            #1D2021;
+@define-color accent_color               #F7C475;
+@define-color destructive_bg_color       #EA6962;
+@define-color destructive_fg_color       #1D2021;
+@define-color destructive_color          #EA6962;
+@define-color success_color              #89B482;
+@define-color warning_color              #D8A657;
+@define-color error_color                #EA6962;

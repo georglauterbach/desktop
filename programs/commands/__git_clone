@@ -3,38 +3,71 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
-CLONE_COMMAND=(git clone --depth=1)
+function parse_arguments() {
+  GIT_CLONE_CMD=(git clone --depth=1)
+  GIT_RESET=false
+  GIT_IS_PINNED_TO_COMMIT=false
 
-GIT_URI=${1:?URI for cloning is required}
-
-if [[ ${2:?git revision is required} == __ref ]]; then
-  GIT_REV=${3:?git revision is required}
-  if [[ "$(printf '%s' "${GIT_REV}" | wc --chars)" -lt 35 ]]; then
-    __log "Git revision '${GIT_REV}' does not seem to a be **long** revision"
-    exit 1
+  if [[ ${1:-} == --reset ]]; then
+    GIT_RESET=true
+    shift 1
   fi
-  CLONE_COMMAND+=(--revision "${GIT_REV}")
-  shift 3
-else
-  GIT_REV=${2:?git revision is required}
-  CLONE_COMMAND+=(--branch "${GIT_REV}")
-  shift 2
-fi
 
-DIR_NAME=$(printf '%s' "${GIT_URI}" | sed -E 's|.*/(.*)\.git$|\1|')
+  GIT_CLONE_URI=${1:?git clone URI required}
+  PROJECT_NAME=$(printf '%s' "${GIT_CLONE_URI}" | sed -E 's|.*/(.*)\.git$|\1|')
 
-if [[ -d ${DIR_NAME} ]]; then
-  cd "${DIR_NAME}"
-  if git checkout "${GIT_REV}" >/dev/null 2>&1; then
-    __log "Project '${DIR_NAME}' exists with correct ref - pulling"
-    git pull
-    exit 0
+  if [[ ${2:?git revision is required} == __commit_id ]]; then
+    GIT_REV=${3:?git revision is required}
+    GIT_REV_LEN=$(printf '%s' "${GIT_REV}" | wc --chars)
+    if [[ ${GIT_REV_LEN} -ne 40 ]] && [[ ${GIT_REV_LEN} -ne 64 ]]; then
+      __log "Git commit ID '${GIT_REV}' for '${PROJECT_NAME}' must be 40 (SHA1) or 60 (SHA256) characters long" >&2
+      exit 1
+    fi
+    GIT_CLONE_CMD+=(--revision "${GIT_REV}")
+    GIT_IS_PINNED_TO_COMMIT=true
+    shift 3
   else
-    __log "Project '${DIR_NAME}' exists in wrong version '${GIT_REV}' - removing and cloning again"
-    cd ..
-    rm --recursive --force "${DIR_NAME}"
+    GIT_REV=${2:?git revision is required}
+    CLONE_COMMAND+=(--branch "${GIT_REV}")
+    shift 2
   fi
-fi
 
-__log "Cloning ${DIR_NAME} @ ${GIT_REV}"
-"${CLONE_COMMAND[@]}" "${GIT_URI}"
+  GIT_CLONE_CMD+=("${GIT_CLONE_URI}")
+
+  readonly GIT_CLONE_CMD GIT_RESET GIT_IS_PINNED_TO_COMMIT GIT_CLONE_URI PROJECT_NAME
+}
+
+function clone_project() {
+  __log "Cloning '${PROJECT_NAME}' @ ${GIT_REV}"
+  "${GIT_CLONE_CMD[@]}"
+  exit 0
+}
+
+function main() {
+  parse_arguments "${@}"
+  [[ -e ${PROJECT_NAME} ]] || clone_project
+
+  __log "'${PROJECT_NAME}' exists"
+
+  if [[ ${GIT_RESET} == true ]]; then
+    __log "Resetting '${PROJECT_NAME}'"
+    git -C "${PROJECT_NAME}" reset --hard
+  fi
+
+  if ! git -C "${PROJECT_NAME}" checkout "${GIT_REV}" &>/dev/null; then
+    __log "Removing '${PROJECT_NAME}' because it exists in the wrong version"
+    rm --recursive --force "${PROJECT_NAME}"
+    clone_project
+  fi
+
+  if [[ ${GIT_IS_PINNED_TO_COMMIT} == true ]]; then
+    __log "Not pulling latest version of '${PROJECT_NAME}' because it is pinned"
+  else
+    __log "Pulling latest version of '${PROJECT_NAME}' because it is not pinned"
+    git -C "${PROJECT_NAME}" pull
+  fi
+
+  return 0
+}
+
+main "${@}"

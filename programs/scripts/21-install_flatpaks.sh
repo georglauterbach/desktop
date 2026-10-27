@@ -20,18 +20,28 @@ flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/fl
 
 # cSpell: disable
 readonly FLATPAKS=(
+  # essentials
   com.github.tchx84.Flatseal
 
+  # GNOME apps
+  app.devsuite.Ptyxis
+  net.nokyan.Resources
+  org.gnome.Calculator
+  org.gnome.Characters
+  org.gnome.font-viewer
+  org.gnome.Papers
+
+  # personal apps
   app.zen_browser.zen
   #com.bitwarden.desktop
+  #com.valvesoftware.Steam
   #eu.betterbird.Betterbird
   #md.obsidian.Obsidian
-  #org.cryptomator.Cryptomator
-
-  #com.valvesoftware.Steam
   #net.lutris.Lutris
+  #org.cryptomator.Cryptomator
   #org.freedesktop.Platform.VulkanLayer.MangoHud
 
+  # work
   #com.github.IsmaelMartinez.teams_for_linux
 )
 # cSpell: enable

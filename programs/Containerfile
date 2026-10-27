@@ -14,7 +14,7 @@ USER root
 WORKDIR /src
 
 ENV __INSTALLATION_PREFIX=/usr/local
-ENV __TOOLCHAIN_VERSION_GO=1.27.2
+ENV __TOOLCHAIN_VERSION_GO=1.27.3
 ENV __TOOLCHAIN_VERSION_MESON=1.12.1
 ENV __TOOLCHAIN_VERSION_RUST=1.99.0
 ENV __TOOLCHAIN_VERSION_MOLD=3.0.0
@@ -87,12 +87,6 @@ RUN __apt_get update \
     && __apt_get autoremove --purge
 
 # -----------------------------------------------
-# ----  Copy Build Scripts (Except Custom)  -----
-# -----------------------------------------------
-
-COPY commands/__build commands/__git_clone /root/.local/bin/
-
-# -----------------------------------------------
 # ----  Toolchain Setup  ------------------------
 # -----------------------------------------------
 
@@ -126,6 +120,12 @@ RUN __log "Setting up UV (Python)"                                              
     \
     && __log "Setting up git"                                                        \
     && git config --global advice.detachedHead false
+
+# -----------------------------------------------
+# ----  Copy Build Scripts (Except Custom)  -----
+# -----------------------------------------------
+
+COPY commands/__build commands/__git_clone /root/.local/bin/
 
 # -----------------------------------------------
 # ----  Actual Build  ---------------------------
@@ -230,7 +230,7 @@ RUN __build wlroots meson_ninja      \
         -D libliftoff=enabled
 
 RUN __git_clone https://github.com/wlrfx/scenefx.git \
-    __ref b96cb6c923b8bf721ad11fa2136fe070d9adc2dd
+    __commit_id b96cb6c923b8bf721ad11fa2136fe070d9adc2dd
 RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
@@ -238,7 +238,7 @@ RUN __build scenefx meson_ninja \
 
 RUN git -C swayfx reset --hard || :
 RUN __git_clone https://github.com/WillPower3309/swayfx.git \
-    __ref 4d341dbb39952ae95f1d8be161359e9316cd6ab8
+    __commit_id 4d341dbb39952ae95f1d8be161359e9316cd6ab8
 RUN __apt_install libjson-c-dev
 COPY patches/swayfx_workspace_animation_output_hotplug.patch /tmp/
 RUN git -C swayfx apply /tmp/swayfx_workspace_animation_output_hotplug.patch
@@ -257,7 +257,7 @@ RUN __build swayfx meson_ninja        \
 # ? xdg-desktop-portal(s)
 
 RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git \
-    __ref 6561725344d18b954c1c3a703c92d856edeed103
+    __commit_id 6561725344d18b954c1c3a703c92d856edeed103
 RUN __apt_install liburing-dev libgirepository1.0-dev
 RUN __build libdex meson_ninja    \
         -D stack-protector=true   \
@@ -268,7 +268,7 @@ RUN __build libdex meson_ninja    \
         -D gdbus=enabled
 
 RUN __git_clone https://github.com/flatpak/xdg-desktop-portal.git \
-    __ref ee298d1817fed18c208c9ddb638a4aef7bcecc9b
+    __commit_id ee298d1817fed18c208c9ddb638a4aef7bcecc9b
 RUN __apt_install                        \
         libflatpak-dev                   \
         libjson-glib-dev                 \
@@ -291,8 +291,17 @@ RUN __build xdg-desktop-portal meson_ninja    \
         -D sandboxed-image-validation=enabled \
         -D sandboxed-sound-validation=enabled
 
+RUN __git_clone https://github.com/flatpak/xdg-desktop-portal-gtk.git \
+    __commit_id 5409af76b4514e187bd2f29033fa0fadad54a5de
+RUN __apt_install libgtk-3-dev gsettings-desktop-schemas-dev
+RUN __build xdg-desktop-portal-gtk meson_ninja \
+        -D wallpaper=disabled \
+        -D settings=enabled   \
+        -D appchooser=enabled \
+        -D lockdown=enabled
+
 RUN __git_clone https://github.com/emersion/xdg-desktop-portal-wlr.git \
-    __ref c0255d7b047b7263629ab5a314661045ff7f65e3
+    __commit_id c0255d7b047b7263629ab5a314661045ff7f65e3
 RUN __apt_install libinih-dev
 RUN __build xdg-desktop-portal-wlr meson_ninja \
         -Dsd-bus-provider=libsystemd         \
@@ -305,8 +314,31 @@ RUN __build xdg-desktop-portal-wlr meson_ninja \
 
 RUN __apt_install libjpeg-dev libjxl-dev libadwaita-1-dev libgtk-4-dev valac
 
+# The Evergruv patches replace whole source files of exactly this release.
+# Only a patched stylesheet contains '#EBEBE4', so the build fails on stock.
+RUN __git_clone --reset https://gitlab.gnome.org/GNOME/libadwaita.git 1.10.0
+COPY patches/libadwaita/ /tmp/libadwaita/
+RUN cp --recursive /tmp/libadwaita/. libadwaita/
+RUN __apt_install sassc
+RUN __build libadwaita meson_ninja                                         \
+        -D documentation=false                                             \
+        -D examples=false                                                  \
+        -D introspection=enabled                                           \
+        -D tests=false                                                     \
+        -D vapi=false                                                      \
+    && grep --quiet --ignore-case '#EBEBE4' libadwaita/build/src/stylesheet/gtk.css
+
+# GTK4 apps without libadwaita need the same stylesheet as a theme directory.
+# It requires GTK >= 4.23.1, so it is only packed, never linked onto the host.
+# Both variants share the one file behind `@media (prefers-color-scheme)`.
+RUN mkdir --parents /tmp/themes/Evergruv/gtk-4.0 "${__INSTALLATION_PREFIX}/share/themes"     \
+    && cp libadwaita/build/src/stylesheet/gtk.css /tmp/themes/Evergruv/gtk-4.0/              \
+    && cp --recursive libadwaita/src/stylesheet/assets /tmp/themes/Evergruv/gtk-4.0/         \
+    && ln --symbolic gtk.css /tmp/themes/Evergruv/gtk-4.0/gtk-dark.css                       \
+    && tar cJf "${__INSTALLATION_PREFIX}/share/themes/Evergruv.tar.xz" -C /tmp/themes Evergruv
+
 RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git \
-    __ref 69ad9a02a8c31ac2d3db6710f43b3d8434559e46
+    __commit_id 69ad9a02a8c31ac2d3db6710f43b3d8434559e46
 RUN __build gtk4-layer-shell meson_ninja \
         -D examples=false                \
         -D docs=false                    \
@@ -326,7 +358,7 @@ RUN __git_clone https://github.com/ErikReider/SwayNotificationCenter.git main
 RUN __git_clone https://codeberg.org/tytan652/door-knocker.git main
 
 RUN __git_clone https://github.com/alacritty/alacritty.git v0.17.0
-RUN __git_clone https://github.com/JakeStanger/ironbar.git __ref 119f361f661aa362843a6dccf02d13236520a8d9
+RUN __git_clone https://github.com/JakeStanger/ironbar.git __commit_id 119f361f661aa362843a6dccf02d13236520a8d9
 RUN __git_clone https://codeberg.org/LGFae/awww.git main
 RUN __git_clone https://github.com/zefr0x/ianny.git main
 RUN __git_clone https://github.com/blurrycat/lightctl.git main
@@ -452,6 +484,49 @@ RUN cd wl-screenrec          \
 RUN cd wleave                \
     && cargo build --release \
     && install -s -Dm755 target/release/wleave -t "${__INSTALLATION_PREFIX}/bin/"
+
+# * 4. GNOME apps
+
+RUN __git_clone https://gitlab.gnome.org/GNOME/gnome-disk-utility.git \
+    __commit_id 3c9d9d8c75db5fd25699c8e22bedea553df06445
+RUN __apt_install        \
+        libdvdread-dev   \
+        libnotify-dev    \
+        libpwquality-dev \
+        libsecret-1-dev  \
+        libudisks2-dev
+RUN __build gnome-disk-utility meson_ninja \
+        -D logind=libsystemd \
+        -D gsd_plugin=false  \
+        -D man=false         \
+        -D profile=release
+
+RUN __git_clone https://gitlab.gnome.org/GNOME/nautilus.git 51.1
+RUN __apt_install \
+        libgexiv2-dev          \
+        libglycin-gtk4-2-dev   \
+        libgnome-autoar-0-dev  \
+        libgnome-desktop-4-dev \
+        libportal-dev          \
+        libportal-gtk4-dev     \
+        libtinysparql-dev
+RUN __build nautilus meson_ninja \
+        -D docs=false            \
+        -D extensions=true       \
+        -D introspection=true    \
+        -D cloudproviders=false  \
+        -D tests=none
+
+RUN __git_clone https://gitlab.gnome.org/GNOME/gnome-keyring.git 51.1
+RUN __apt_install libgck-1-dev libgcr-3-dev
+RUN __build gnome-keyring meson_ninja \
+        -D libcap-ng=enabled          \
+        -D ssh-agent=false            \
+        -D selinux=enabled            \
+        -D systemd=enabled            \
+        -D pam=true                   \
+        -D debug-mode=false           \
+        -D manpage=false
 
 # -----------------------------------------------
 # ----  Final Adjustments  ----------------------

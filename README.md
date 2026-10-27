@@ -1,22 +1,22 @@
 
 # My Linux Desktop
 
-| Property        | Description                                                                                |
-| :-------------- | :----------------------------------------------------------------------------------------- |
-| Distribution    | I assume Ubuntu 26.04, but other versions might also work                                  |
-| Programs        | See the ["Programs" section below](#programs)                                              |
-| (Icon) Theme    | See the ["Theme" section below](#theme)                                                    |
-| Configuration   | Files contained in [`data/home/`](./data/home/) go into `${HOME}`                          |
-| Fonts           | See `20-install_packages.sh` & `22-fonts.sh` in [`programs/scripts/`](./programs/scripts/) |
-| Icon Font       | [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet)                                  |
-| AsciiArt        | [patorjk](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=A)                |
+| Property      | Description                                                                   |
+| :------------ | :---------------------------------------------------------------------------- |
+| Distribution  | Ubuntu <= 26.10 and >= 26.04 with GTK4 >= 4.24                                |
+| Programs      | See the ["Programs" section below](#programs)                                 |
+| Theme         | See the ["Theme" section below](#theme)                                       |
+| Configuration | Files contained in [`data/home/`](data/home/) go into `${HOME}`               |
+| Fonts         | See [`20-install_packages.sh`](programs/scripts/20-install_packages.sh), [`22-fonts.sh`](programs/scripts/22-fonts.sh), and [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet) |
+| AsciiArt      | [patorjk](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=ART) |
 
 ## Programs
 
 ### Installation
 
-Essential programs are built from source in a container to have as much control over them as possible; other programs are [installed via `apt`](./programs/scripts/20-install_packages.sh). Perform the following steps for a system installation:
+Essential programs are built from source in a container, patched to use the correct shared objects and then linked into `/usr/local/` (all without linking the shared objects into `/usr/local/`). Other programs are [installed via `apt`](programs/scripts/20-install_packages.sh).
 
+Perform the following steps for a system installation:
 1. Install [Podman](https://podman.io/): `sudo apt-get --yes install podman`
 2. Install [`lief-patchelf`](https://lief.re/blog/2025-07-13-patchelf/#download) (or [build](https://lief.re/doc/stable/tools/lief-patchelf/index.html#compilation) it from [here](https://github.com/lief-project/LIEF)):
     ```console
@@ -33,7 +33,7 @@ Essential programs are built from source in a container to have as much control 
 
 The following packages are built from source:
 
-1. Wayland compositor: [SwayFX](https://github.com/WillPower3309/swayfx) with Xwayland support
+1. Wayland compositor: [SwayFX](https://github.com/WillPower3309/swayfx) (with Xwayland support)
 2. Terminal: [Alacritty](https://github.com/alacritty/alacritty) (see [vtdn.dev](https://vtdn.dev/) for terminal capabilities)
 3. Bar: [Ironbar](https://github.com/JakeStanger/ironbar)
 4. Launcher: [rofi](https://github.com/davatorium/rofi)
@@ -54,10 +54,14 @@ The following packages are built from source:
 
 ## Theme
 
-The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The actual system theme (GTK etc.) is a patched version of [Yaru](https://github.com/ubuntu/yaru), the default Ubuntu GNOME theme. Yaru is a well-maintained, community-supported theme that has undergone extensive usage and testing. Hence, patching colors for this theme is a straightforward solution to getting a custom theme.
+The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The actual system theme is a patched version of [libadwaita](https://gitlab.gnome.org/GNOME/libadwaita) (a GNOME platform library), a patched version of which is built in the [container](#installation). Recoloring libadwaita rather than a third-party theme keeps the upstream design language, and it is the only thing libadwaita apps actually read - they ignore `gtk-theme-name` and draw from the stylesheet compiled into the library.
 
-Files that were patched or added to the Yaru repository can be found in [`data/theme/patches/`](./data/theme/patches/). The generated files, after running [`data/theme/patches/build_evergruv.sh`](./data/theme/patches/build_evergruv.sh) in the patched Yaru repository, can be found [in a GitHub release](https://github.com/georglauterbach/desktop/releases/tag/system-theme). Download the archive and extract it via `tar xf Yaru.tar.xz -C "${HOME}"`.
+Since libadwaita is bundled, only the bundled programs from the container that use libadwaita load it. A process can only load one glibc and one GTK, so host apps keep loading the host's stock libadwaita. They are recolored by the stylesheets in [`data/home/.config/gtk-4.0/themes/`](./data/home/.config/gtk-4.0/themes/) instead, which `theme` links to `~/.config/gtk-4.0/gtk.css`. libadwaita is GTK4 only, so GTK3 apps are not covered.
+
+GTK4 apps that do not use libadwaita fall back to GTK's built-in Adwaita, which the stylesheets above cannot recolor. They need the patched stylesheet as a theme directory instead, which the container packs into `programs/.out/share/themes/Evergruv.tar.xz`. It requires GTK 4.23.1 or newer, so it is not installed automatically; once the host's GTK is recent enough, extract it via `tar xf programs/.out/share/themes/Evergruv.tar.xz -C ~/.local/share/themes/`.
+
+The `Evergruv` and `Evergruv-dark` icon themes are Adwaita with green and yellow folders, respectively, and inherit all other icons from Adwaita. They are derived from the installed Adwaita icons on the host itself by running [`data/theme/patch_adwaita_icons.sh`](./data/theme/patch_adwaita_icons.sh), which writes them to `~/.local/share/icons/`.
 
 ## Licensing
 
-Files in this repository are licensed under [GPLv3+](./LICENSE). Files in [`data/theme/`](./data/theme/) taken (and patched) from the [Yaru project](https://github.com/ubuntu/yaru) remain under their respective license.
+Files in this repository are licensed under [GPLv3+](./LICENSE). Files in [`programs/patches/libadwaita/`](./programs/patches/libadwaita/) taken (and patched) from the [libadwaita project](https://gitlab.gnome.org/GNOME/libadwaita) remain under their respective license.

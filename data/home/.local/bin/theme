@@ -5,18 +5,20 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
-XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
-
 function log_debug() {
-  echo -e "\033[1;36mDEBUG\033[0m ${1:?Log info message required}"
+  echo -e "$(date --iso-8601=s) \033[1;36mDEBUG\033[0m ${1:?Log info message required}"
 }
 
 function log_info() {
-  echo -e "\033[1;34mINFO\033[0m  ${1:?Log info message required}"
+  echo -e "$(date --iso-8601=s)  \033[1;34mINFO\033[0m ${1:?Log info message required}"
 }
 
 function log_warn() {
-  echo -e "\033[1;33mWARN\033[0m  ${1:?Log warning message required}" >&2
+  echo -e "$(date --iso-8601=s)  \033[1;33mWARN\033[0m ${1:?Log warning message required}" >&2
+}
+
+function log_error() {
+  echo -e "$(date --iso-8601=s) \033[1;31mERROR\033[0m ${1:?Log warning message required}" >&2
 }
 
 function set_theme_alacritty() {
@@ -32,11 +34,18 @@ function set_theme_alacritty() {
 
 function set_theme_flatpak() {
   if [[ -s ${HOME}/.local/share/flatpak/overrides/global ]]; then
-    sed --in-place --regexp-extended              \
-      -e "s|~|${HOME}|g"                          \
-      -e "s|(GTK_THEME=).*|\1${GTK_THEME_NAME}|"  \
-      -e "s|(ICON_THEME=).*|\1${GTK_THEME_NAME}|" \
+    # GTK_THEME would bypass the portal, which already hands sandboxed apps the
+    # theme name and color scheme the host uses; drop it from older overrides.
+    sed --in-place --regexp-extended               \
+      -e "s|~|${HOME}|g"                           \
+      -e '/^GTK_THEME=/d'                          \
+      -e "s|(ICON_THEME=).*|\1${ICON_THEME_NAME}|" \
       "${HOME}"/.local/share/flatpak/overrides/global
+
+    # The sandbox's XDG_CONFIG_HOME is per app, so GTK only finds the `gtk.css`
+    # that recolors libadwaita once the host's directory is shared with it.
+    flatpak override --user --filesystem=xdg-config/gtk-4.0:ro \
+      || { log_warn 'Could not share the GTK4 configuration with Flatpak apps' ; return 1 ; }
   fi
 }
 
@@ -48,24 +57,40 @@ function set_theme_gtk() {
   # because HOME stays untouched - hence the symlink rather than a second copy.
   # `--no-target-directory` keeps a leftover real `~/.themes` from swallowing
   # the link instead of being reported.
-  ln --symbolic --force --no-target-directory .local/share/themes "${HOME}/.themes" \
-    || { log_warn "Could not link '${HOME}/.themes' - remove it if it is a real directory" ; return 1 ; }
+  if ! ln --symbolic --force --no-target-directory .local/share/themes "${HOME}/.themes"; then
+    log_warn "Could not link '${HOME}/.themes' - remove it if it is a real directory"
+    return 1
+  fi
 
-  local gtk_version
+  local gtk_version gtk_version_theme_name
   for gtk_version in {3..4}; do
+    # libadwaita is GTK4 only, so naming the Evergruv build to GTK3 would only
+    # send GTK3 apps looking for a directory that holds a GTK4 stylesheet.
+    if [[ ${gtk_version} -eq 3 ]]; then
+      gtk_version_theme_name=${GTK3_THEME_NAME}
+    else
+      gtk_version_theme_name=${GTK4_THEME_NAME}
+    fi
+
     if [[ -s ${HOME}/.config/gtk-${gtk_version}.0/settings.ini ]]; then
-      sed --in-place --regexp-extended \
-        -e "s|^(gtk-theme-name=).*|\1${GTK_THEME_NAME}|" \
-        -e "s|^(gtk-icon-theme-name=).*|\1${GTK_THEME_NAME}|" \
-        "${HOME}/.config/gtk-${gtk_version}.0/settings.ini" \
-        || { log_warn "Failed to update GTK ${gtk_version} theme settings" ; return 1 ; }
+      if ! sed --in-place --regexp-extended \
+        -e "s|^(gtk-theme-name=).*|\1${gtk_version_theme_name}|" \
+        -e "s|^(gtk-icon-theme-name=).*|\1${ICON_THEME_NAME}|" \
+        -e "s|^(gtk-cursor-theme-name=).*|\1${CURSOR_THEME_NAME}|" \
+        "${HOME}/.config/gtk-${gtk_version}.0/settings.ini"
+      then
+        log_warn "Failed to update GTK ${gtk_version} theme settings"
+        return 1
+      fi
     fi
   done
 
-  gsettings set org.gnome.desktop.interface gtk-theme "${GTK_THEME_NAME}" \
+  gsettings set org.gnome.desktop.interface gtk-theme "${GTK4_THEME_NAME}" \
     || { log_warn 'Could not set GTK theme' ; return 1 ; }
-  gsettings set org.gnome.desktop.interface icon-theme "${GTK_THEME_NAME}" \
+  gsettings set org.gnome.desktop.interface icon-theme "${ICON_THEME_NAME}" \
     || { log_warn 'Could not set GTK icon theme' ; return 1 ; }
+  gsettings set org.gnome.desktop.interface cursor-theme "${CURSOR_THEME_NAME}" \
+    || { log_warn 'Could not set cursor theme' ; return 1 ; }
   gsettings set org.gnome.desktop.interface color-scheme "prefer-${THEME_VARIANT}" \
     || { log_warn 'Could not set GTK color scheme preference' ; return 1 ; }
 
@@ -79,7 +104,19 @@ function set_theme_gtk() {
   gsettings set org.gnome.desktop.interface document-font-name  'Ubuntu Sans 12'
   gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
 
-  rm --force "${HOME}/.config/gtk-4.0/"{colors.css,gtk.css}
+  rm --force "${HOME}/.config/gtk-4.0/colors.css"
+
+  # libadwaita apps ignore `gtk-theme-name`, so the theme directory never
+  # reaches them; this overrides their named colors instead. Only the bundled
+  # programs carry the patched libadwaita, host apps load the stock one.
+  local gtk_theme_file=themes/evergruv_${THEME_VARIANT}.css
+  if [[ -s ${HOME}/.config/gtk-4.0/${gtk_theme_file} ]]; then
+    ln --symbolic --force --no-target-directory \
+      "${gtk_theme_file}" "${HOME}/.config/gtk-4.0/gtk.css" \
+      || { log_warn 'Could not link the libadwaita stylesheet' ; return 1 ; }
+  else
+    rm --force "${HOME}/.config/gtk-4.0/gtk.css"
+  fi
 }
 
 function set_theme_rofi() {
@@ -189,8 +226,10 @@ function set_theme_wleave() {
 function set_theme_x11() {
   # cSpell: disable xsettingsd
   if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
+    # X11 clients here are GTK3, which the Evergruv build does not cover.
     sed --in-place --regexp-extended \
-      "s|^(Net/ThemeName).*|\1 \"${GTK_THEME_NAME}\"|" \
+      -e "s|^(Net/ThemeName).*|\1 \"${GTK3_THEME_NAME}\"|" \
+      -e "s|^(Net/IconThemeName).*|\1 \"${ICON_THEME_NAME}\"|" \
       "${HOME}/.config/xsettingsd/xsettingsd.conf"
   fi
 }
@@ -201,13 +240,12 @@ function run_update_async() {
   shift 2
 
   ${UPDATE_FUNCTION} "${@}" &
-  JOB_NAME_MAPPING[${!}]=${UPDATE_COMPONENT}
+  job_name_mapping[${!}]=${UPDATE_COMPONENT}
 }
 
 function main() {
-  local THEME_VARIANT=light GTK_THEME_NAME=Yaru FORCE=false EXIT_CODE=0
-  local JOB_ID JOB_RESULT JOB_NAME
-  declare -A JOB_NAME_MAPPING=()
+  export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+  local FORCE=false GTK3_THEME_NAME=Adwaita GTK4_THEME_NAME=Evergruv ICON_THEME_NAME=Evergruv THEME_VARIANT=light
 
   while [[ ${#} -gt 0 ]]; do
     case "${1:-}" in
@@ -215,7 +253,8 @@ function main() {
 
       ( d | dark )
         THEME_VARIANT=dark
-        GTK_THEME_NAME+=-${THEME_VARIANT}
+        GTK3_THEME_NAME+=-${THEME_VARIANT}
+        ICON_THEME_NAME+=-${THEME_VARIANT}
         ;;
 
       ( -f | --force )
@@ -231,8 +270,15 @@ function main() {
     shift 1
   done
 
-  readonly THEME_VARIANT GTK_THEME_NAME FORCE
-  log_info "Updating theme to \033[1mEvergruv ${THEME_VARIANT^}\033[0m"
+  # The Evergruv icon themes only recolor Adwaita's folders (see
+  # `data/theme/patch_adwaita_icons.sh`) and ship no cursors.
+  readonly CURSOR_THEME_NAME=Adwaita
+
+  readonly THEME_VARIANT ICON_THEME_NAME GTK4_THEME_NAME GTK3_THEME_NAME FORCE
+  log_info "Updating theme to \033[1m${THEME_VARIANT^}\033[0m"
+
+  local job_id job_result job_name exit_code=0
+  declare -A job_name_mapping=()
 
   run_update_async shell                  set_theme_shell
   run_update_async Alacritty              set_theme_alacritty
@@ -247,32 +293,32 @@ function main() {
   run_update_async X11                    set_theme_x11
 
   while [[ -n $(jobs -p || :) ]]; do
-    JOB_RESULT=0
-    wait -n -p JOB_ID || JOB_RESULT=${?}
-    JOB_NAME=${JOB_NAME_MAPPING[${JOB_ID}]}
+    job_result=0
+    wait -n -p job_id || job_result=${?}
+    job_name=${job_name_mapping[${job_id}]}
 
-    case "${JOB_RESULT:-0}" in
+    case "${job_result:-0}" in
       ( 0 )
-        log_info "Updated ${JOB_NAME}"
+        log_info "Updated ${job_name}"
         ;;
 
       ( 1 )
-        log_warn "Update of ${JOB_NAME} failed"
-        EXIT_CODE=1
+        log_warn "Update of ${job_name} failed"
+        exit_code=1
         ;;
 
       ( 2 )
-        log_debug "No update of ${JOB_NAME} performed"
+        log_debug "No update of ${job_name} performed"
         ;;
 
       ( * )
-        log_warn "Unknown error occurred during update of ${JOB_NAME}"
-        EXIT_CODE=1
+        log_warn "Unknown error occurred during update of ${job_name}"
+        exit_code=1
         ;;
     esac
   done
 
-  exit "${EXIT_CODE}"
+  exit "${exit_code}"
 }
 
 main "${@}"

@@ -13,8 +13,8 @@ require_run_as_root
 # cSpell: disable
 PACKAGES=(
   # ? XDG
-  xdg-desktop-portal-gtk # XDG-based portal frontend for GTK/GNOME
   xdg-utils              # common XDG utilities
+  adwaita-icon-theme     # icon theme
   # ? fonts
   fonts-font-awesome     # Font Awesome
   fonts-ubuntu           # default Ubuntu (Sans) font
@@ -26,25 +26,9 @@ PACKAGES=(
   dex                    # desktop-file application launcher
   git                    # version control system
   rtkit                  # userland real-time scheduling
+  # wdisplays              # arrange displays on Wayland
 )
 # cSpell: enable
-
-# wdisplays              # arrange displays on Wayland
-
-if [[ ${*} == *--ubuntu-desktop* ]]; then
-  PACKAGES+=(
-    ubuntu-desktop-minimal # Ubuntu desktop base package
-    gnome-calculator       # calculator
-    gnome-characters       # character visualizer
-    gnome-disk-utility     # disk management
-    gnome-font-viewer      # character viewer
-    gnome-keyring          # keyring daemon
-    highlight              # used by GTK for syntax highlighting
-    papers                 # documents viewer
-    ptyxis                 # (fallback) terminal emulator
-    resources              # resource usage monitor
-  )
-fi
 
 
 log_info 'Installing packages'
