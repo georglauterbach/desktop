@@ -104,9 +104,9 @@ adw_accent_color_to_rgba (AdwAccentColor  self,
  * Since: 1.6
  */
 void
-adw_accent_color_to_standalone_rgba (AdwAccentColor  self,
-                                     gboolean        dark,
-                                     GdkRGBA        *rgba)
+adw_accent_color_to_standalone_rgba(AdwAccentColor  self,
+                                    gboolean        dark,
+                                    GdkRGBA        *rgba)
 {
   g_return_if_fail (self >= ADW_ACCENT_COLOR_BLUE);
   g_return_if_fail (self <= ADW_ACCENT_COLOR_SLATE);
