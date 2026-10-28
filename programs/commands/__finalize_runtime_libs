@@ -13,17 +13,23 @@ function copy_shared_objects_from_file() {
     FILE=${FILE#/usr}
     [[ -e "${__INSTALLATION_PREFIX:?}${FILE}" ]] && continue
 
-    echo "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
     mkdir --parents "${__INSTALLATION_PREFIX}/$(dirname "${FILE}")"
-    cp "${FILE}" "${__INSTALLATION_PREFIX}${FILE}"
 
     if [[ -L ${FILE} ]]; then
       LINK_TARGET=$(realpath --canonicalize-existing --logical "${FILE}")
-      [[ -e "${__INSTALLATION_PREFIX}/${LINK_TARGET#/usr}" ]] && continue
+      LINK_TARGET_COPY=${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}
 
-      echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
-      mkdir --parents "$(dirname "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}")"
-      cp "${LINK_TARGET}" "${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}"
+      if [[ ! -e ${LINK_TARGET_COPY} ]]; then
+        echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
+        mkdir --parents "$(dirname "${LINK_TARGET_COPY}")"
+        cp "${LINK_TARGET}" "${LINK_TARGET_COPY}"
+      fi
+
+      echo "Linking '${__INSTALLATION_PREFIX}${FILE}' to '${LINK_TARGET_COPY}'"
+      ln --symbolic --relative "${LINK_TARGET_COPY}" "${__INSTALLATION_PREFIX}${FILE}"
+    else
+      echo "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
+      cp "${FILE}" "${__INSTALLATION_PREFIX}${FILE}"
     fi
   done < <(ldd "${OBJECT}" | grep -E ' /(usr/)?lib/')
 }

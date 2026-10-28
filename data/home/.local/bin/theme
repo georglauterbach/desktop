@@ -105,18 +105,6 @@ function set_theme_gtk() {
   gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font 11'
 
   rm --force "${HOME}/.config/gtk-4.0/colors.css"
-
-  # libadwaita apps ignore `gtk-theme-name`, so the theme directory never
-  # reaches them; this overrides their named colors instead. Only the bundled
-  # programs carry the patched libadwaita, host apps load the stock one.
-  local gtk_theme_file=themes/evergruv_${THEME_VARIANT}.css
-  if [[ -s ${HOME}/.config/gtk-4.0/${gtk_theme_file} ]]; then
-    ln --symbolic --force --no-target-directory \
-      "${gtk_theme_file}" "${HOME}/.config/gtk-4.0/gtk.css" \
-      || { log_warn 'Could not link the libadwaita stylesheet' ; return 1 ; }
-  else
-    rm --force "${HOME}/.config/gtk-4.0/gtk.css"
-  fi
 }
 
 function set_theme_rofi() {
@@ -133,24 +121,26 @@ function set_theme_shell() {
   bash -l -i -c \
     "[[ \$(type -t hermes::switch_theme) != function ]] || hermes::switch_theme ${THEME_VARIANT}"
 
-  [[ -r /tmp/.hermes_shells_to_update ]] || return
+  local __HERMES__SHELLS_TO_UPDATE=${XDG_RUNTIME_DIR:-/tmp}/hermes-${UID}/shells
+  [[ -r ${__HERMES__SHELLS_TO_UPDATE} ]] || return 0
 
   # We ignore SC2094 because we fully read the file first,
   # and then we overwrite it afterward.
   # shellcheck disable=SC2094
   {
-    flock -s 3 || return 1
+    flock -s -w 2 3 || return 1
     while read -r PID; do
       if ps --pid "${PID}" &>/dev/null; then
         kill -s SIGUSR2 "${PID}" || return 1
-        echo "${PID}" >>/tmp/.hermes_shells_to_update_tmp
+        echo "${PID}" >>"${__HERMES__SHELLS_TO_UPDATE}.exit"
       fi
     done <&3
 
-    if [[ -s /tmp/.hermes_shells_to_update_tmp ]]; then
-      mv /tmp/.hermes_shells_to_update_tmp /tmp/.hermes_shells_to_update
+    if [[ -s "${__HERMES__SHELLS_TO_UPDATE}.exit" ]]; then
+      # shellcheck disable=SC2217
+      mv --force "${__HERMES__SHELLS_TO_UPDATE}.exit" "${__HERMES__SHELLS_TO_UPDATE}" < /dev/null
     fi
-  } 3</tmp/.hermes_shells_to_update
+  } 3< "${__HERMES__SHELLS_TO_UPDATE}"
 }
 
 function set_theme_sway() {

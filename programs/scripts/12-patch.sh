@@ -24,6 +24,9 @@ find "${OUT_DIR}" -type d -empty -delete
 log_info "Patching files in '${OUT_DIR}'"
 while read -r SHARED_OBJECT; do
   [[ ${SHARED_OBJECT} == *ld-linux-x86-64.so.2 ]] && continue
+  # lief-patchelf (0.17.0) corrupts the GNU hash table of libicui18n, so none
+  # of its symbols resolve; executables' RPATHs still cover its dependencies.
+  [[ ${SHARED_OBJECT} == */libicui18n.so* ]] && continue
   patchelf --remove-rpath                                "${SHARED_OBJECT}" || :
   patchelf --set-rpath "${OUT_DIR}/lib/x86_64-linux-gnu" "${SHARED_OBJECT}" || :
   patchelf --force-rpath                                 "${SHARED_OBJECT}" || :
@@ -34,6 +37,7 @@ while read -r EXECUTABLE; do
   # binds `/usr`; rewriting their interpreter/RPATH into `${OUT_DIR}` (outside the
   # sandbox) makes them un-runnable, so they must keep the stock system values.
   [[ ${EXECUTABLE} == *'/libexec/glycin-loaders/'* ]] && continue
+  [[ ${EXECUTABLE} == *.socket ]] && continue
 
   [[ $(file --mime-type --brief "${EXECUTABLE}") == *executable* ]] || continue
   patchelf --remove-rpath                                                           "${EXECUTABLE}" || :

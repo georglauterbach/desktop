@@ -329,13 +329,16 @@ RUN __build libadwaita meson_ninja                                         \
     && grep --quiet --ignore-case '#EBEBE4' libadwaita/build/src/stylesheet/gtk.css
 
 # GTK4 apps without libadwaita need the same stylesheet as a theme directory.
-# It requires GTK >= 4.23.1, so it is only packed, never linked onto the host.
-# Both variants share the one file behind `@media (prefers-color-scheme)`.
-RUN mkdir --parents /tmp/themes/Evergruv/gtk-4.0 "${__INSTALLATION_PREFIX}/share/themes"     \
-    && cp libadwaita/build/src/stylesheet/gtk.css /tmp/themes/Evergruv/gtk-4.0/              \
-    && cp --recursive libadwaita/src/stylesheet/assets /tmp/themes/Evergruv/gtk-4.0/         \
-    && ln --symbolic gtk.css /tmp/themes/Evergruv/gtk-4.0/gtk-dark.css                       \
-    && tar cJf "${__INSTALLATION_PREFIX}/share/themes/Evergruv.tar.xz" -C /tmp/themes Evergruv
+# It requires GTK >= 4.23.1. Both variants share the one file behind
+# `@media (prefers-color-scheme)`; `gtk-dark.css` is a hard link because
+# `30-link.sh` only links regular files onto the host.
+RUN mkdir --parents "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0" \
+    && cp --recursive                                                       \
+        libadwaita/build/src/stylesheet/gtk.css                             \
+        libadwaita/src/stylesheet/assets                                    \
+        "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0/"           \
+    && cd "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0"          \
+    && ln gtk.css gtk-dark.css
 
 RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git \
     __commit_id 69ad9a02a8c31ac2d3db6710f43b3d8434559e46
@@ -540,7 +543,8 @@ RUN __apt_install glycin-loaders                                             \
 
 RUN cd "${__INSTALLATION_PREFIX}/lib/x86_64-linux-gnu" \
     && cp -r /lib/x86_64-linux-gnu/pulseaudio/ .       \
-    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so
+    && ln -s pulseaudio/libpulsecommon-17.0.so libpulsecommon-17.0.so \
+    && ln -s gnome_disks/libgnome_disks.so libgnome_disks.so
 
 COPY commands/__finalize_runtime_libs /root/.local/bin/
 RUN __finalize_runtime_libs

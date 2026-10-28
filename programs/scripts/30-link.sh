@@ -23,7 +23,7 @@ while read -r FILE; do
     ln --symbolic --no-dereference --force \
       "${FILE}" "${LINK_NAME}"
   fi
-done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3}},libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,icons,libinput,man,metainfo,rofi,wayland*,xdg-desktop-portal}} -type f)
+done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3}},libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,gnome-shell,icons,libinput,man,metainfo,pipewire,rofi,themes,wayland*,wireplumber,xdg-desktop-portal}} -type f)
 
 log_info 'Removing superfluous files'
 rm -f /usr/local/share/wayland-sessions/sway.desktop
