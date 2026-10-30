@@ -11,6 +11,9 @@ source "${SCRIPT_DIR}/00-env.sh"
 require_run_as_user
 
 log_info 'Copying user configuration files'
-cp "${@:---update=none}" --recursive                                 \
+cp "${@:---update=older}" --recursive                                \
   "$(realpath -eL "${BASE_DIR}/..")/data/home/"{.config,.local,.var} \
   "${HOME}"
+
+log_info 'Reloading systemd user manager'
+systemctl --user daemon-reload

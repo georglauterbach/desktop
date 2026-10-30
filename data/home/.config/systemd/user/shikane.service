@@ -3,8 +3,11 @@
 
 [Unit]
 Description=Shikane | Dynamic Output Configuration Tool
+Documentation=https://gitlab.com/w0lff/shikane
 Wants=xdg-desktop-portal.service
-After=xdg-desktop-portal.service
+After=xdg-desktop-portal.service graphical-session.target
+PartOf=graphical-session.target
+Requisite=graphical-session.target
 
 [Service]
 Type=simple
@@ -14,7 +17,5 @@ StandardOutput=journal
 Restart=on-failure
 RestartSec=3
 
-Documentation=https://gitlab.com/w0lff/shikane
-
 [Install]
-WantedBy=default.target
+WantedBy=sway-session.target

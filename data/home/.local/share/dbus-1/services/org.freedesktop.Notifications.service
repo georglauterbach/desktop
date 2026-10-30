@@ -1,0 +1,7 @@
+# Takes precedence over other desktop environment's
+# activation file for the same name.
+
+[D-BUS Service]
+Name=org.freedesktop.Notifications
+Exec=/bin/false
+SystemdService=swaync.service

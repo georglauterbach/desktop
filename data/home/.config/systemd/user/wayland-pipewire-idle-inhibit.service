@@ -4,7 +4,9 @@
 [Unit]
 Description=Wayland PipeWire Idle Inhibit | Inhibit Idling When Media Is Played Through PipeWire
 Wants=pipewire.service
-After=pipewire.service
+After=pipewire.service graphical-session.target
+PartOf=graphical-session.target
+Requisite=graphical-session.target
 Documentation=https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit
 
 [Service]
@@ -16,4 +18,4 @@ Restart=on-failure
 RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=sway-session.target

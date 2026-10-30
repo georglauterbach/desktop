@@ -3,8 +3,11 @@
 
 [Unit]
 Description=Ianny | Utility That Helps Preventing Repetitive Strain Injuries
+Documentation=https://github.com/zefr0x/ianny
 Wants=xdg-desktop-portal.service
-After=xdg-desktop-portal.service
+After=xdg-desktop-portal.service graphical-session.target
+PartOf=graphical-session.target
+Requisite=graphical-session.target
 
 [Service]
 Type=simple
@@ -14,7 +17,5 @@ StandardOutput=journal
 Restart=on-failure
 RestartSec=3
 
-Documentation=https://github.com/zefr0x/ianny
-
 [Install]
-WantedBy=default.target
+WantedBy=sway-session.target

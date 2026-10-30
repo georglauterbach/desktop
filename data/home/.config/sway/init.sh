@@ -3,15 +3,6 @@
 set +eE -u -o pipefail
 shopt -s inherit_errexit
 
-function systemd_start_user_service() {
-  local SERVICE=${1:?Service name required}.service
-  if systemctl --user is-failed "${SERVICE}" &>/dev/null; then
-    systemctl --user restart "${SERVICE}"
-  elif ! systemctl --user is-active "${SERVICE}" &>/dev/null; then
-    systemctl --user start "${SERVICE}"
-  fi
-}
-
 function set_wallpaper() {
   for _ in {1..20}; do awww query &>/dev/null && break; sleep 0.1; done
   awww img "${HOME}/.config/sway/theme/wallpaper" --transition-type fade --transition-duration 0.4
@@ -27,25 +18,13 @@ dbus-update-activation-environment --systemd "${ENVIRONMENT[@]}" || :
 # `Requisite=graphical-session.target`, so that target MUST be active before
 # they can start; otherwise portal D-Bus activation times out and blocks GTK
 # clients (e.g. swaync). `graphical-session.target` refuses a manual start, so
-# we activate it via `sway-session.target`, which binds it.
-systemctl --user start sway-session.target
+# we activate it via `sway-session.target`, which binds it. The target also
+# pulls in the units linked in `sway-session.target.wants/`; a unit that hit its
+# start limit in a previous session would be refused, hence `reset-failed`.
+systemctl --user reset-failed &>/dev/null || :
+systemctl --user start sway-session.target ssh-agent.service
 
 set_wallpaper &
-
-readonly SERVICES=(
-  xdg-desktop-portal{,-wlr,-gtk}
-  awww-daemon
-  shikane
-  swaync
-  ironbar
-  wayland-pipewire-idle-inhibit
-  ssh-agent
-  # ianny
-)
-for SERVICE in "${SERVICES[@]}"; do
-  systemd_start_user_service "${SERVICE}"
-done
-unset SERVICE
 
 # shellcheck source=/dev/null
 [[ ! -s ${HOME}/.config/sway/user/init.sh ]] || source "${HOME}/.config/sway/user/init.sh"

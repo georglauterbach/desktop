@@ -3,39 +3,79 @@
 set +eE -u -o pipefail
 shopt -s inherit_errexit
 
-mkdir -p /tmp/.sway/
-rm -f    /tmp/.sway/sway.log   /tmp/.sway/sway.err.log
-exec    >/tmp/.sway/sway.log 2>/tmp/.sway/sway.err.log
+function log() {
+  declare -r level=${1:?log level required}
+  declare -r message=${2:?log message required}
+  printf "%s %5s %s\n" "$(date --iso-8601=s)" "${level^^}" "${message}"
+}
 
-echo 'INFO  Setting up environment for Sway'
+function setup_log() {
+  local uid=${UID:-$(id -u)}
+  local sway_base_dir=/tmp/sway-${uid}
+  local sway_log_file_stdout=${sway_base_dir}/stdout.log
+  local sway_log_file_stderr=${sway_base_dir}/stderr.log
 
-export WLR_RENDERER=vulkan
+  # shellcheck disable=SC2174
+  mkdir -p -m 700 "${sway_base_dir}"
+  exec >>"${sway_log_file_stdout}" 2>>"${sway_log_file_stderr}"
+  log info "Set up log files for stdout '${sway_log_file_stdout}' and stderr '${sway_log_file_stderr}'"
+}
 
-export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
-export XDG_CACHE_HOME=${XDG_CACHE_HOME:-${HOME}/.cache}
-export XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
-export XDG_STATE_HOME=${XDG_STATE_HOME:-${HOME}/.local/state}
+function setup_environment() {
+  function export_env() {
+    log info "Exporting environment variable '${1}=${2}'"
+    export "${1}=${2}"
+  }
 
-export XDG_CURRENT_DESKTOP=sway
-systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP}"
+  function unset_env() {
+    local env_name
+    for env_name in "${@}"; do
+      log info "Unsetting environment variable '${env_name}'"
+      unset "${env_name}"
+      systemctl --user unset-environment "${env_name}"
+    done
+  }
 
-unset DISPLAY WAYLAND_DISPLAY
-systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY
+  log info 'Setting up environment for Sway'
 
-if [[ -v XDG_RUNTIME_DIR ]]; then
-  export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}/ssh-agent.socket
-else
-  echo "WARN  Environment variable 'XDG_RUNTIME_DIR' not set" >&2
-fi
+  export_env WLR_RENDERER        vulkan
+  export_env XDG_CURRENT_DESKTOP sway
+  export_env XDG_CACHE_HOME      "${XDG_CACHE_HOME:-${HOME}/.cache}"
+  export_env XDG_CONFIG_HOME     "${XDG_CONFIG_HOME:-${HOME}/.config}"
+  export_env XDG_DATA_HOME       "${XDG_DATA_HOME:-${HOME}/.local/share}"
+  export_env XDG_RUNTIME_DIR     "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+  export_env XDG_STATE_HOME      "${XDG_STATE_HOME:-${HOME}/.local/state}"
+  export_env SSH_AUTH_SOCK       "${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
-# PAM already started an unlocked --login daemon. --start finishes its init
-# (secrets) on that same process so a later D-Bus activation cannot replace
-# it with a locked Secret Service. Unlock stays PAM's job. We skip SSH here
-# because we run a dedicated systemd user service ssh agent.
-if command -v gnome-keyring-daemon &>/dev/null; then
-  # shellcheck source=/dev/null
-  gnome-keyring-daemon --start --components=secrets,pkcs11 2>/dev/null || :
-fi
+  systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP:?}"
 
-echo 'INFO  Executing Sway now'
-exec sway
+  unset_env "${DISPLAYS_AND_SOCKETS[@]}"
+}
+
+function setup_keyring() {
+  # PAM already started an unlocked --login daemon. --start finishes its init
+  # (secrets) on that same process so a later D-Bus activation cannot replace
+  # it with a locked Secret Service. Unlock stays PAM's job. We skip SSH here
+  # because we run a dedicated systemd user service ssh agent.
+  if command -v gnome-keyring-daemon &>/dev/null; then
+    # shellcheck source=/dev/null
+    gnome-keyring-daemon --start --components=secrets,pkcs11 2>/dev/null || :
+  fi
+}
+
+function finalize_session() {
+  log info 'Finalizing session'
+  systemctl --user stop sway-session.target
+  systemctl --user unset-environment "${DISPLAYS_AND_SOCKETS[@]}"
+}
+
+readonly DISPLAYS_AND_SOCKETS=(DISPLAY WAYLAND_DISPLAY SWAYSOCK I3SOCK)
+
+setup_log
+setup_environment
+setup_keyring
+
+trap finalize_session EXIT
+
+log info 'Starting Sway'
+sway
