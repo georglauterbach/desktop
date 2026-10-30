@@ -25,5 +25,12 @@ while read -r FILE; do
   fi
 done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3}},libexec,man,share/{applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,gnome-shell,icons,libinput,man,metainfo,pipewire,rofi,themes,wayland*,wireplumber,xdg-desktop-portal}} -type f)
 
+log_info 'Installing PAM module for gnome-keyring'
+# PAM only searches its own module directory, and the module runs as root, so
+# it must be a root-owned copy rather than a symlink into `${OUT_DIR}`.
+install -o root -g root -m 0644 \
+  "${OUT_DIR}/lib/x86_64-linux-gnu/security/pam_gnome_keyring.so" \
+  /usr/lib/x86_64-linux-gnu/security/pam_gnome_keyring.so
+
 log_info 'Removing superfluous files'
 rm -f /usr/local/share/wayland-sessions/sway.desktop
