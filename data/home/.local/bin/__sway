@@ -49,6 +49,8 @@ function setup_environment() {
 
   systemctl --user set-environment "XDG_CURRENT_DESKTOP=${XDG_CURRENT_DESKTOP:?}"
 
+  [[ ${PATH} == *"${HOME}/.local/bin"* ]] || export_env PATH "${HOME}/.local/bin:${PATH}"
+
   unset_env "${DISPLAYS_AND_SOCKETS[@]}"
 }
 
@@ -58,7 +60,6 @@ function setup_keyring() {
   # it with a locked Secret Service. Unlock stays PAM's job. We skip SSH here
   # because we run a dedicated systemd user service ssh agent.
   if command -v gnome-keyring-daemon &>/dev/null; then
-    # shellcheck source=/dev/null
     gnome-keyring-daemon --start --components=secrets,pkcs11 2>/dev/null || :
   fi
 }

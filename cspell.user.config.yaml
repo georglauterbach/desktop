@@ -6,6 +6,8 @@ words:
   - sandboxed
 
 ignoreWords:
+  - alsa
+  - buildtype
   - fira
   - flathub
   - flatpak
@@ -19,3 +21,5 @@ ignoreWords:
   - screenrec
   - SWAYSOCK
   - vtdn
+  - warnlevel
+  - xtype

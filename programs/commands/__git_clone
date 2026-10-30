@@ -3,10 +3,16 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
+function _log() {
+  declare -r level=${1:?log level is required}
+  shift 1
+  __log "${level}" "git clone(${PROJECT_NAME}): ${*}"
+}
+
 function parse_arguments() {
   GIT_CLONE_CMD=(git clone --depth=1)
   GIT_RESET=false
-  GIT_IS_PINNED_TO_COMMIT=false
+  GIT_PINNED_TO=none
 
   if [[ ${1:-} == --reset ]]; then
     GIT_RESET=true
@@ -20,54 +26,59 @@ function parse_arguments() {
     GIT_REV=${3:?git revision is required}
     GIT_REV_LEN=$(printf '%s' "${GIT_REV}" | wc --chars)
     if [[ ${GIT_REV_LEN} -ne 40 ]] && [[ ${GIT_REV_LEN} -ne 64 ]]; then
-      __log "Git commit ID '${GIT_REV}' for '${PROJECT_NAME}' must be 40 (SHA1) or 60 (SHA256) characters long" >&2
+      _log error "commit ID '${GIT_REV}' for '${PROJECT_NAME}' must be 40 (SHA1) or 60 (SHA256) characters long" >&2
       exit 1
     fi
     GIT_CLONE_CMD+=(--revision "${GIT_REV}")
-    GIT_IS_PINNED_TO_COMMIT=true
+    GIT_PINNED_TO=commit-id
+    shift 3
+  elif [[ ${2:?git revision is required} == __tag ]]; then
+    GIT_REV=${3:?git tag is required}
+    GIT_CLONE_CMD+=(--branch "${GIT_REV}")
+    GIT_PINNED_TO=tag
     shift 3
   else
     GIT_REV=${2:?git revision is required}
-    CLONE_COMMAND+=(--branch "${GIT_REV}")
+    GIT_CLONE_CMD+=(--branch "${GIT_REV}")
     shift 2
   fi
 
   GIT_CLONE_CMD+=("${GIT_CLONE_URI}")
 
-  readonly GIT_CLONE_CMD GIT_RESET GIT_IS_PINNED_TO_COMMIT GIT_CLONE_URI PROJECT_NAME
-}
-
-function clone_project() {
-  __log "Cloning '${PROJECT_NAME}' @ ${GIT_REV}"
-  "${GIT_CLONE_CMD[@]}"
-  exit 0
+  readonly GIT_CLONE_CMD GIT_RESET GIT_PINNED_TO GIT_CLONE_URI PROJECT_NAME
 }
 
 function main() {
   parse_arguments "${@}"
-  [[ -e ${PROJECT_NAME} ]] || clone_project
 
-  __log "'${PROJECT_NAME}' exists"
+  if [[ ! -e ${PROJECT_NAME} ]]; then
+    _log info "cloning @ ${GIT_REV}"
+    "${GIT_CLONE_CMD[@]}"
+    exit 0
+  fi
+
+  _log info 'project directory exist, revision check pending'
 
   if [[ ${GIT_RESET} == true ]]; then
-    __log "Resetting '${PROJECT_NAME}'"
+    _log info 'resetting changes'
     git -C "${PROJECT_NAME}" reset --hard
   fi
 
   if ! git -C "${PROJECT_NAME}" checkout "${GIT_REV}" &>/dev/null; then
-    __log "Removing '${PROJECT_NAME}' because it exists in the wrong version"
+    _log info "revision check failed, removing and cloning again"
     rm --recursive --force "${PROJECT_NAME}"
-    clone_project
+    "${GIT_CLONE_CMD[@]}"
+    exit 0
   fi
 
-  if [[ ${GIT_IS_PINNED_TO_COMMIT} == true ]]; then
-    __log "Not pulling latest version of '${PROJECT_NAME}' because it is pinned"
+  if [[ ${GIT_PINNED_TO} == commit-id ]]; then
+    _log info "project is pinned to commit '${GIT_REV}', not pulling"
+  elif [[ ${GIT_PINNED_TO} == tag ]]; then
+    _log info "project is pinned to tag '${GIT_REV}', not pulling"
   else
-    __log "Pulling latest version of '${PROJECT_NAME}' because it is not pinned"
+    __log info "project is not pinned (revision is '${GIT_REV}'), pulling"
     git -C "${PROJECT_NAME}" pull
   fi
-
-  return 0
 }
 
 main "${@}"

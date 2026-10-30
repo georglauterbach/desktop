@@ -90,23 +90,23 @@ RUN __apt_get update \
 # ----  Toolchain Setup  ------------------------
 # -----------------------------------------------
 
-RUN __log "Setting up UV (Python)"                                                   \
+RUN __log info "Setting up UV (Python)"                                                   \
     && curl -sSfL https://astral.sh/uv/install.sh | sh                               \
     && uv tool install "meson==${__TOOLCHAIN_VERSION_MESON}"                         \
     \
-    && __log "Setting up Rust"                                                       \
+    && __log info"Setting up Rust"                                                       \
     && { [ -d "${CARGO_HOME}" ] || curl -sSfL https://sh.rustup.rs                   \
         | sh -s -- -y --default-toolchain "${__TOOLCHAIN_VERSION_RUST}" ; }          \
     && rustup toolchain install "${__TOOLCHAIN_VERSION_RUST}"                        \
     \
-    && __log "Setting up Go"                                                         \
+    && __log info"Setting up Go"                                                         \
     && mkdir -p "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}"                          \
     && { [ -e "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" ] ||             \
         curl -sSfL -o "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz"          \
             "https://go.dev/dl/go${__TOOLCHAIN_VERSION_GO}.linux-amd64.tar.gz" ; }   \
     && tar xf "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" -C /usr          \
     \
-    && __log "Setting up mold"                                                       \
+    && __log info"Setting up mold"                                                       \
     && mkdir -p "/root/.cache/mold"                                                  \
     && MOLD_TARBALL="mold-${__TOOLCHAIN_VERSION_MOLD}-x86_64-linux.tar.gz"           \
     && { [ -e "/root/.cache/mold/${MOLD_TARBALL}" ] ||                               \
@@ -118,7 +118,7 @@ RUN __log "Setting up UV (Python)"                                              
     && echo "[target.'cfg(target_os = \"linux\")']"            >>/.cargo/config.toml \
     && echo "rustflags = [\"-C\", \"link-arg=-fuse-ld=mold\"]" >>/.cargo/config.toml \
     \
-    && __log "Setting up git"                                                        \
+    && __log info "Setting up git"                                                        \
     && git config --global advice.detachedHead false
 
 # -----------------------------------------------
@@ -133,8 +133,8 @@ COPY commands/__build commands/__git_clone /root/.local/bin/
 
 # ? Wayland
 
-RUN __git_clone https://gitlab.freedesktop.org/wayland/wayland.git 1.26.0 \
-    && __git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git 1.49
+RUN __git_clone https://gitlab.freedesktop.org/wayland/wayland.git           __tag 1.26.0
+RUN __git_clone https://gitlab.freedesktop.org/wayland/wayland-protocols.git __tag 1.49
 
 RUN __build wayland meson_ninja              \
         -D libraries=true                    \
@@ -148,8 +148,8 @@ RUN __build wayland meson_ninja              \
 
 # ? Generic Dependencies
 
-RUN __git_clone https://gitlab.freedesktop.org/libinput/libinput.git 1.32.0 \
-    && __git_clone https://gitlab.freedesktop.org/pixman/pixman.git pixman-0.46.4
+RUN __git_clone https://gitlab.freedesktop.org/libinput/libinput.git __tag 1.32.0
+RUN __git_clone https://gitlab.freedesktop.org/pixman/pixman.git     __tag pixman-0.46.4
 
 RUN __apt_install libevdev-dev libmtdev-dev
 
@@ -165,8 +165,8 @@ RUN __build libinput meson_ninja  \
 
 # ? X11
 
-RUN __git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git xorgproto-2026.1 \
-    && __git_clone https://gitlab.freedesktop.org/xorg/xserver.git xwayland-26.0.99.903
+RUN __git_clone https://gitlab.freedesktop.org/xorg/proto/xorgproto.git __tag xorgproto-2026.1
+RUN __git_clone https://gitlab.freedesktop.org/xorg/xserver.git         __tag xwayland-26.0.99.903
 
 RUN __apt_install          \
         libaudit-dev       \
@@ -202,7 +202,7 @@ RUN __build xorgproto meson_ninja  \
 
 # ? SwayFX
 
-RUN __git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git 0.20.2
+RUN __git_clone https://gitlab.freedesktop.org/wlroots/wlroots.git __tag 0.20.2
 RUN __apt_install               \
         libxkbcommon-dev        \
         libgles-dev             \
@@ -235,7 +235,6 @@ RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
 
-
 RUN git -C swayfx reset --hard || :
 RUN __git_clone https://github.com/WillPower3309/swayfx.git \
     __commit_id 4d341dbb39952ae95f1d8be161359e9316cd6ab8
@@ -254,15 +253,60 @@ RUN __build swayfx meson_ninja        \
         -D man-pages=enabled          \
         -D sd-bus-provider=libsystemd
 
+# ? PipeWire & WirePlumber
+
+# The client-side integrations (ALSA, JACK, V4L2, GStreamer) are left to the host's packages.
+RUN __git_clone https://gitlab.freedesktop.org/pipewire/pipewire.git    __tag 1.6.11
+RUN __git_clone https://gitlab.freedesktop.org/pipewire/wireplumber.git __tag 0.5.19
+RUN __apt_install         \
+        libasound2-dev    \
+        libbluetooth-dev  \
+        libdbus-1-dev     \
+        libfdk-aac-dev    \
+        libfreeaptx-dev   \
+        libglib2.0-dev    \
+        liblc3-dev        \
+        libldacbt-abr-dev \
+        libldacbt-enc-dev \
+        libopus-dev       \
+        libreadline-dev   \
+        libsbc-dev        \
+        libsndfile1-dev   \
+        libspandsp-dev    \
+        libwebrtc-audio-processing-dev
+RUN __build pipewire meson_ninja                             \
+        -D session-managers=[]                               \
+        -D systemd-user-unit-dir=/usr/local/lib/systemd/user \
+        -D systemd-system-service=disabled                   \
+        -D rlimits-install=false                             \
+        -D pipewire-alsa=disabled                            \
+        -D pipewire-jack=disabled                            \
+        -D pipewire-v4l2=disabled                            \
+        -D gstreamer=disabled                                \
+        -D jack=disabled                                     \
+        -D libcamera=disabled                                \
+        -D bluez5=enabled                                    \
+        -D echo-cancel-webrtc=enabled                        \
+        -D docs=disabled                                     \
+        -D examples=disabled                                 \
+        -D tests=disabled
+RUN __build wireplumber meson_ninja                          \
+        -D systemd-user-unit-dir=/usr/local/lib/systemd/user \
+        -D systemd-system-service=false                      \
+        -D introspection=disabled                            \
+        -D doc=disabled                                      \
+        -D tests=false                                       \
+        -D dbus-tests=false
+
 # ? xdg-desktop-portal(s)
 
 RUN __git_clone https://gitlab.gnome.org/GNOME/libdex.git \
     __commit_id 6561725344d18b954c1c3a703c92d856edeed103
-RUN __apt_install liburing-dev libgirepository1.0-dev
+RUN __apt_install liburing-dev
 RUN __build libdex meson_ninja    \
         -D stack-protector=true   \
         -D vapi=false             \
-        -D introspection=enabled  \
+        -D introspection=disabled \
         -D liburing=enabled       \
         -D eventfd=enabled        \
         -D gdbus=enabled
@@ -276,10 +320,7 @@ RUN __apt_install                        \
         libgstreamer1.0-dev              \
         libgstreamer-plugins-base1.0-dev \
         libgeoclue-2-dev                 \
-        libpipewire-0.3-dev              \
-        libpipewire-0.3-modules          \
-        libdbus-1-dev                    \
-        libwireplumber-0.5-dev
+        libdbus-1-dev
 RUN __build xdg-desktop-portal meson_ninja    \
         -D flatpak-interfaces=enabled         \
         -D geoclue=enabled                    \
@@ -316,14 +357,14 @@ RUN __apt_install libjpeg-dev libjxl-dev libadwaita-1-dev libgtk-4-dev valac
 
 # The Evergruv patches replace whole source files of exactly this release.
 # Only a patched stylesheet contains '#EBEBE4', so the build fails on stock.
-RUN __git_clone --reset https://gitlab.gnome.org/GNOME/libadwaita.git 1.10.0
+RUN __git_clone --reset https://gitlab.gnome.org/GNOME/libadwaita.git __tag 1.10.0
 COPY patches/libadwaita/ /tmp/libadwaita/
 RUN cp --recursive /tmp/libadwaita/. libadwaita/
 RUN __apt_install sassc
 RUN __build libadwaita meson_ninja                                         \
         -D documentation=false                                             \
         -D examples=false                                                  \
-        -D introspection=enabled                                           \
+        -D introspection=disabled                                          \
         -D tests=false                                                     \
         -D vapi=false                                                      \
     && grep --quiet --ignore-case '#EBEBE4' libadwaita/build/src/stylesheet/gtk.css
@@ -342,6 +383,8 @@ RUN mkdir --parents "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0" \
 
 RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git \
     __commit_id 69ad9a02a8c31ac2d3db6710f43b3d8434559e46
+# SwayNotificationCenter (Vala) needs the VAPI, which is generated from the GIR.
+RUN __apt_install libgirepository1.0-dev
 RUN __build gtk4-layer-shell meson_ninja \
         -D examples=false                \
         -D docs=false                    \
@@ -360,8 +403,9 @@ RUN __git_clone https://github.com/kennylevinsen/wlsunset.git master
 RUN __git_clone https://github.com/ErikReider/SwayNotificationCenter.git main
 RUN __git_clone https://codeberg.org/tytan652/door-knocker.git main
 
-RUN __git_clone https://github.com/alacritty/alacritty.git v0.17.0
-RUN __git_clone https://github.com/JakeStanger/ironbar.git __commit_id 119f361f661aa362843a6dccf02d13236520a8d9
+RUN __git_clone https://github.com/alacritty/alacritty.git __tag v0.17.0
+RUN __git_clone https://github.com/JakeStanger/ironbar.git \
+    __commit_id 119f361f661aa362843a6dccf02d13236520a8d9
 RUN __git_clone https://codeberg.org/LGFae/awww.git main
 RUN __git_clone https://github.com/zefr0x/ianny.git main
 RUN __git_clone https://github.com/blurrycat/lightctl.git main
@@ -504,7 +548,7 @@ RUN __build gnome-disk-utility meson_ninja \
         -D man=false         \
         -D profile=release
 
-RUN __git_clone https://gitlab.gnome.org/GNOME/nautilus.git 51.1
+RUN __git_clone https://gitlab.gnome.org/GNOME/nautilus.git __tag 51.1
 RUN __apt_install \
         libgexiv2-dev          \
         libglycin-gtk4-2-dev   \
@@ -516,11 +560,11 @@ RUN __apt_install \
 RUN __build nautilus meson_ninja \
         -D docs=false            \
         -D extensions=true       \
-        -D introspection=true    \
+        -D introspection=false   \
         -D cloudproviders=false  \
         -D tests=none
 
-RUN __git_clone https://gitlab.gnome.org/GNOME/gnome-keyring.git 51.1
+RUN __git_clone https://gitlab.gnome.org/GNOME/gnome-keyring.git __tag 51.1
 RUN __apt_install libgck-1-dev libgcr-3-dev
 RUN __build gnome-keyring meson_ninja \
         -D libcap-ng=enabled          \
@@ -557,6 +601,4 @@ RUN cp --recursive \
   /usr/lib/x86_64-linux-gnu/libdl.so.2           \
   /usr/lib/x86_64-linux-gnu/libpthread.so.0      \
   /usr/lib/x86_64-linux-gnu/libdisplay-info.so.3 \
-  /usr/lib/x86_64-linux-gnu/spa-0.2              \
-  /usr/lib/x86_64-linux-gnu/pipewire-0.3         \
   "${__INSTALLATION_PREFIX}/lib/x86_64-linux-gnu"

@@ -3,5 +3,5 @@
 set -eE -u -o pipefail
 shopt -s inherit_errexit
 
-__log "Installing ${*}"
-apt-get install --quiet=2 -o=Dpkg::Use-Pty=0 --yes --no-install-recommends "${@}"
+__log info "Installing packages: ${*}"
+__apt_get install --yes --no-install-recommends "${@}"

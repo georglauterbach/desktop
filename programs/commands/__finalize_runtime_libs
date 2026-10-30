@@ -12,6 +12,9 @@ function copy_shared_objects_from_file() {
   while read -r _ _ FILE _; do
     FILE=${FILE#/usr}
     [[ -e "${__INSTALLATION_PREFIX:?}${FILE}" ]] && continue
+    # libasound loads its plugins relative to its own location and must match the host's
+    # ALSA configuration, hence the host's library is used.
+    [[ ${FILE} == */libasound.so* ]] && continue
 
     mkdir --parents "${__INSTALLATION_PREFIX}/$(dirname "${FILE}")"
 
@@ -20,19 +23,21 @@ function copy_shared_objects_from_file() {
       LINK_TARGET_COPY=${__INSTALLATION_PREFIX}${LINK_TARGET#/usr}
 
       if [[ ! -e ${LINK_TARGET_COPY} ]]; then
-        echo "Copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
+        __log debug "copying symbolic link target '${LINK_TARGET}' of '${FILE}'"
         mkdir --parents "$(dirname "${LINK_TARGET_COPY}")"
         cp "${LINK_TARGET}" "${LINK_TARGET_COPY}"
       fi
 
-      echo "Linking '${__INSTALLATION_PREFIX}${FILE}' to '${LINK_TARGET_COPY}'"
+      __log debug "Linking '${__INSTALLATION_PREFIX}${FILE}' to '${LINK_TARGET_COPY}'"
       ln --symbolic --relative "${LINK_TARGET_COPY}" "${__INSTALLATION_PREFIX}${FILE}"
     else
-      echo "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
+      __log debug "Copying '${FILE}' to '${__INSTALLATION_PREFIX}${FILE}'"
       cp "${FILE}" "${__INSTALLATION_PREFIX}${FILE}"
     fi
   done < <(ldd "${OBJECT}" | grep -E ' /(usr/)?lib/')
 }
+
+__log info 'Finalizing runtime libraries'
 
 for PROGRAM in "${__INSTALLATION_PREFIX}/bin/"* ; do
   copy_shared_objects_from_file "${PROGRAM}"
@@ -40,4 +45,9 @@ done
 
 find /usr/local/libexec -executable | while read -r LIBEXEC_PROGRAM; do
   copy_shared_objects_from_file "${LIBEXEC_PROGRAM}"
+done
+
+find "${__INSTALLATION_PREFIX}/lib/x86_64-linux-gnu/"{pipewire-0.3,spa-0.2,wireplumber-0.5} \
+  -type f -name '*.so' | while read -r PLUGIN; do
+  copy_shared_objects_from_file "${PLUGIN}"
 done
