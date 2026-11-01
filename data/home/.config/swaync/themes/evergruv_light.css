@@ -9,9 +9,11 @@
 /* ----  Colors  ----------------------------- */
 /* ------------------------------------------- */
 
-@define-color background-dim #EBEBE4;
 @define-color background #F5F5F2;
-@define-color foreground #29363D; /* 5C6A72 */
+@define-color background-dim #EBEBE4;
+@define-color background-dim-tp alpha(@background-dim, 0.75);
+@define-color border-active #A4A9AC;
+@define-color foreground #505D65;
 @define-color red #F85552;
 @define-color orange #F57D26;
 @define-color yellow #D69A00;
@@ -19,6 +21,7 @@
 @define-color cyan #35A77C;
 @define-color blue #3A94C5;
 @define-color purple #DF69BA;
+@define-color accent @green;
 
 /* ------------------------------------------- */
 /* ----  General  ---------------------------- */
@@ -44,8 +47,8 @@
 
 .notification {
   background: @background;
+  border: 1px solid @border-active;
   border-radius: 5px;
-  box-shadow: inset 0 0 0 1px @foreground;
   margin: 20px;
   outline: none;
   padding: 0px;
@@ -82,10 +85,10 @@
 /* upper message */
 .notification-default-action,
 .notification-action {
-  border: 1px solid alpha(@foreground, 0.35);
-  border-top: 1px solid alpha(@foreground, 0.35);
-  border-left: 1px solid alpha(@foreground, 0.35);
-  border-right: 1px solid alpha(@foreground, 0.35);
+  border: 1px solid @border-active;
+  border-top: 1px solid @border-active;
+  border-left: 1px solid @border-active;
+  border-right: 1px solid @border-active;
   background: transparent;
 }
 
@@ -95,7 +98,12 @@
 
 .notification-default-action:hover,
 .notification-action:hover {
-  background: @background-dim;
+  background: @background-dim-tp;
+}
+
+.notification-default-action:hover .summary,
+.notification-action:hover > button {
+  color: @accent;
 }
 
 /* -- do not round corners when lower content is available */
@@ -106,12 +114,12 @@
 
 /* -- provide the correct border when only upper content is available */
 .notification-default-action:only-child {
-  border-bottom: 1px solid alpha(@foreground, 0.35);
+  border-bottom: 1px solid @border-active;
 }
 
 /* lower actions */
 .notification-action {
-  border-bottom: 1px solid alpha(@foreground, 0.35);
+  border-bottom: 1px solid @border-active;
   border-radius: 0px;
   border-right: none;
   border-top: none;
@@ -124,13 +132,13 @@
 
 /* -- set the correct inner border when multiple actions are available */
 .notification-action:not(:first-child) {
-  border-left: 1px solid alpha(@foreground, 0.35);
+  border-left: 1px solid @border-active;
 }
 
 /* -- round the right bottom corner when multiple actions are available */
 .notification-action:last-child {
   border-bottom-right-radius: 5px;
-  border-right: 1px solid alpha(@foreground, 0.35);
+  border-right: 1px solid @border-active;
 }
 
 .notification-action > button {
@@ -180,7 +188,7 @@ progressbar trough {
 }
 
 progressbar trough progress {
-  background: @purple;
+  background: @accent;
   border-radius: 5px;
   min-height: 6px;
 }
@@ -210,7 +218,7 @@ progressbar trough progress {
 
 .control-center-clear-all {
   background: transparent;
-  border: 1px solid alpha(@foreground, 0.45);
+  border: 1px solid @border-active;
   border-radius: 5px;
   color: @foreground;
   font-size: 1rem;
@@ -219,8 +227,8 @@ progressbar trough progress {
 }
 
 .control-center-clear-all:hover {
-  background: @background-dim;
-  border-color: @blue;
+  background: @background-dim-tp;
+  color: @accent;
 }
 
 .widget-dnd {
@@ -231,13 +239,13 @@ progressbar trough progress {
 .control-center-dnd {
   border-radius: 15px;
   background: transparent;
-  border: 1px solid alpha(@foreground, 0.45);
+  border: 1px solid @border-active;
   box-shadow: none;
 }
 
 .control-center-dnd:checked {
-  background: @blue;
-  border-color: @blue;
+  background: @accent;
+  border-color: @accent;
 }
 
 .control-center-dnd slider {
@@ -250,9 +258,8 @@ progressbar trough progress {
 }
 
 .control-center {
-  border: none;
+  border: 1px solid @border-active;
   border-radius: 5px;
-  box-shadow: inset 0 0 0 2px @blue;
   background: alpha(@background, 0.7);
   color: @foreground;
   margin: 0;
@@ -277,12 +284,12 @@ progressbar trough progress {
 }
 
 .notification-group:focus {
-  border: 1px solid @blue;
+  border: 1px solid @accent;
   border-radius: 5px;
 }
 
 .notification-group:hover {
-  border: 1px solid alpha(@blue, 0.6);
+  border: 1px solid alpha(@accent, 0.6);
   border-radius: 5px;
 }
 
@@ -318,26 +325,26 @@ progressbar trough progress {
 /* quieter notification chrome inside the panel */
 .control-center .notification-default-action,
 .control-center .notification-action {
-  border: 1px solid alpha(@foreground, 0.35);
-  border-top: 1px solid alpha(@foreground, 0.35);
-  border-left: 1px solid alpha(@foreground, 0.35);
-  border-right: 1px solid alpha(@foreground, 0.35);
+  border: 1px solid @border-active;
+  border-top: 1px solid @border-active;
+  border-left: 1px solid @border-active;
+  border-right: 1px solid @border-active;
 }
 
 .control-center .notification-default-action:only-child {
-  border-bottom: 1px solid alpha(@foreground, 0.35);
+  border-bottom: 1px solid @border-active;
 }
 
 .control-center .notification-action {
-  border-bottom: 1px solid alpha(@foreground, 0.35);
+  border-bottom: 1px solid @border-active;
 }
 
 .control-center .notification-action:not(:first-child) {
-  border-left: 1px solid alpha(@foreground, 0.35);
+  border-left: 1px solid @border-active;
 }
 
 .control-center .notification-action:last-child {
-  border-right: 1px solid alpha(@foreground, 0.35);
+  border-right: 1px solid @border-active;
 }
 
 /* -- window behind control center and on all other monitors */
