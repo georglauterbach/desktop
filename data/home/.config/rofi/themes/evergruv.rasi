@@ -1,0 +1,67 @@
+* {
+    background-color: @color-bg;
+    text-color: @color-fg;
+    highlight: bold;
+
+    color-error: @color-red;
+}
+
+#window {
+    height: 45%;
+    width: 60%;
+    border: 1px;
+    border-radius: 5px;
+    border-color: @color-bd-act;
+}
+
+#mainbox {
+    children: [ inputbar, message, listview ];
+}
+
+/* ------------------------------------------- */
+/* ----  Inputbar  --------------------------- */
+/* ------------------------------------------- */
+
+#inputbar {
+    padding: 0.7em 0.7em 0.7em 1.5em;
+    margin: 0;
+    children: [prompt, entry];
+    background-color: @color-bg-dim;
+}
+
+#prompt {
+    background-color: inherit;
+    margin: 0 0 0 10px;
+}
+
+#entry {
+    text-color: @color-accent;
+    background-color: inherit;
+}
+
+/* ------------------------------------------- */
+/* ----  Listview  --------------------------- */
+/* ------------------------------------------- */
+
+// the container for all entries
+#listview {
+    padding: 0.7em 0.7em 0.7em 1.5em;
+    scrollbar: false;
+    spacing: 0em;
+}
+
+#element-text {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+// the currently selected entry
+#element-text.selected {
+    text-color: @color-accent;
+    background-color: @color-bg-dim-tp;
+}
+
+// message shown when execution yields an error
+#error-message {
+    text-color: @color-error;
+}

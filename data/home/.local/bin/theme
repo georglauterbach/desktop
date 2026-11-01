@@ -144,21 +144,16 @@ function set_theme_shell() {
 }
 
 function set_theme_sway() {
-  # shellcheck disable=SC2016
-  declare -ar filler=('$color.transparent' '$color.transparent' '$color.transparent')
+  local CONFIG_DIR=${XDG_CONFIG_HOME}/sway/theme
+  local CONFIG_FILE=${THEME_VARIANT}/theme.conf
 
-  swaymsg client.focused "${filler[@]}" \
-    "\$color.${THEME_VARIANT}.foreground" "\$color.${THEME_VARIANT}.foreground" \
-    || return 1
-  swaymsg client.focused_inactive "${filler[@]}" \
-    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" \
-    || return 1
-  swaymsg client.unfocused "${filler[@]}" \
-    "\$color.${THEME_VARIANT}.foregroundB0" "\$color.${THEME_VARIANT}.foregroundB0" \
-    || return 1
-  swaymsg client.urgent "${filler[@]}" \
-    "\$color.${THEME_VARIANT}.red" "\$color.${THEME_VARIANT}.red" \
-    || return 1
+  if [[ ! -d ${CONFIG_DIR} ]] || [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+    return 2
+  fi
+
+  # `include` is config-only, so the file's commands are sent to the running instance
+  ln --symbolic --force "${CONFIG_FILE}" "${CONFIG_DIR}/theme.conf" || return 1
+  swaymsg "$(sed -E '/^[[:space:]]*(#|$)/d' "${CONFIG_DIR}/${CONFIG_FILE}" | paste -sd ';')" >/dev/null
 }
 
 function set_theme_swaylock() {

@@ -1,12 +1,14 @@
-// ref: https://github.com/davatorium/rofi/blob/next/doc/rofi-theme.5.markdown
+// > https://github.com/davatorium/rofi/blob/next/doc/rofi-theme.5.markdown
 
 configuration {
     show: "combi";
     modes: [combi,drun];
     combi-modes: [window,drun];
 
+    click-to-exit: false;
+
     show-icons: false;
-    font: "JetBrainsMono Nerd Font 11";
+    font: "JetBrainsMono Nerd Font 12";
 
     display-ssh:         "󰣀 ";
     display-run:         " ";
@@ -17,3 +19,7 @@ configuration {
 }
 
 @theme "themes/evergruv_dark"
+
+entry {
+  hide-cursor-on-empty: true;
+}
