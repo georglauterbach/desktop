@@ -402,7 +402,7 @@ RUN __git_clone https://codeberg.org/tytan652/door-knocker.git main
 
 RUN __git_clone https://github.com/alacritty/alacritty.git __tag v0.17.0
 RUN __git_clone https://github.com/JakeStanger/ironbar.git \
-    __commit_id 119f361f661aa362843a6dccf02d13236520a8d9
+    __commit_id 06a691284f81eb520231fbf098981327f40b2431
 RUN __git_clone https://codeberg.org/LGFae/awww.git main
 RUN __git_clone https://github.com/zefr0x/ianny.git main
 RUN __git_clone https://github.com/blurrycat/lightctl.git main
