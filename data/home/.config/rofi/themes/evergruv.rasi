@@ -31,7 +31,7 @@
 
 #prompt {
     background-color: inherit;
-    margin: 0 0 0 10px;
+    margin: 0 8px 0 10px;
 }
 
 #entry {

@@ -253,7 +253,8 @@ popover.menu modelbutton {
 /* ----  End Modules  ------------------------ */
 /* ------------------------------------------- */
 
-#bar #cpu {
+#bar #cpu,
+#bar .power_profiles {
   background-color: var(--orange);
 }
 

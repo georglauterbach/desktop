@@ -90,6 +90,14 @@ let {
     interval.cpu = 5
   }
 
+  $power_profiles = {
+    type = "power_profiles"
+
+    profiles.performance.when = "performance"
+    profiles.performance.icon = ""
+    tooltip = ""
+  }
+
   $memory = {
     type = "sys_info"
     name = "memory"
