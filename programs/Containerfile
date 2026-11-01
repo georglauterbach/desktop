@@ -90,23 +90,23 @@ RUN __apt_get update \
 # ----  Toolchain Setup  ------------------------
 # -----------------------------------------------
 
-RUN __log info "Setting up UV (Python)"                                                   \
+RUN __log info "Setting up UV (Python)"                                              \
     && curl -sSfL https://astral.sh/uv/install.sh | sh                               \
     && uv tool install "meson==${__TOOLCHAIN_VERSION_MESON}"                         \
     \
-    && __log info"Setting up Rust"                                                       \
+    && __log info "Setting up Rust"                                                  \
     && { [ -d "${CARGO_HOME}" ] || curl -sSfL https://sh.rustup.rs                   \
         | sh -s -- -y --default-toolchain "${__TOOLCHAIN_VERSION_RUST}" ; }          \
     && rustup toolchain install "${__TOOLCHAIN_VERSION_RUST}"                        \
     \
-    && __log info"Setting up Go"                                                         \
+    && __log info "Setting up Go"                                                    \
     && mkdir -p "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}"                          \
     && { [ -e "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" ] ||             \
         curl -sSfL -o "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz"          \
             "https://go.dev/dl/go${__TOOLCHAIN_VERSION_GO}.linux-amd64.tar.gz" ; }   \
     && tar xf "/root/.cache/go/${__TOOLCHAIN_VERSION_GO}/go.tar.gz" -C /usr          \
     \
-    && __log info"Setting up mold"                                                       \
+    && __log info "Setting up mold"                                                  \
     && mkdir -p "/root/.cache/mold"                                                  \
     && MOLD_TARBALL="mold-${__TOOLCHAIN_VERSION_MOLD}-x86_64-linux.tar.gz"           \
     && { [ -e "/root/.cache/mold/${MOLD_TARBALL}" ] ||                               \
@@ -118,7 +118,7 @@ RUN __log info "Setting up UV (Python)"                                         
     && echo "[target.'cfg(target_os = \"linux\")']"            >>/.cargo/config.toml \
     && echo "rustflags = [\"-C\", \"link-arg=-fuse-ld=mold\"]" >>/.cargo/config.toml \
     \
-    && __log info "Setting up git"                                                        \
+    && __log info "Setting up git"                                                   \
     && git config --global advice.detachedHead false
 
 # -----------------------------------------------
@@ -235,12 +235,9 @@ RUN __build scenefx meson_ninja \
         -D examples=false       \
         -D color-management=enabled
 
-RUN git -C swayfx reset --hard || :
 RUN __git_clone https://github.com/WillPower3309/swayfx.git \
-    __commit_id 4d341dbb39952ae95f1d8be161359e9316cd6ab8
+    __commit_id 453e5c65098511796e16fcc4b5fae83b1e212110
 RUN __apt_install libjson-c-dev
-COPY patches/swayfx_workspace_animation_output_hotplug.patch /tmp/
-RUN git -C swayfx apply /tmp/swayfx_workspace_animation_output_hotplug.patch
 RUN __build swayfx meson_ninja        \
         -D default-wallpaper=false    \
         -D zsh-completions=false      \
@@ -459,7 +456,6 @@ RUN __build wlsunset meson_ninja
 
 RUN __apt_install sassc blueprint-compiler libgranite-7-dev libpulse-dev
 RUN __build SwayNotificationCenter meson_ninja \
-        -D systemd-service=false               \
         -D scripting=false                     \
         -D pulse-audio=true                    \
         -D man-pages=true                      \
