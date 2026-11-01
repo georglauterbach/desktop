@@ -1,6 +1,6 @@
 show-keyboard-layout
 layout-bg-color=F5F5F2
-layout-text-color=5C6A72
+layout-text-color=505D65
 
 font=JetBrainsMono Nerd Font
 font-size=20
@@ -17,24 +17,24 @@ indicator-thickness=7
 line-uses-inside
 
 # NORMAL
-text-color=5C6A72
+text-color=505D65
 inside-color=F5F5F2
 ring-color=35A77C
 key-hl-color=F5F5F2
 
 # CLEAR
-text-clear-color=5C6A72
+text-clear-color=505D65
 inside-clear-color=F5F5F2
 ring-clear-color=DF69BA
 
 # CAPS
-text-caps-lock-color=5C6A72
+text-caps-lock-color=505D65
 inside-caps-lock-color=F5F5F2
 ring-caps-lock-color=D69A00
 caps-lock-key-hl-color=F5F5F2
 
 # VERIFYING
-text-ver-color=5C6A72
+text-ver-color=505D65
 inside-ver-color=F5F5F2
 ring-ver-color=3A94C5
 

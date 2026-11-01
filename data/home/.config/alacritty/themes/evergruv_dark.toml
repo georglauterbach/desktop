@@ -13,7 +13,7 @@ green   = "#A9B665"
 yellow  = "#D8A657"
 blue    = "#7DAEA3"
 magenta = "#D3869B"
-cyan    = "#7BB674"
+cyan    = "#89B482"
 white   = "#A39377"
 
 [colors.bright]
@@ -23,7 +23,7 @@ green   = "#A9B665"
 yellow  = "#D8A657"
 blue    = "#7DAEA3"
 magenta = "#D3869B"
-cyan    = "#7BB674"
+cyan    = "#89B482"
 white   = "#FFE6BA"
 
 [colors.cursor]

@@ -10,11 +10,13 @@
 
 :root {
   --surface: #1D2021;
-  --module: #504945;
-  --mode: #504945;
+  --border-active: #4D4A45;
+  --accent: #D8A657;
+  --module: #4D4A45;
+  --mode: #4D4A45;
   --text: #DDC7A1;
   --text-on-accent: #1D2021;
-  --workspace-focused-text: #504945;
+  --workspace-focused-text: #4D4A45;
   --workspace-urgent-text: #1D2021;
   --red: #EA6962;
   --orange: #E78A4E;
@@ -28,11 +30,13 @@
 @media (prefers-color-scheme: light) {
   :root {
     --surface: #F5F5F2;
+    --border-active: #A4A9AC;
+    --accent: #8DA101;
     --module: #EBEBE4;
     --mode: #F5F5F2;
-    --text: #5C6A72;
+    --text: #505D65;
     --workspace-focused-text: #F5F5F2;
-    --workspace-urgent-text: #5C6A72;
+    --workspace-urgent-text: #505D65;
     --red: #F85552;
     --orange: #F57D26;
     --yellow: #D69A00;
@@ -49,7 +53,7 @@
   font-weight: 700;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: none;
   text-shadow: none;
   background-image: none;
@@ -93,7 +97,7 @@
 tooltip,
 .popup,
 popover.menu contents {
-  border: 1px solid alpha(var(--text), 0.35);
+  border: 1px solid var(--border-active);
 }
 
 /* GTK sizes the popup surface including this margin (but not `box-shadow`),
@@ -156,7 +160,7 @@ tooltip label {
 }
 
 .popup-clock .calendar label.today {
-  background-color: var(--green);
+  background-color: var(--accent);
   color: var(--mode);
 }
 

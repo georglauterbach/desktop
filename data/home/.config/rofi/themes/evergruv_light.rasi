@@ -7,13 +7,13 @@
 
     color-fg:        #505D65;
 
-    color-red:       #F85552
-    color-orange:    #F57D26
-    color-yellow:    #D69A00
-    color-green:     #8DA101
-    color-cyan:      #35A77C
-    color-blue:      #3A94C5
-    color-purple:    #DF69BA
+    color-red:       #F85552;
+    color-orange:    #F57D26;
+    color-yellow:    #D69A00;
+    color-green:     #8DA101;
+    color-cyan:      #35A77C;
+    color-blue:      #3A94C5;
+    color-purple:    #DF69BA;
 
     color-accent: @color-green;
 }

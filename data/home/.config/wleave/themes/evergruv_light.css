@@ -1,7 +1,8 @@
 :root {
   --background-dim: #EBEBE4;
   --background: #F5F5F2;
-  --foreground: #5C6A72;
+  --border-active: #A4A9AC;
+  --foreground: #505D65;
   --red: #F85552;
   --orange: #F57D26;
   --yellow: #D69A00;
@@ -18,6 +19,8 @@ window {
 button {
   color: oklab(from var(--view-fg-color) var(--standalone-color-oklab));
   background-color: var(--background);
+  border: 1px solid var(--border-active);
+  border-radius: 5px;
   font-family: "JetBrainsMono Nerd Font";
   font-size: 1.5rem;
   margin: 0px;
