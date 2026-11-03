@@ -12,8 +12,7 @@ require_run_as_root
 
 # cSpell: disable
 PACKAGES=(
-  # ? XDG
-  xdg-utils              # common XDG utilities
+  # ? theme & icons
   adwaita-icon-theme     # icon theme
   # ? fonts
   fonts-font-awesome     # Font Awesome
@@ -27,9 +26,9 @@ PACKAGES=(
   git                    # version control system
   rtkit                  # userland real-time scheduling
   # wdisplays              # arrange displays on Wayland
+  xdg-utils              # common XDG utilities
 )
 # cSpell: enable
-
 
 log_info 'Installing packages'
 apt-get install --yes --no-install-recommends "${PACKAGES[@]}"

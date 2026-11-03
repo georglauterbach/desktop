@@ -23,7 +23,7 @@ while read -r FILE; do
     ln --symbolic --no-dereference --force \
       "${FILE}" "${LINK_NAME}"
   fi
-done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3,wireplumber-0.5}},libexec,man,share/{alsa-card-profile,applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,gnome-shell,icons,libinput,man,metainfo,pipewire,rofi,spa-0.2,themes,wayland*,wireplumber,xdg-desktop-portal}} -xtype f)
+done < <(command find "${OUT_DIR}/"{bin,etc,lib/{udev,systemd/user,x86_64-linux-gnu/{spa-0.2,pipewire-0.3,wireplumber-0.5}},libexec,man,share/{alsa-card-profile,applications,bash-completion,dbus-1,glib-2.0,glycin-loaders,gnome-shell,icons,libinput,man,metainfo,pipewire,rofi,spa-0.2,wayland*,wireplumber,xdg-desktop-portal}} -xtype f)
 
 log_info 'Installing PAM module for gnome-keyring'
 # PAM only searches its own module directory, and the module runs as root, so

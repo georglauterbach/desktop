@@ -43,9 +43,11 @@ function set_theme_flatpak() {
       "${HOME}"/.local/share/flatpak/overrides/global
 
     # The sandbox's XDG_CONFIG_HOME is per app, so GTK only finds the `gtk.css`
-    # that recolors libadwaita once the host's directory is shared with it.
-    flatpak override --user --filesystem=xdg-config/gtk-4.0:ro \
-      || { log_warn 'Could not share the GTK4 configuration with Flatpak apps' ; return 1 ; }
+    # that recolors libadwaita (GTK4) and the `settings.ini` that selects the
+    # GTK3 variant once the host's directories are shared with it.
+    flatpak override --user --filesystem=xdg-config/gtk-3.0:ro \
+      --filesystem=xdg-config/gtk-4.0:ro                       \
+      || { log_warn 'Could not share the GTK configuration with Flatpak apps' ; return 1 ; }
   fi
 }
 
@@ -62,19 +64,14 @@ function set_theme_gtk() {
     return 1
   fi
 
-  local gtk_version gtk_version_theme_name
+  local gtk_version
   for gtk_version in {3..4}; do
-    # libadwaita is GTK4 only, so naming the Evergruv build to GTK3 would only
-    # send GTK3 apps looking for a directory that holds a GTK4 stylesheet.
-    if [[ ${gtk_version} -eq 3 ]]; then
-      gtk_version_theme_name=${GTK3_THEME_NAME}
-    else
-      gtk_version_theme_name=${GTK4_THEME_NAME}
-    fi
-
     if [[ -s ${HOME}/.config/gtk-${gtk_version}.0/settings.ini ]]; then
+      # GTK3 ignores `color-scheme`; it loads `gtk-dark.css` of the theme when
+      # `gtk-application-prefer-dark-theme` is set (a no-op for GTK4's file).
       if ! sed --in-place --regexp-extended \
-        -e "s|^(gtk-theme-name=).*|\1${gtk_version_theme_name}|" \
+        -e "s|^(gtk-theme-name=).*|\1${GTK_THEME_NAME}|" \
+        -e "s|^(gtk-application-prefer-dark-theme=).*|\1${PREFER_DARK}|" \
         -e "s|^(gtk-icon-theme-name=).*|\1${ICON_THEME_NAME}|" \
         -e "s|^(gtk-cursor-theme-name=).*|\1${CURSOR_THEME_NAME}|" \
         "${HOME}/.config/gtk-${gtk_version}.0/settings.ini"
@@ -85,7 +82,7 @@ function set_theme_gtk() {
     fi
   done
 
-  gsettings set org.gnome.desktop.interface gtk-theme "${GTK4_THEME_NAME}" \
+  gsettings set org.gnome.desktop.interface gtk-theme "${GTK_THEME_NAME}" \
     || { log_warn 'Could not set GTK theme' ; return 1 ; }
   gsettings set org.gnome.desktop.interface icon-theme "${ICON_THEME_NAME}" \
     || { log_warn 'Could not set GTK icon theme' ; return 1 ; }
@@ -211,9 +208,11 @@ function set_theme_wleave() {
 function set_theme_x11() {
   # cSpell: disable xsettingsd
   if [[ -s ${HOME}/.config/xsettingsd/xsettingsd.conf ]]; then
-    # X11 clients here are GTK3, which the Evergruv build does not cover.
+    # X11 clients here are GTK3, which loads the dark variant of the theme
+    # only when `Gtk/ApplicationPreferDarkTheme` is set.
     sed --in-place --regexp-extended \
-      -e "s|^(Net/ThemeName).*|\1 \"${GTK3_THEME_NAME}\"|" \
+      -e "s|^(Net/ThemeName).*|\1 \"${GTK_THEME_NAME}\"|" \
+      -e "s|^(Gtk/ApplicationPreferDarkTheme).*|\1 ${PREFER_DARK}|" \
       -e "s|^(Net/IconThemeName).*|\1 \"${ICON_THEME_NAME}\"|" \
       "${HOME}/.config/xsettingsd/xsettingsd.conf"
   fi
@@ -230,7 +229,7 @@ function run_update_async() {
 
 function main() {
   export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
-  local FORCE=false GTK3_THEME_NAME=Adwaita GTK4_THEME_NAME=Evergruv ICON_THEME_NAME=Evergruv THEME_VARIANT=light
+  local FORCE=false GTK_THEME_NAME=Evergruv ICON_THEME_NAME=Evergruv PREFER_DARK=0 THEME_VARIANT=light
 
   while [[ ${#} -gt 0 ]]; do
     case "${1:-}" in
@@ -238,7 +237,7 @@ function main() {
 
       ( d | dark )
         THEME_VARIANT=dark
-        GTK3_THEME_NAME+=-${THEME_VARIANT}
+        PREFER_DARK=1
         ICON_THEME_NAME+=-${THEME_VARIANT}
         ;;
 
@@ -259,7 +258,7 @@ function main() {
   # `data/theme/patch_adwaita_icons.sh`) and ship no cursors.
   readonly CURSOR_THEME_NAME=Adwaita
 
-  readonly THEME_VARIANT ICON_THEME_NAME GTK4_THEME_NAME GTK3_THEME_NAME FORCE
+  readonly THEME_VARIANT ICON_THEME_NAME GTK_THEME_NAME PREFER_DARK FORCE
   log_info "Updating theme to \033[1m${THEME_VARIANT^}\033[0m"
 
   local job_id job_result job_name exit_code=0

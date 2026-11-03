@@ -18,13 +18,14 @@ ENV __TOOLCHAIN_VERSION_GO=1.27.3
 ENV __TOOLCHAIN_VERSION_MESON=1.12.1
 ENV __TOOLCHAIN_VERSION_RUST=1.99.0
 ENV __TOOLCHAIN_VERSION_MOLD=3.0.0
+ENV __TOOLCHAIN_VERSION_DART_SASS=1.107.1
 
 ENV CARGO_HOME=/root/.cache/rust/${__TOOLCHAIN_VERSION_RUST}/cargo/home
 ENV RUSTUP_HOME=/root/.cache/rust/${__TOOLCHAIN_VERSION_RUST}/rustup/home
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu
-ENV PATH=${CARGO_HOME}/bin:/root/.local/bin:/usr/go/bin:$PATH
+ENV PATH=${CARGO_HOME}/bin:/root/.local/bin:/usr/go/bin:/usr/dart-sass:$PATH
 
 RUN ln --symbolic --force --no-dereference "$(command -v bash)" "$(command -v sh)"
 
@@ -117,6 +118,14 @@ RUN __log info "Setting up UV (Python)"                                         
     && mkdir -p /.cargo                                                              \
     && echo "[target.'cfg(target_os = \"linux\")']"            >>/.cargo/config.toml \
     && echo "rustflags = [\"-C\", \"link-arg=-fuse-ld=mold\"]" >>/.cargo/config.toml \
+    \
+    && __log info "Setting up Dart Sass"                                             \
+    && mkdir -p "/root/.cache/dart-sass"                                             \
+    && SASS_TARBALL="dart-sass-${__TOOLCHAIN_VERSION_DART_SASS}-linux-x64.tar.gz"    \
+    && { [ -e "/root/.cache/dart-sass/${SASS_TARBALL}" ] ||                          \
+        curl -sSfL -o "/root/.cache/dart-sass/${SASS_TARBALL}"                       \
+            "https://github.com/sass/dart-sass/releases/download/${__TOOLCHAIN_VERSION_DART_SASS}/${SASS_TARBALL}" ; } \
+    && tar xf "/root/.cache/dart-sass/${SASS_TARBALL}" -C /usr/                      \
     \
     && __log info "Setting up git"                                                   \
     && git config --global advice.detachedHead false
@@ -368,15 +377,32 @@ RUN __build libadwaita meson_ninja                                         \
 
 # GTK4 apps without libadwaita need the same stylesheet as a theme directory.
 # It requires GTK >= 4.23.1. Both variants share the one file behind
-# `@media (prefers-color-scheme)`; `gtk-dark.css` is a hard link because
-# `30-link.sh` only links regular files onto the host.
+# `@media (prefers-color-scheme)`. `40-cp_configuration.sh` copies the themes
+# into the user's `~/.local/share/themes/`, where Flatpak apps can read them.
 RUN mkdir --parents "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0" \
     && cp --recursive                                                       \
         libadwaita/build/src/stylesheet/gtk.css                             \
         libadwaita/src/stylesheet/assets                                    \
         "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0/"           \
     && cd "${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-4.0"          \
-    && ln gtk.css gtk-dark.css
+    && ln --symbolic gtk.css gtk-dark.css
+
+# GTK3 apps get the libadwaita look from adw-gtk3, recolored by the patched
+# `_defaults.scss`. GTK3 loads `gtk-dark.css` instead of `gtk.css` when
+# `gtk-application-prefer-dark-theme` is set, so both variants share the one
+# `Evergruv` theme. The Sass needs Dart Sass >= 1.95 (CSS-style `if()`).
+RUN __git_clone --reset https://github.com/lassekongo83/adw-gtk3.git __tag v6.5
+COPY patches/adw-gtk3/ /tmp/adw-gtk3/
+RUN cp --recursive /tmp/adw-gtk3/. adw-gtk3/
+RUN GTK3_THEME_DIR="${__INSTALLATION_PREFIX}/share/themes/Evergruv/gtk-3.0"  \
+    && mkdir --parents "${GTK3_THEME_DIR}"                                   \
+    && sass --no-source-map adw-gtk3/src/sass/gtk.scss                       \
+        "${GTK3_THEME_DIR}/gtk.css"                                          \
+    && sass --no-source-map adw-gtk3/src/sass/gtk-dark.scss                  \
+        "${GTK3_THEME_DIR}/gtk-dark.css"                                     \
+    && cp --recursive adw-gtk3/src/assets "${GTK3_THEME_DIR}/"               \
+    && grep --quiet --ignore-case '#EBEBE4' "${GTK3_THEME_DIR}/gtk.css"      \
+    && grep --quiet --ignore-case '#141617' "${GTK3_THEME_DIR}/gtk-dark.css"
 
 RUN __git_clone https://github.com/wmww/gtk4-layer-shell.git \
     __commit_id 69ad9a02a8c31ac2d3db6710f43b3d8434559e46

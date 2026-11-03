@@ -15,5 +15,11 @@ cp "${@:---update=older}" --recursive                                \
   "$(realpath -eL "${BASE_DIR}/..")/data/home/"{.config,.local,.var} \
   "${HOME}"
 
+# Themes and icons are copied into ~/.local/share/ rather than linked into
+# /usr/local so Flatpak apps can read them as well.
+log_info 'Copying themes'
+mkdir --parents "${HOME}/.local/share/themes"
+cp "${@:---update=older}" --recursive "${OUT_DIR}/share/themes/." "${HOME}/.local/share/themes/"
+
 log_info 'Reloading systemd user manager'
 systemctl --user daemon-reload

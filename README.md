@@ -7,8 +7,8 @@
 | Programs      | See the ["Programs" section below](#programs)                                 |
 | Theme         | See the ["Theme" section below](#theme)                                       |
 | Configuration | Files contained in [`data/home/`](data/home/) go into `${HOME}`               |
-| Fonts         | See [`20-install_packages.sh`](programs/scripts/20-install_packages.sh), [`22-fonts.sh`](programs/scripts/22-fonts.sh), and [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet) |
 | AsciiArt      | [patorjk](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=ART) |
+| Fonts         | See [`20-install_packages.sh`](programs/scripts/20-install_packages.sh), [`22-fonts.sh`](programs/scripts/22-fonts.sh), and [Nerd Fonts Icons](https://www.nerdfonts.com/cheat-sheet) |
 
 ## Programs
 
@@ -49,19 +49,12 @@ The following packages are built from source:
 14. Screen Brightness: [lightctl](https://github.com/blurrycat/lightctl)
 15. Screen Recordings: [wl-screenrec](https://github.com/russelltg/wl-screenrec)
 16. Portal Checker: [door-knocker](https://codeberg.org/tytan652/door-knocker)
-17. Custom XDG Desktop Portals: [xdg-desktop-portal](https://github.com/flatpak/xdg-desktop-portal) & [xdg-desktop-portal-wlr](https://github.com/emersion/xdg-desktop-portal-wlr)
-18. GTK3 Settings Editor: [nwg-look](https://github.com/nwg-piotr/nwg-look)
+17. XDG Desktop Portals: [xdg-desktop-portal](https://github.com/flatpak/xdg-desktop-portal), [xdg-desktop-portal-wlr](https://github.com/emersion/xdg-desktop-portal-wlr) & [xdg-desktop-portal-gtk](https://github.com/flatpak/xdg-desktop-portal-gtk)
 
 ## Theme
 
-The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The actual system theme is a patched version of [libadwaita](https://gitlab.gnome.org/GNOME/libadwaita) (a GNOME platform library), a patched version of which is built in the [container](#installation). Recoloring libadwaita rather than a third-party theme keeps the upstream design language, and it is the only thing libadwaita apps actually read - they ignore `gtk-theme-name` and draw from the stylesheet compiled into the library.
-
-Since libadwaita is bundled, only the bundled programs from the container that use libadwaita load it. A process can only load one glibc and one GTK, so host apps keep loading the host's stock libadwaita. They, and Flatpak apps, are recolored by [`data/home/.config/gtk-4.0/gtk.css`](./data/home/.config/gtk-4.0/gtk.css) instead, which follows the system color scheme and requires GTK 4.20 or newer. libadwaita is GTK4 only, so GTK3 apps are not covered.
-
-GTK4 apps that do not use libadwaita fall back to GTK's built-in Adwaita, which the stylesheets above cannot recolor. They need the patched stylesheet as a theme directory instead, which the container installs as `Evergruv` into `/usr/local/share/themes/`. It requires GTK 4.23.1 or newer.
-
-The `Evergruv` and `Evergruv-dark` icon themes are Adwaita with green and yellow folders, respectively, and inherit all other icons from Adwaita. They are derived from the installed Adwaita icons on the host itself by running [`data/theme/patch_adwaita_icons.sh`](./data/theme/patch_adwaita_icons.sh), which writes them to `~/.local/share/icons/`.
+The colors are based on [Evergruv](https://github.com/georglauterbach/evergruv). The system theme is a [custom-built](#installation), patched version of [libadwaita](https://gitlab.gnome.org/GNOME/libadwaita) (a GNOME platform library) also called Evergruv. The `Evergruv` and `Evergruv-dark` icon themes are Adwaita with green and yellow folders, respectively, and inherit all other icons from Adwaita. They are derived from the installed Adwaita icons on the host by running [`data/theme/patch_adwaita_icons.sh`](./data/theme/patch_adwaita_icons.sh).
 
 ## Licensing
 
-Files in this repository are licensed under [GPLv3+](./LICENSE). Files in [`programs/patches/libadwaita/`](./programs/patches/libadwaita/) taken (and patched) from the [libadwaita project](https://gitlab.gnome.org/GNOME/libadwaita) remain under their respective license.
+Files in this repository are licensed under [GPLv3+](./LICENSE). Files in [`programs/patches/`](./programs/patches) from other projects remain under their respective license.

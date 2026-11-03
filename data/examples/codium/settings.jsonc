@@ -124,6 +124,8 @@
   "window.titleBarStyle": "native",
   "window.zoomLevel": 1,
   // ? workbench
+  // * workbench::experimental
+  "workbench.experimental.modernUI": true,
   // * workbench::bars
   "workbench.sideBar.location": "right",
   "workbench.activityBar.location": "top",
