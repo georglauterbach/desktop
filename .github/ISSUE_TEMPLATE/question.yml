@@ -3,7 +3,7 @@ name: Other
 description: Miscellaneous questions and reports
 title: 'other: '
 labels:
-  - meta::help wanted
+  - meta::needs triage
 
 body:
   - type: dropdown

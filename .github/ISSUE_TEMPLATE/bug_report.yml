@@ -1,9 +1,9 @@
 ---
 name: Bug Report
 description: Submit a bug report
+type: Bug Report
 title: 'bug: '
 labels:
-  - kind::bug/report
   - meta::needs triage
 
 body:
