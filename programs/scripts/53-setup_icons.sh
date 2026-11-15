@@ -12,7 +12,7 @@ set -e -u
 # add-ons and HTML files reuse a few of those blues as part of their artwork,
 # so they are left alone.
 #
-# Usage: patch_adwaita_icons.sh [ADWAITA_DIR [ICONS_DIR]]
+# Usage: 53-setup_icons.sh [ADWAITA_DIR [ICONS_DIR]]
 
 # Every blue becomes the Evergruv accent, mixed towards white or black by as
 # much as the blue is lighter or darker than the folder body (#62a0ea), then

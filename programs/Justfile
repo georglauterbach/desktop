@@ -46,6 +46,9 @@
 @setup-gkd:
     {{justfile_directory()}}/scripts/52-setup_gkd.sh
 
+# Create the icon theme on the host
+@setup-icons *arguments:
+    {{justfile_directory()}}/scripts/53-setup_icons.sh {{arguments}}
 
 # Remove (almost all) installed files from the host
 @clean:
