@@ -3,7 +3,7 @@
 # This script displays a table to visualize your
 # terminal colors and how they interact with each other.
 #
-# ref: https://github.com/pablopunk/colortest
+# > https://github.com/pablopunk/colortest
 #      https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 
 printf '\n                  '

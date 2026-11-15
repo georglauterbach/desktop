@@ -2,12 +2,6 @@
 
 This project contains the configuration of my personal desktop.
 
-## Associated Projects
-
-1. [`github.com/georglauterbach/hermes`](https://github.com/georglauterbach/hermes): Like this project, but for the command line
-2. [`github.com/georglauterbach/evergruv`](https://github.com/georglauterbach/evergruv): My color scheme for everything
-3. [`github.com/georglauterbach/linter`](https://github.com/georglauterbach/linter): A composite linter for all of my projects
-
 ## Repository Layout
 
 | Path            | Purpose                                              |

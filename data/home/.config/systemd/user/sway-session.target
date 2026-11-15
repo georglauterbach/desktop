@@ -1,4 +1,4 @@
-# ref: https://github.com/swaywm/sway/wiki/Systemd-integration
+# > https://github.com/swaywm/sway/wiki/Systemd-integration
 
 [Unit]
 Description=SwayFX compositor session

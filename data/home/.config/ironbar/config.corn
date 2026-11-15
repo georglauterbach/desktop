@@ -5,7 +5,7 @@
 //
 // cSpell: ignore prefsrc waybar
 //
-// ref: https://github.com/JakeStanger/ironbar/wiki
+// > https://github.com/JakeStanger/ironbar/wiki
 //      https://www.nerdfonts.com/cheat-sheet
 //      `ironbar --print-schema`
 
