@@ -4,14 +4,16 @@ This project contains the configuration of my personal desktop.
 
 ## Repository Layout
 
-| Path            | Purpose                                              |
-| :-------------- | :--------------------------------------------------- |
-| `.github/`      | GitHub-related content like CI/CD, issues, etc.      |
-| `data/home/`    | files that go one-to-one into `${HOME}`              |
-| `data/manuals/` | written manuals for all kinds of work on the desktop |
-| `data/theme/`   | derives the Evergruv icon themes from Adwaita        |
-| `programs/`     | contains all code I build from source for my desktop |
+|Path|Purpose|
+|:-|:-|
+|`.github/`|GitHub-related content like CI/CD, issues, etc.|
+|`cspell.config.yaml`|Spell-check configuration|
+|`README.md`|Project description|
+|`data/home/`|files that go one-to-one into `${HOME}`|
+|`data/manuals/`|written manuals for all kinds of work on the desktop|
+|`data/theme/`|derives the Evergruv icon themes from Adwaita|
+|`programs/`|contains all code I build from source for my desktop|
 
 ## Custom-Built Programs
 
-I build my most of my Wayland-based desktop applications, libraries and associated tools from source in a container. This container, described by [`programs/Containerfile`](./programs/Containerfile), uses scripts in [`programs/build_scripts/`](./programs/build_scripts/) to build projects like `wayland-protocols`, `SwayFx`, `Alacritty`, ..., when the container image itself is built. Afterwards, the content of the container's `/usr/local/` directory is copied onto the host file system and linked into the host's `/usr/local/` directory. The scripts to do that live in [`programs/scripts/`](./programs/scripts/).
+I build my most of my Wayland-based desktop applications, libraries and associated tools from source in a container. This container, described by [`programs/Containerfile`](./programs/Containerfile), uses scripts in [`programs/commands/`](./programs/commands/) to build projects like `wayland-protocols`, `SwayFx`, `Alacritty`, ..., when the container image itself is built. Afterwards, the content of the container's `/usr/local/` directory is copied onto the host file system and linked into the host's `/usr/local/` directory. The scripts to do that live in [`programs/scripts/`](./programs/scripts/).

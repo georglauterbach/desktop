@@ -6,6 +6,7 @@ words:
   - sandboxed
 
 ignoreWords:
+  - adwaita
   - alsa
   - buildtype
   - fira

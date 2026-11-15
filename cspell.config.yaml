@@ -79,6 +79,8 @@ ignoreWords:
   - libbash
   - libflyline
   - lightctl
+  - nodev
+  - nosuid
   - patchelf
   - pipewire
   - powerprofilesctl
@@ -99,6 +101,8 @@ ignoreWords:
   - swaymsg
   - swaync
   - swaynotificationcenter
+  - tmpfs
+  - waybar
   - wdisplays
   - wireplumber
   - wleave
