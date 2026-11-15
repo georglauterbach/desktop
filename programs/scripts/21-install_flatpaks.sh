@@ -29,6 +29,7 @@ readonly FLATPAKS=(
   org.gnome.Calculator
   org.gnome.Characters
   org.gnome.font-viewer
+  org.gnome.Loupe
   org.gnome.Papers
 
   # personal apps
